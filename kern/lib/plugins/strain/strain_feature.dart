@@ -21,6 +21,9 @@ class StrainFeature implements KernPlugin {
 
   @override
   Widget buildDashboardWidget(BuildContext context, PluginSlot slot) {
+    if (slot == PluginSlot.header) {
+      return const _StrainHeaderWidget();
+    }
     return const _StrainFooterWidget();
   }
 
@@ -78,5 +81,43 @@ class _StrainFooterWidget extends ConsumerWidget {
         ),
       ),
     ));
+  }
+}
+class _StrainHeaderWidget extends ConsumerWidget {
+  const _StrainHeaderWidget();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final scoreAsync = ref.watch(strainScoreProvider());
+
+    return Container(
+      width: 140,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppTheme.accentBlue,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Row(
+            children: [
+              Icon(Icons.directions_run_rounded, color: AppTheme.textBlue, size: 16),
+              SizedBox(width: 6),
+              Text('Strain', style: TextStyle(color: AppTheme.textBlue, fontSize: 13, fontWeight: FontWeight.w600)),
+            ],
+          ),
+          const SizedBox(height: 12),
+          scoreAsync.when(
+            data: (score) => Text(
+              score?.toStringAsFixed(0) ?? '--',
+              style: const TextStyle(color: AppTheme.textPrimary, fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            loading: () => const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)),
+            error: (_, __) => const Text('!'),
+          ),
+        ],
+      ),
+    );
   }
 }

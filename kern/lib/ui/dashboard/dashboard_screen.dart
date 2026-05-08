@@ -66,7 +66,7 @@ class DashboardScreen extends ConsumerWidget {
           // Header Zone (Carousel if multiple)
           if (headerPlugins.isNotEmpty)
             SizedBox(
-              height: 100,
+              height: 110,
               child: PageView.builder(
                 controller: PageController(viewportFraction: 0.9),
                 padEnds: false,

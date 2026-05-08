@@ -21,6 +21,9 @@ class SleepFeature implements KernPlugin {
 
   @override
   Widget buildDashboardWidget(BuildContext context, PluginSlot slot) {
+    if (slot == PluginSlot.header) {
+      return const _SleepHeaderWidget();
+    }
     return const _SleepFooterWidget();
   }
 
@@ -118,5 +121,47 @@ class _SleepFooterWidget extends ConsumerWidget {
         ),
       ),
     ));
+  }
+}
+class _SleepHeaderWidget extends ConsumerWidget {
+  const _SleepHeaderWidget();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final minsAsync = ref.watch(sleepMinutesProvider());
+
+    return Container(
+      width: 140,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppTheme.accentPurple,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Row(
+            children: [
+              Icon(Icons.bedtime_rounded, color: AppTheme.textPurple, size: 16),
+              SizedBox(width: 6),
+              Text('Sleep', style: TextStyle(color: AppTheme.textPurple, fontSize: 13, fontWeight: FontWeight.w600)),
+            ],
+          ),
+          const SizedBox(height: 12),
+          minsAsync.when(
+            data: (m) {
+              final hrs = (m.total / 60).floor();
+              final mins = (m.total % 60).floor();
+              return Text(
+                '${hrs}h ${mins}m',
+                style: const TextStyle(color: AppTheme.textPrimary, fontSize: 24, fontWeight: FontWeight.bold),
+              );
+            },
+            loading: () => const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)),
+            error: (_, __) => const Text('!'),
+          ),
+        ],
+      ),
+    );
   }
 }

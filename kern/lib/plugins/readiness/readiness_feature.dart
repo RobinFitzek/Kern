@@ -55,8 +55,6 @@ class _ReadinessMainWidget extends ConsumerWidget {
                 const Icon(Icons.bolt_rounded, color: AppTheme.textMint, size: 20),
                 const SizedBox(width: 8),
                 const Text('Readiness', style: TextStyle(color: AppTheme.textSecondary, fontWeight: FontWeight.w600)),
-                const Spacer(),
-                const Icon(Icons.more_horiz, color: AppTheme.textTertiary),
               ],
             ),
             const SizedBox(height: 24),

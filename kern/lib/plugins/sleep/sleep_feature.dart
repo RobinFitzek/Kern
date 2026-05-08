@@ -59,8 +59,6 @@ class _SleepFooterWidget extends ConsumerWidget {
                 ),
                 const SizedBox(width: 8),
                 const Text('Sleep', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: AppTheme.textSecondary)),
-                const Spacer(),
-                const Icon(Icons.more_horiz, color: AppTheme.textTertiary),
               ],
             ),
             const SizedBox(height: 16),

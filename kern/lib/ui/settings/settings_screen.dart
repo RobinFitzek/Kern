@@ -44,10 +44,14 @@ class SettingsScreen extends ConsumerWidget {
               subtitle: Text(
                 syncState.status == SyncStatus.permissionDenied 
                   ? 'Disconnected - Tap to connect' 
-                  : 'Connected',
+                  : syncState.status == SyncStatus.error 
+                    ? 'Error - Tap to retry' 
+                    : 'Connected',
                 style: TextStyle(
                   fontSize: 13, 
-                  color: syncState.status == SyncStatus.permissionDenied ? Colors.red : Colors.green[700]
+                  color: (syncState.status == SyncStatus.permissionDenied || syncState.status == SyncStatus.error) 
+                    ? Colors.red 
+                    : Colors.green[700]
                 ),
               ),
               trailing: syncState.status == SyncStatus.syncing

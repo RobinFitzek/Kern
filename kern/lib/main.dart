@@ -3,10 +3,21 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/database/app_database.dart';
 import 'core/sync/sync_notifier.dart';
-import 'plugins/raw/raw_providers.dart';
+import 'core/plugins/plugin_registry.dart';
+import 'plugins/readiness/readiness_feature.dart';
+import 'plugins/sleep/sleep_feature.dart';
+import 'plugins/strain/strain_feature.dart';
+import 'ui/dashboard/dashboard_screen.dart';
+import 'ui/data/data_explorer_screen.dart';
+import 'ui/plugins/plugin_manager_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Register all plugins
+  PluginRegistry.register(ReadinessFeature());
+  PluginRegistry.register(SleepFeature());
+  PluginRegistry.register(StrainFeature());
 
   final db = AppDatabase();
 
@@ -43,7 +54,7 @@ class KernApp extends StatelessWidget {
 }
 
 // ---------------------------------------------------------------------------
-// App shell — triggers sync on first build, passes state to placeholder
+// App shell — manages bottom navigation and sync on first build
 // ---------------------------------------------------------------------------
 
 class _AppShell extends ConsumerStatefulWidget {
@@ -54,119 +65,57 @@ class _AppShell extends ConsumerStatefulWidget {
 }
 
 class _AppShellState extends ConsumerState<_AppShell> {
+  int _currentIndex = 0;
+
   @override
   void initState() {
     super.initState();
-    // Kick off the permission check + delta sync on first frame.
-    // Using addPostFrameCallback so the widget tree is fully built before
-    // we trigger async work that reads other providers.
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // 1. Initialize plugin settings defaults in DB
+      await ref.read(pluginConfiguratorProvider.notifier).initializeDefaults();
+      // 2. Start sync
       ref.read(syncNotifierProvider.notifier).initialize();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final sync = ref.watch(syncNotifierProvider);
-    return _PlaceholderHome(syncState: sync);
-  }
-}
+    // Watch active plugins to know if any have detail pages
+    final pluginStateAsync = ref.watch(activePluginsProvider);
 
-// ---------------------------------------------------------------------------
-// Temporary placeholder — replaced in Phase 3 with the Dashboard screen
-// ---------------------------------------------------------------------------
+    return pluginStateAsync.when(
+      data: (state) {
+        final navPlugins = state.getNavigablePlugins();
+        
+        final pages = [
+          const DashboardScreen(),
+          const DataExplorerScreen(),
+          ...navPlugins.map((p) => p.buildDetailPage(context)!),
+          const PluginManagerScreen(),
+        ];
 
-class _PlaceholderHome extends StatelessWidget {
-  const _PlaceholderHome({required this.syncState});
-
-  final HealthSyncState syncState;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFF0A0A0F),
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              'kern',
-              style: TextStyle(
-                fontSize: 48,
-                fontWeight: FontWeight.w700,
-                color: Color(0xFF00D4FF),
-                letterSpacing: -2,
-              ),
-            ),
-            const SizedBox(height: 16),
-            _SyncStatusIndicator(state: syncState),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _SyncStatusIndicator extends StatelessWidget {
-  const _SyncStatusIndicator({required this.state});
-
-  final HealthSyncState state;
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 300),
-      child: switch (state.status) {
-        SyncStatus.idle => _label('initializing…'),
-        SyncStatus.checkingPermissions => _label('checking permissions…'),
-        SyncStatus.syncing => _row(
-            const SizedBox(
-              width: 12,
-              height: 12,
-              child: CircularProgressIndicator(
-                strokeWidth: 1.5,
-                color: Color(0xFF00D4FF),
-              ),
-            ),
-            'syncing health data…',
+        return Scaffold(
+          body: pages[_currentIndex],
+          bottomNavigationBar: BottomNavigationBar(
+            currentIndex: _currentIndex,
+            onTap: (index) => setState(() => _currentIndex = index),
+            backgroundColor: const Color(0xFF0A0A0F),
+            selectedItemColor: const Color(0xFF00D4FF),
+            unselectedItemColor: Colors.white.withOpacity(0.4),
+            type: BottomNavigationBarType.fixed,
+            showSelectedLabels: false,
+            showUnselectedLabels: false,
+            items: [
+              const BottomNavigationBarItem(icon: Icon(Icons.dashboard_rounded), label: 'Dashboard'),
+              const BottomNavigationBarItem(icon: Icon(Icons.analytics_rounded), label: 'Data'),
+              ...navPlugins.map((p) => BottomNavigationBarItem(icon: const Icon(Icons.extension), label: p.name)),
+              const BottomNavigationBarItem(icon: Icon(Icons.settings_rounded), label: 'Plugins'),
+            ],
           ),
-        SyncStatus.done => _label('ready', color: const Color(0xFF00D4FF)),
-        SyncStatus.permissionDenied => _label(
-            'health connect permission required',
-            color: Colors.orange,
-          ),
-        SyncStatus.error => _label(
-            'sync error — tap to retry',
-            color: Colors.redAccent,
-          ),
+        );
       },
+      loading: () => const Scaffold(backgroundColor: Color(0xFF0A0A0F), body: Center(child: CircularProgressIndicator())),
+      error: (e, _) => Scaffold(body: Center(child: Text('Error: $e'))),
     );
   }
-
-  Widget _label(String text, {Color? color}) => Text(
-        text,
-        key: ValueKey(text),
-        style: TextStyle(
-          fontSize: 12,
-          color: color ?? Colors.white.withValues(alpha: 0.4),
-          letterSpacing: 1.5,
-        ),
-      );
-
-  Widget _row(Widget icon, String text) => Row(
-        key: const ValueKey('syncing'),
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          icon,
-          const SizedBox(width: 8),
-          Text(
-            text,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.white.withValues(alpha: 0.4),
-              letterSpacing: 1.5,
-            ),
-          ),
-        ],
-      );
 }

@@ -13,12 +13,12 @@ part 'app_database.g.dart';
 // Database — two isolated stores + sync watermark state
 // ---------------------------------------------------------------------------
 
-@DriftDatabase(tables: [RawEntries, DerivedEntries, SyncStates])
+@DriftDatabase(tables: [RawEntries, DerivedEntries, SyncStates, PluginSettings])
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -54,6 +54,9 @@ class AppDatabase extends _$AppDatabase {
               'CREATE INDEX IF NOT EXISTS idx_derived_ns_key_date '
               'ON derived_entries(namespace, key, date)',
             );
+          }
+          if (from < 3) {
+            await m.createTable(pluginSettings);
           }
         },
         // Enforce foreign-key constraints and enable WAL mode for better
@@ -173,6 +176,26 @@ class AppDatabase extends _$AppDatabase {
           lastSyncedAt: syncedAt,
         ),
       );
+
+  // -------------------------------------------------------------------------
+  // Plugin Settings DAOs
+  // -------------------------------------------------------------------------
+
+  Stream<List<PluginSetting>> watchAllPluginSettings() =>
+      select(pluginSettings).watch();
+
+  Future<PluginSetting?> getPluginSettings(String pluginId) =>
+      (select(pluginSettings)..where((t) => t.pluginId.equals(pluginId)))
+          .getSingleOrNull();
+
+  Future<void> upsertPluginSettings(PluginSettingsCompanion settings) =>
+      into(pluginSettings).insertOnConflictUpdate(settings);
+
+  Future<void> initDefaultSettings(List<PluginSettingsCompanion> defaults) async {
+    await batch((batch) {
+      batch.insertAllOnConflictUpdate(pluginSettings, defaults);
+    });
+  }
 }
 
 // ---------------------------------------------------------------------------

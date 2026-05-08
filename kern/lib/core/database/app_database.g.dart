@@ -1163,12 +1163,344 @@ class SyncStatesCompanion extends UpdateCompanion<SyncState> {
   }
 }
 
+class $PluginSettingsTable extends PluginSettings
+    with TableInfo<$PluginSettingsTable, PluginSetting> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $PluginSettingsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _pluginIdMeta = const VerificationMeta(
+    'pluginId',
+  );
+  @override
+  late final GeneratedColumn<String> pluginId = GeneratedColumn<String>(
+    'plugin_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _isEnabledMeta = const VerificationMeta(
+    'isEnabled',
+  );
+  @override
+  late final GeneratedColumn<bool> isEnabled = GeneratedColumn<bool>(
+    'is_enabled',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_enabled" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _dashboardSlotMeta = const VerificationMeta(
+    'dashboardSlot',
+  );
+  @override
+  late final GeneratedColumn<String> dashboardSlot = GeneratedColumn<String>(
+    'dashboard_slot',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('hidden'),
+  );
+  static const VerificationMeta _sortOrderMeta = const VerificationMeta(
+    'sortOrder',
+  );
+  @override
+  late final GeneratedColumn<int> sortOrder = GeneratedColumn<int>(
+    'sort_order',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    pluginId,
+    isEnabled,
+    dashboardSlot,
+    sortOrder,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'plugin_settings';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<PluginSetting> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('plugin_id')) {
+      context.handle(
+        _pluginIdMeta,
+        pluginId.isAcceptableOrUnknown(data['plugin_id']!, _pluginIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_pluginIdMeta);
+    }
+    if (data.containsKey('is_enabled')) {
+      context.handle(
+        _isEnabledMeta,
+        isEnabled.isAcceptableOrUnknown(data['is_enabled']!, _isEnabledMeta),
+      );
+    }
+    if (data.containsKey('dashboard_slot')) {
+      context.handle(
+        _dashboardSlotMeta,
+        dashboardSlot.isAcceptableOrUnknown(
+          data['dashboard_slot']!,
+          _dashboardSlotMeta,
+        ),
+      );
+    }
+    if (data.containsKey('sort_order')) {
+      context.handle(
+        _sortOrderMeta,
+        sortOrder.isAcceptableOrUnknown(data['sort_order']!, _sortOrderMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {pluginId};
+  @override
+  PluginSetting map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return PluginSetting(
+      pluginId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}plugin_id'],
+      )!,
+      isEnabled: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_enabled'],
+      )!,
+      dashboardSlot: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}dashboard_slot'],
+      )!,
+      sortOrder: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}sort_order'],
+      )!,
+    );
+  }
+
+  @override
+  $PluginSettingsTable createAlias(String alias) {
+    return $PluginSettingsTable(attachedDatabase, alias);
+  }
+}
+
+class PluginSetting extends DataClass implements Insertable<PluginSetting> {
+  /// Unique identifier of the plugin (e.g. 'readiness', 'sleep').
+  final String pluginId;
+
+  /// Whether the plugin is currently enabled by the user.
+  final bool isEnabled;
+
+  /// The dashboard slot where this plugin should render:
+  /// 'header', 'main', 'footer', or 'hidden'.
+  final String dashboardSlot;
+
+  /// Sort order within the slot. Lower numbers appear first.
+  final int sortOrder;
+  const PluginSetting({
+    required this.pluginId,
+    required this.isEnabled,
+    required this.dashboardSlot,
+    required this.sortOrder,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['plugin_id'] = Variable<String>(pluginId);
+    map['is_enabled'] = Variable<bool>(isEnabled);
+    map['dashboard_slot'] = Variable<String>(dashboardSlot);
+    map['sort_order'] = Variable<int>(sortOrder);
+    return map;
+  }
+
+  PluginSettingsCompanion toCompanion(bool nullToAbsent) {
+    return PluginSettingsCompanion(
+      pluginId: Value(pluginId),
+      isEnabled: Value(isEnabled),
+      dashboardSlot: Value(dashboardSlot),
+      sortOrder: Value(sortOrder),
+    );
+  }
+
+  factory PluginSetting.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return PluginSetting(
+      pluginId: serializer.fromJson<String>(json['pluginId']),
+      isEnabled: serializer.fromJson<bool>(json['isEnabled']),
+      dashboardSlot: serializer.fromJson<String>(json['dashboardSlot']),
+      sortOrder: serializer.fromJson<int>(json['sortOrder']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'pluginId': serializer.toJson<String>(pluginId),
+      'isEnabled': serializer.toJson<bool>(isEnabled),
+      'dashboardSlot': serializer.toJson<String>(dashboardSlot),
+      'sortOrder': serializer.toJson<int>(sortOrder),
+    };
+  }
+
+  PluginSetting copyWith({
+    String? pluginId,
+    bool? isEnabled,
+    String? dashboardSlot,
+    int? sortOrder,
+  }) => PluginSetting(
+    pluginId: pluginId ?? this.pluginId,
+    isEnabled: isEnabled ?? this.isEnabled,
+    dashboardSlot: dashboardSlot ?? this.dashboardSlot,
+    sortOrder: sortOrder ?? this.sortOrder,
+  );
+  PluginSetting copyWithCompanion(PluginSettingsCompanion data) {
+    return PluginSetting(
+      pluginId: data.pluginId.present ? data.pluginId.value : this.pluginId,
+      isEnabled: data.isEnabled.present ? data.isEnabled.value : this.isEnabled,
+      dashboardSlot: data.dashboardSlot.present
+          ? data.dashboardSlot.value
+          : this.dashboardSlot,
+      sortOrder: data.sortOrder.present ? data.sortOrder.value : this.sortOrder,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PluginSetting(')
+          ..write('pluginId: $pluginId, ')
+          ..write('isEnabled: $isEnabled, ')
+          ..write('dashboardSlot: $dashboardSlot, ')
+          ..write('sortOrder: $sortOrder')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(pluginId, isEnabled, dashboardSlot, sortOrder);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is PluginSetting &&
+          other.pluginId == this.pluginId &&
+          other.isEnabled == this.isEnabled &&
+          other.dashboardSlot == this.dashboardSlot &&
+          other.sortOrder == this.sortOrder);
+}
+
+class PluginSettingsCompanion extends UpdateCompanion<PluginSetting> {
+  final Value<String> pluginId;
+  final Value<bool> isEnabled;
+  final Value<String> dashboardSlot;
+  final Value<int> sortOrder;
+  final Value<int> rowid;
+  const PluginSettingsCompanion({
+    this.pluginId = const Value.absent(),
+    this.isEnabled = const Value.absent(),
+    this.dashboardSlot = const Value.absent(),
+    this.sortOrder = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  PluginSettingsCompanion.insert({
+    required String pluginId,
+    this.isEnabled = const Value.absent(),
+    this.dashboardSlot = const Value.absent(),
+    this.sortOrder = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : pluginId = Value(pluginId);
+  static Insertable<PluginSetting> custom({
+    Expression<String>? pluginId,
+    Expression<bool>? isEnabled,
+    Expression<String>? dashboardSlot,
+    Expression<int>? sortOrder,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (pluginId != null) 'plugin_id': pluginId,
+      if (isEnabled != null) 'is_enabled': isEnabled,
+      if (dashboardSlot != null) 'dashboard_slot': dashboardSlot,
+      if (sortOrder != null) 'sort_order': sortOrder,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  PluginSettingsCompanion copyWith({
+    Value<String>? pluginId,
+    Value<bool>? isEnabled,
+    Value<String>? dashboardSlot,
+    Value<int>? sortOrder,
+    Value<int>? rowid,
+  }) {
+    return PluginSettingsCompanion(
+      pluginId: pluginId ?? this.pluginId,
+      isEnabled: isEnabled ?? this.isEnabled,
+      dashboardSlot: dashboardSlot ?? this.dashboardSlot,
+      sortOrder: sortOrder ?? this.sortOrder,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (pluginId.present) {
+      map['plugin_id'] = Variable<String>(pluginId.value);
+    }
+    if (isEnabled.present) {
+      map['is_enabled'] = Variable<bool>(isEnabled.value);
+    }
+    if (dashboardSlot.present) {
+      map['dashboard_slot'] = Variable<String>(dashboardSlot.value);
+    }
+    if (sortOrder.present) {
+      map['sort_order'] = Variable<int>(sortOrder.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PluginSettingsCompanion(')
+          ..write('pluginId: $pluginId, ')
+          ..write('isEnabled: $isEnabled, ')
+          ..write('dashboardSlot: $dashboardSlot, ')
+          ..write('sortOrder: $sortOrder, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $RawEntriesTable rawEntries = $RawEntriesTable(this);
   late final $DerivedEntriesTable derivedEntries = $DerivedEntriesTable(this);
   late final $SyncStatesTable syncStates = $SyncStatesTable(this);
+  late final $PluginSettingsTable pluginSettings = $PluginSettingsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -1177,6 +1509,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     rawEntries,
     derivedEntries,
     syncStates,
+    pluginSettings,
   ];
 }
 
@@ -1790,6 +2123,191 @@ typedef $$SyncStatesTableProcessedTableManager =
       SyncState,
       PrefetchHooks Function()
     >;
+typedef $$PluginSettingsTableCreateCompanionBuilder =
+    PluginSettingsCompanion Function({
+      required String pluginId,
+      Value<bool> isEnabled,
+      Value<String> dashboardSlot,
+      Value<int> sortOrder,
+      Value<int> rowid,
+    });
+typedef $$PluginSettingsTableUpdateCompanionBuilder =
+    PluginSettingsCompanion Function({
+      Value<String> pluginId,
+      Value<bool> isEnabled,
+      Value<String> dashboardSlot,
+      Value<int> sortOrder,
+      Value<int> rowid,
+    });
+
+class $$PluginSettingsTableFilterComposer
+    extends Composer<_$AppDatabase, $PluginSettingsTable> {
+  $$PluginSettingsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get pluginId => $composableBuilder(
+    column: $table.pluginId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isEnabled => $composableBuilder(
+    column: $table.isEnabled,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get dashboardSlot => $composableBuilder(
+    column: $table.dashboardSlot,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get sortOrder => $composableBuilder(
+    column: $table.sortOrder,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$PluginSettingsTableOrderingComposer
+    extends Composer<_$AppDatabase, $PluginSettingsTable> {
+  $$PluginSettingsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get pluginId => $composableBuilder(
+    column: $table.pluginId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isEnabled => $composableBuilder(
+    column: $table.isEnabled,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get dashboardSlot => $composableBuilder(
+    column: $table.dashboardSlot,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get sortOrder => $composableBuilder(
+    column: $table.sortOrder,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$PluginSettingsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $PluginSettingsTable> {
+  $$PluginSettingsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get pluginId =>
+      $composableBuilder(column: $table.pluginId, builder: (column) => column);
+
+  GeneratedColumn<bool> get isEnabled =>
+      $composableBuilder(column: $table.isEnabled, builder: (column) => column);
+
+  GeneratedColumn<String> get dashboardSlot => $composableBuilder(
+    column: $table.dashboardSlot,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get sortOrder =>
+      $composableBuilder(column: $table.sortOrder, builder: (column) => column);
+}
+
+class $$PluginSettingsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $PluginSettingsTable,
+          PluginSetting,
+          $$PluginSettingsTableFilterComposer,
+          $$PluginSettingsTableOrderingComposer,
+          $$PluginSettingsTableAnnotationComposer,
+          $$PluginSettingsTableCreateCompanionBuilder,
+          $$PluginSettingsTableUpdateCompanionBuilder,
+          (
+            PluginSetting,
+            BaseReferences<_$AppDatabase, $PluginSettingsTable, PluginSetting>,
+          ),
+          PluginSetting,
+          PrefetchHooks Function()
+        > {
+  $$PluginSettingsTableTableManager(
+    _$AppDatabase db,
+    $PluginSettingsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$PluginSettingsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$PluginSettingsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$PluginSettingsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> pluginId = const Value.absent(),
+                Value<bool> isEnabled = const Value.absent(),
+                Value<String> dashboardSlot = const Value.absent(),
+                Value<int> sortOrder = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => PluginSettingsCompanion(
+                pluginId: pluginId,
+                isEnabled: isEnabled,
+                dashboardSlot: dashboardSlot,
+                sortOrder: sortOrder,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String pluginId,
+                Value<bool> isEnabled = const Value.absent(),
+                Value<String> dashboardSlot = const Value.absent(),
+                Value<int> sortOrder = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => PluginSettingsCompanion.insert(
+                pluginId: pluginId,
+                isEnabled: isEnabled,
+                dashboardSlot: dashboardSlot,
+                sortOrder: sortOrder,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$PluginSettingsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $PluginSettingsTable,
+      PluginSetting,
+      $$PluginSettingsTableFilterComposer,
+      $$PluginSettingsTableOrderingComposer,
+      $$PluginSettingsTableAnnotationComposer,
+      $$PluginSettingsTableCreateCompanionBuilder,
+      $$PluginSettingsTableUpdateCompanionBuilder,
+      (
+        PluginSetting,
+        BaseReferences<_$AppDatabase, $PluginSettingsTable, PluginSetting>,
+      ),
+      PluginSetting,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -1800,4 +2318,6 @@ class $AppDatabaseManager {
       $$DerivedEntriesTableTableManager(_db, _db.derivedEntries);
   $$SyncStatesTableTableManager get syncStates =>
       $$SyncStatesTableTableManager(_db, _db.syncStates);
+  $$PluginSettingsTableTableManager get pluginSettings =>
+      $$PluginSettingsTableTableManager(_db, _db.pluginSettings);
 }

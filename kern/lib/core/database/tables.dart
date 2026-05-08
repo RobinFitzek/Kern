@@ -119,3 +119,26 @@ class SyncStates extends Table {
   @override
   Set<Column> get primaryKey => {dataType};
 }
+
+// ---------------------------------------------------------------------------
+// Plugin Settings
+// ---------------------------------------------------------------------------
+
+/// Persists user preferences for plugins (dashboard position, enabled state).
+class PluginSettings extends Table {
+  /// Unique identifier of the plugin (e.g. 'readiness', 'sleep').
+  TextColumn get pluginId => text()();
+
+  /// Whether the plugin is currently enabled by the user.
+  BoolColumn get isEnabled => boolean().withDefault(const Constant(true))();
+
+  /// The dashboard slot where this plugin should render:
+  /// 'header', 'main', 'footer', or 'hidden'.
+  TextColumn get dashboardSlot => text().withDefault(const Constant('hidden'))();
+
+  /// Sort order within the slot. Lower numbers appear first.
+  IntColumn get sortOrder => integer().withDefault(const Constant(0))();
+
+  @override
+  Set<Column> get primaryKey => {pluginId};
+}

@@ -23,15 +23,16 @@
 - [x] **`SyncNotifier`** — full state machine: idle → checkingPermissions → syncing → done/permissionDenied/error (`lib/core/sync/sync_notifier.dart`)
 - [x] **Sync on app open** — `_AppShell` triggers `initialize()` in `initState`; sync status shown live in placeholder UI
 
-## Phase 2 — Plugins
+## Phase 2 — Plugins ✅ COMPLETE
 
-- [ ] `readinessPlugin` — reads `rawHrv` + `rawSleep` + `rawRestingHr`, computes 0–100 score, writes `readiness.score` + `readiness.components` to Derived Store
-  - [ ] 7-day HRV average vs. 30-day personal baseline (40% weight)
-  - [ ] Deep + REM minutes vs. optimal (35% weight)
-  - [ ] Yesterday's strain vs. 7-day average (25% weight)
-- [ ] `sleepPlugin` — reads `rawSleepDeep` + `rawSleepRem` + `rawSleepLight`, writes `sleep.quality_score`
-- [ ] `strainPlugin` — reads `rawSteps` + `rawHeartRate`, computes daily training load, writes `strain.daily`
-- [ ] `PluginRunner` — triggers all plugins after `syncAll` completes; isolated error handling per plugin
+- [x] `derived_keys.dart` — `DerivedNamespace`, `ReadinessKey`, `SleepKey`, `StrainKey` constants
+- [x] `rawEntriesBetween()` added to `AppDatabase` for precise time-window queries
+- [x] `ReadinessPlugin` — HRV(40%) + Sleep(35%) + Strain(25%) weighted score; graceful degradation when components missing; calibration detection
+- [x] `SleepPlugin` — quality score from deep+REM stage minutes (60%) + total duration (40%)
+- [x] `StrainPlugin` — 0-100 from yesterday's steps vs 7-day avg; groups step intervals by calendar day
+- [x] `PluginRunner` — Riverpod Notifier, runs all 3 plugins in parallel with per-plugin error isolation
+- [x] `derived_providers.dart` — UI reader providers for all scores (readinessScore, sleepScore, strainScore, components, sleepMinutes)
+- [x] `SyncNotifier` updated — calls `pluginRunner.runAll()` after sync (fire-and-forget)
 
 ### Known edge cases to handle in plugins
 - [ ] **Cold start / no baseline** — first 7 days of use: show calibration placeholder, skip readiness score. Write `readiness.status = 'calibrating'` to Derived Store.

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/sync/sync_notifier.dart';
 import '../plugins/plugin_manager_screen.dart';
+import 'navigation_manager_screen.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -64,7 +65,7 @@ class SettingsScreen extends ConsumerWidget {
           ]),
           const SizedBox(height: 24),
 
-          _buildSectionHeader('Extensions'),
+          _buildSectionHeader('Extensions & Layout'),
           _buildCard([
             ListTile(
               leading: const Icon(Icons.extension_outlined, color: Colors.black54),
@@ -75,6 +76,19 @@ class SettingsScreen extends ConsumerWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => const PluginManagerScreen()),
+                );
+              },
+            ),
+            const Divider(height: 1, color: Colors.black12),
+            ListTile(
+              leading: const Icon(Icons.view_column_rounded, color: Colors.black54),
+              title: const Text('Navigation Menu'),
+              subtitle: const Text('Customize your bottom bar tabs', style: TextStyle(fontSize: 13)),
+              trailing: const Icon(Icons.chevron_right, color: Colors.black26),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const NavigationManagerScreen()),
                 );
               },
             ),

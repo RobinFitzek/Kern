@@ -12,6 +12,7 @@ import 'ui/dashboard/dashboard_screen.dart';
 import 'ui/data/data_explorer_screen.dart';
 import 'ui/settings/settings_screen.dart';
 import 'ui/theme/app_theme.dart';
+import 'core/navigation/navigation_state.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -87,29 +88,52 @@ class _AppShellState extends ConsumerState<_AppShell> {
   Widget build(BuildContext context) {
     // Watch active plugins to know if any have detail pages
     final pluginStateAsync = ref.watch(activePluginsProvider);
+    final navOrder = ref.watch(navigationStateProvider);
 
     return pluginStateAsync.when(
       data: (state) {
         final navPlugins = state.getNavigablePlugins();
         
-        final pages = [
-          const DashboardScreen(),
-          const DataExplorerScreen(),
-          ...navPlugins.map((p) => p.buildDetailPage(context)!),
-          const SettingsScreen(),
-        ];
+        final List<Widget> pages = [];
+        final List<BottomNavigationBarItem> items = [];
+
+        for (final id in navOrder) {
+          if (id == 'dashboard') {
+            pages.add(const DashboardScreen());
+            items.add(const BottomNavigationBarItem(icon: Icon(Icons.view_agenda_rounded), label: 'Today'));
+          } else if (id == 'data') {
+            pages.add(const DataExplorerScreen());
+            items.add(const BottomNavigationBarItem(icon: Icon(Icons.analytics_rounded), label: 'Data'));
+          } else if (id == 'settings') {
+            pages.add(const SettingsScreen());
+            items.add(const BottomNavigationBarItem(icon: Icon(Icons.settings_rounded), label: 'Settings'));
+          } else {
+            // It might be a plugin
+            final plugin = navPlugins.where((p) => p.id == id).firstOrNull;
+            if (plugin != null) {
+              pages.add(plugin.buildDetailPage(context)!);
+              items.add(BottomNavigationBarItem(icon: const Icon(Icons.extension_rounded), label: plugin.name));
+            }
+          }
+        }
+
+        // Failsafe if empty
+        if (pages.isEmpty) {
+          pages.add(const DashboardScreen());
+          items.add(const BottomNavigationBarItem(icon: Icon(Icons.view_agenda_rounded), label: 'Today'));
+        }
+
+        // Ensure current index is valid
+        if (_currentIndex >= pages.length) {
+          _currentIndex = 0;
+        }
 
         return Scaffold(
           body: pages[_currentIndex],
           bottomNavigationBar: BottomNavigationBar(
             currentIndex: _currentIndex,
             onTap: (index) => setState(() => _currentIndex = index),
-            items: [
-              const BottomNavigationBarItem(icon: Icon(Icons.view_agenda_rounded), label: 'Today'),
-              const BottomNavigationBarItem(icon: Icon(Icons.analytics_rounded), label: 'Data'),
-              ...navPlugins.map((p) => BottomNavigationBarItem(icon: const Icon(Icons.extension), label: p.name)),
-              const BottomNavigationBarItem(icon: Icon(Icons.settings_rounded), label: 'Settings'),
-            ],
+            items: items,
           ),
         );
       },

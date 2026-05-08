@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/plugins/plugin_interfaces.dart';
 import '../../core/plugins/plugin_registry.dart';
 import '../../core/sync/sync_notifier.dart';
+import '../theme/app_theme.dart';
 
 // ---------------------------------------------------------------------------
 // DashboardScreen
@@ -48,12 +49,13 @@ class DashboardScreen extends ConsumerWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text(
-                'Google Health', // Matching the mockup for now
+              Text(
+                'Kern',
                 style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
+                  fontSize: 24,
+                  fontWeight: FontWeight.w700,
                   letterSpacing: -0.5,
+                  color: AppTheme.primaryBlue,
                 ),
               ),
               const SizedBox(width: 8),

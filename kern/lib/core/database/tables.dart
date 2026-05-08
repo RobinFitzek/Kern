@@ -54,6 +54,9 @@ class RawEntries extends Table {
   /// Stored for audit / future upsert workflows; not used as the primary key.
   TextColumn get sourceRecordId => text().nullable()();
 
+  /// Optional JSON blob for complex raw data (e.g., Blood Pressure Systolic/Diastolic).
+  TextColumn get metadata => text().nullable()();
+
   /// Composite uniqueness: one row per (type, sample-start, source-app).
   /// Prevents duplicate insertion when the same time window is re-synced.
   Set<List<Column>> get uniqueColumns => {

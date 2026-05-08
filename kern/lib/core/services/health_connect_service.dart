@@ -38,6 +38,21 @@ class HealthConnectService {
     HealthDataType.SLEEP_REM,
     HealthDataType.SLEEP_LIGHT,
     HealthDataType.STEPS,
+    
+    // Phase 4: Universal Sync Types
+    HealthDataType.ACTIVE_ENERGY_BURNED,
+    HealthDataType.BASAL_ENERGY_BURNED,
+    HealthDataType.BLOOD_GLUCOSE,
+    HealthDataType.BLOOD_OXYGEN,
+    HealthDataType.BLOOD_PRESSURE_DIASTOLIC,
+    HealthDataType.BLOOD_PRESSURE_SYSTOLIC,
+    HealthDataType.BODY_FAT_PERCENTAGE,
+    HealthDataType.BODY_TEMPERATURE,
+    HealthDataType.DISTANCE_DELTA,
+    HealthDataType.FLIGHTS_CLIMBED,
+    HealthDataType.WATER,
+    HealthDataType.WEIGHT,
+    HealthDataType.WORKOUT,
   ];
 
   static List<HealthDataAccess> get _permissions =>
@@ -71,53 +86,39 @@ class HealthConnectService {
     }
   }
 
-  // -------------------------------------------------------------------------
-  // Public fetch methods — each fetches only the delta since last sync
-  // -------------------------------------------------------------------------
-
-  /// Sync HRV (RMSSD) — fetches from last watermark or 30-day backfill.
-  Future<void> fetchHrv() => _deltaSync(
-        types: [HealthDataType.HEART_RATE_VARIABILITY_RMSSD],
-        rawType: RawDataType.hrv,
-      );
-
-  /// Sync resting heart rate.
-  Future<void> fetchRestingHr() => _deltaSync(
-        types: [HealthDataType.RESTING_HEART_RATE],
-        rawType: RawDataType.restingHr,
-      );
-
-  /// Sync all sleep stages (deep, REM, light) in parallel.
-  Future<void> fetchSleep() => Future.wait([
-        _deltaSync(
-          types: [HealthDataType.SLEEP_DEEP],
-          rawType: RawDataType.sleepDeep,
-        ),
-        _deltaSync(
-          types: [HealthDataType.SLEEP_REM],
-          rawType: RawDataType.sleepRem,
-        ),
-        _deltaSync(
-          types: [HealthDataType.SLEEP_LIGHT],
-          rawType: RawDataType.sleepLight,
-        ),
-      ]);
-
-  /// Sync step counts.
-  Future<void> fetchSteps() => _deltaSync(
-        types: [HealthDataType.STEPS],
-        rawType: RawDataType.steps,
-      );
+  /// Maps a HealthDataType to the internal RawStore type name.
+  String _mapType(HealthDataType type) {
+    switch (type) {
+      case HealthDataType.HEART_RATE_VARIABILITY_RMSSD:
+        return RawDataType.hrv;
+      case HealthDataType.RESTING_HEART_RATE:
+        return RawDataType.restingHr;
+      case HealthDataType.SLEEP_DEEP:
+        return RawDataType.sleepDeep;
+      case HealthDataType.SLEEP_REM:
+        return RawDataType.sleepRem;
+      case HealthDataType.SLEEP_LIGHT:
+        return RawDataType.sleepLight;
+      case HealthDataType.STEPS:
+        return RawDataType.steps;
+      case HealthDataType.HEART_RATE:
+        return RawDataType.heartRate;
+      default:
+        // Use lowercase string representation for dynamically supported types.
+        return type.name.toLowerCase();
+    }
+  }
 
   /// Full sync — all data types in parallel.
   /// Each type independently tracks its own watermark, so partial failures
   /// only affect the failed type on the next retry.
-  Future<void> syncAll() => Future.wait([
-        fetchHrv(),
-        fetchRestingHr(),
-        fetchSleep(),
-        fetchSteps(),
-      ]);
+  Future<void> syncAll() {
+    final futures = _readTypes.map((type) => _deltaSync(
+          types: [type],
+          rawType: _mapType(type),
+        ));
+    return Future.wait(futures);
+  }
 
   // -------------------------------------------------------------------------
   // Internal — delta sync core
@@ -160,6 +161,16 @@ class HealthConnectService {
             ? (point.value as NumericHealthValue).numericValue.toDouble()
             : 0.0;
 
+        // If it's a complex value, try to serialize it or at least capture its string representation
+        String? metadataJson;
+        if (point.value is! NumericHealthValue) {
+          try {
+            // Using toString as a safe fallback. The health package objects usually
+            // override toString() to provide a JSON-like map representation.
+            metadataJson = point.value.toString();
+          } catch (_) {}
+        }
+
         // sourceId is the originating app's package name in the health package,
         // e.g. "com.garmin.android.apps.connectmobile".
         final origin = point.sourceId.isNotEmpty ? point.sourceId : 'unknown';
@@ -172,6 +183,7 @@ class HealthConnectService {
           sourceName: Value(origin),
           // sourceId is the package name; uuid is Health Connect's record UUID.
           sourceRecordId: Value(point.uuid),
+          metadata: Value(metadataJson),
         );
       }).toList();
 

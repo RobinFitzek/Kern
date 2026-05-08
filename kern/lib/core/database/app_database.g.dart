@@ -85,6 +85,17 @@ class $RawEntriesTable extends RawEntries
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _metadataMeta = const VerificationMeta(
+    'metadata',
+  );
+  @override
+  late final GeneratedColumn<String> metadata = GeneratedColumn<String>(
+    'metadata',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -94,6 +105,7 @@ class $RawEntriesTable extends RawEntries
     timestampEnd,
     sourceName,
     sourceRecordId,
+    metadata,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -158,6 +170,12 @@ class $RawEntriesTable extends RawEntries
         ),
       );
     }
+    if (data.containsKey('metadata')) {
+      context.handle(
+        _metadataMeta,
+        metadata.isAcceptableOrUnknown(data['metadata']!, _metadataMeta),
+      );
+    }
     return context;
   }
 
@@ -195,6 +213,10 @@ class $RawEntriesTable extends RawEntries
         DriftSqlType.string,
         data['${effectivePrefix}source_record_id'],
       ),
+      metadata: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}metadata'],
+      ),
     );
   }
 
@@ -226,6 +248,9 @@ class RawEntry extends DataClass implements Insertable<RawEntry> {
   /// Health Connect's own UUID for this record (nullable for data not from HC).
   /// Stored for audit / future upsert workflows; not used as the primary key.
   final String? sourceRecordId;
+
+  /// Optional JSON blob for complex raw data (e.g., Blood Pressure Systolic/Diastolic).
+  final String? metadata;
   const RawEntry({
     required this.id,
     required this.type,
@@ -234,6 +259,7 @@ class RawEntry extends DataClass implements Insertable<RawEntry> {
     this.timestampEnd,
     required this.sourceName,
     this.sourceRecordId,
+    this.metadata,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -248,6 +274,9 @@ class RawEntry extends DataClass implements Insertable<RawEntry> {
     map['source_name'] = Variable<String>(sourceName);
     if (!nullToAbsent || sourceRecordId != null) {
       map['source_record_id'] = Variable<String>(sourceRecordId);
+    }
+    if (!nullToAbsent || metadata != null) {
+      map['metadata'] = Variable<String>(metadata);
     }
     return map;
   }
@@ -265,6 +294,9 @@ class RawEntry extends DataClass implements Insertable<RawEntry> {
       sourceRecordId: sourceRecordId == null && nullToAbsent
           ? const Value.absent()
           : Value(sourceRecordId),
+      metadata: metadata == null && nullToAbsent
+          ? const Value.absent()
+          : Value(metadata),
     );
   }
 
@@ -281,6 +313,7 @@ class RawEntry extends DataClass implements Insertable<RawEntry> {
       timestampEnd: serializer.fromJson<DateTime?>(json['timestampEnd']),
       sourceName: serializer.fromJson<String>(json['sourceName']),
       sourceRecordId: serializer.fromJson<String?>(json['sourceRecordId']),
+      metadata: serializer.fromJson<String?>(json['metadata']),
     );
   }
   @override
@@ -294,6 +327,7 @@ class RawEntry extends DataClass implements Insertable<RawEntry> {
       'timestampEnd': serializer.toJson<DateTime?>(timestampEnd),
       'sourceName': serializer.toJson<String>(sourceName),
       'sourceRecordId': serializer.toJson<String?>(sourceRecordId),
+      'metadata': serializer.toJson<String?>(metadata),
     };
   }
 
@@ -305,6 +339,7 @@ class RawEntry extends DataClass implements Insertable<RawEntry> {
     Value<DateTime?> timestampEnd = const Value.absent(),
     String? sourceName,
     Value<String?> sourceRecordId = const Value.absent(),
+    Value<String?> metadata = const Value.absent(),
   }) => RawEntry(
     id: id ?? this.id,
     type: type ?? this.type,
@@ -315,6 +350,7 @@ class RawEntry extends DataClass implements Insertable<RawEntry> {
     sourceRecordId: sourceRecordId.present
         ? sourceRecordId.value
         : this.sourceRecordId,
+    metadata: metadata.present ? metadata.value : this.metadata,
   );
   RawEntry copyWithCompanion(RawEntriesCompanion data) {
     return RawEntry(
@@ -331,6 +367,7 @@ class RawEntry extends DataClass implements Insertable<RawEntry> {
       sourceRecordId: data.sourceRecordId.present
           ? data.sourceRecordId.value
           : this.sourceRecordId,
+      metadata: data.metadata.present ? data.metadata.value : this.metadata,
     );
   }
 
@@ -343,7 +380,8 @@ class RawEntry extends DataClass implements Insertable<RawEntry> {
           ..write('timestamp: $timestamp, ')
           ..write('timestampEnd: $timestampEnd, ')
           ..write('sourceName: $sourceName, ')
-          ..write('sourceRecordId: $sourceRecordId')
+          ..write('sourceRecordId: $sourceRecordId, ')
+          ..write('metadata: $metadata')
           ..write(')'))
         .toString();
   }
@@ -357,6 +395,7 @@ class RawEntry extends DataClass implements Insertable<RawEntry> {
     timestampEnd,
     sourceName,
     sourceRecordId,
+    metadata,
   );
   @override
   bool operator ==(Object other) =>
@@ -368,7 +407,8 @@ class RawEntry extends DataClass implements Insertable<RawEntry> {
           other.timestamp == this.timestamp &&
           other.timestampEnd == this.timestampEnd &&
           other.sourceName == this.sourceName &&
-          other.sourceRecordId == this.sourceRecordId);
+          other.sourceRecordId == this.sourceRecordId &&
+          other.metadata == this.metadata);
 }
 
 class RawEntriesCompanion extends UpdateCompanion<RawEntry> {
@@ -379,6 +419,7 @@ class RawEntriesCompanion extends UpdateCompanion<RawEntry> {
   final Value<DateTime?> timestampEnd;
   final Value<String> sourceName;
   final Value<String?> sourceRecordId;
+  final Value<String?> metadata;
   const RawEntriesCompanion({
     this.id = const Value.absent(),
     this.type = const Value.absent(),
@@ -387,6 +428,7 @@ class RawEntriesCompanion extends UpdateCompanion<RawEntry> {
     this.timestampEnd = const Value.absent(),
     this.sourceName = const Value.absent(),
     this.sourceRecordId = const Value.absent(),
+    this.metadata = const Value.absent(),
   });
   RawEntriesCompanion.insert({
     this.id = const Value.absent(),
@@ -396,6 +438,7 @@ class RawEntriesCompanion extends UpdateCompanion<RawEntry> {
     this.timestampEnd = const Value.absent(),
     this.sourceName = const Value.absent(),
     this.sourceRecordId = const Value.absent(),
+    this.metadata = const Value.absent(),
   }) : type = Value(type),
        value = Value(value),
        timestamp = Value(timestamp);
@@ -407,6 +450,7 @@ class RawEntriesCompanion extends UpdateCompanion<RawEntry> {
     Expression<DateTime>? timestampEnd,
     Expression<String>? sourceName,
     Expression<String>? sourceRecordId,
+    Expression<String>? metadata,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -416,6 +460,7 @@ class RawEntriesCompanion extends UpdateCompanion<RawEntry> {
       if (timestampEnd != null) 'timestamp_end': timestampEnd,
       if (sourceName != null) 'source_name': sourceName,
       if (sourceRecordId != null) 'source_record_id': sourceRecordId,
+      if (metadata != null) 'metadata': metadata,
     });
   }
 
@@ -427,6 +472,7 @@ class RawEntriesCompanion extends UpdateCompanion<RawEntry> {
     Value<DateTime?>? timestampEnd,
     Value<String>? sourceName,
     Value<String?>? sourceRecordId,
+    Value<String?>? metadata,
   }) {
     return RawEntriesCompanion(
       id: id ?? this.id,
@@ -436,6 +482,7 @@ class RawEntriesCompanion extends UpdateCompanion<RawEntry> {
       timestampEnd: timestampEnd ?? this.timestampEnd,
       sourceName: sourceName ?? this.sourceName,
       sourceRecordId: sourceRecordId ?? this.sourceRecordId,
+      metadata: metadata ?? this.metadata,
     );
   }
 
@@ -463,6 +510,9 @@ class RawEntriesCompanion extends UpdateCompanion<RawEntry> {
     if (sourceRecordId.present) {
       map['source_record_id'] = Variable<String>(sourceRecordId.value);
     }
+    if (metadata.present) {
+      map['metadata'] = Variable<String>(metadata.value);
+    }
     return map;
   }
 
@@ -475,7 +525,8 @@ class RawEntriesCompanion extends UpdateCompanion<RawEntry> {
           ..write('timestamp: $timestamp, ')
           ..write('timestampEnd: $timestampEnd, ')
           ..write('sourceName: $sourceName, ')
-          ..write('sourceRecordId: $sourceRecordId')
+          ..write('sourceRecordId: $sourceRecordId, ')
+          ..write('metadata: $metadata')
           ..write(')'))
         .toString();
   }
@@ -1522,6 +1573,7 @@ typedef $$RawEntriesTableCreateCompanionBuilder =
       Value<DateTime?> timestampEnd,
       Value<String> sourceName,
       Value<String?> sourceRecordId,
+      Value<String?> metadata,
     });
 typedef $$RawEntriesTableUpdateCompanionBuilder =
     RawEntriesCompanion Function({
@@ -1532,6 +1584,7 @@ typedef $$RawEntriesTableUpdateCompanionBuilder =
       Value<DateTime?> timestampEnd,
       Value<String> sourceName,
       Value<String?> sourceRecordId,
+      Value<String?> metadata,
     });
 
 class $$RawEntriesTableFilterComposer
@@ -1575,6 +1628,11 @@ class $$RawEntriesTableFilterComposer
 
   ColumnFilters<String> get sourceRecordId => $composableBuilder(
     column: $table.sourceRecordId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get metadata => $composableBuilder(
+    column: $table.metadata,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -1622,6 +1680,11 @@ class $$RawEntriesTableOrderingComposer
     column: $table.sourceRecordId,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get metadata => $composableBuilder(
+    column: $table.metadata,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$RawEntriesTableAnnotationComposer
@@ -1659,6 +1722,9 @@ class $$RawEntriesTableAnnotationComposer
     column: $table.sourceRecordId,
     builder: (column) => column,
   );
+
+  GeneratedColumn<String> get metadata =>
+      $composableBuilder(column: $table.metadata, builder: (column) => column);
 }
 
 class $$RawEntriesTableTableManager
@@ -1696,6 +1762,7 @@ class $$RawEntriesTableTableManager
                 Value<DateTime?> timestampEnd = const Value.absent(),
                 Value<String> sourceName = const Value.absent(),
                 Value<String?> sourceRecordId = const Value.absent(),
+                Value<String?> metadata = const Value.absent(),
               }) => RawEntriesCompanion(
                 id: id,
                 type: type,
@@ -1704,6 +1771,7 @@ class $$RawEntriesTableTableManager
                 timestampEnd: timestampEnd,
                 sourceName: sourceName,
                 sourceRecordId: sourceRecordId,
+                metadata: metadata,
               ),
           createCompanionCallback:
               ({
@@ -1714,6 +1782,7 @@ class $$RawEntriesTableTableManager
                 Value<DateTime?> timestampEnd = const Value.absent(),
                 Value<String> sourceName = const Value.absent(),
                 Value<String?> sourceRecordId = const Value.absent(),
+                Value<String?> metadata = const Value.absent(),
               }) => RawEntriesCompanion.insert(
                 id: id,
                 type: type,
@@ -1722,6 +1791,7 @@ class $$RawEntriesTableTableManager
                 timestampEnd: timestampEnd,
                 sourceName: sourceName,
                 sourceRecordId: sourceRecordId,
+                metadata: metadata,
               ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))

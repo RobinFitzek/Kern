@@ -39,9 +39,22 @@
 - [ ] **Multi-source conflict** — if `rawHrv` returns data from both Garmin and phone: prefer Garmin package (`com.garmin.android.apps.connectmobile`). Needs a `PreferredSourceSettings` table or SharedPreferences entry.
 - [ ] **Missing data types** — user may not have HRV data (older Garmin models). Readiness plugin must degrade gracefully: skip HRV component, reweight sleep + strain to 60/40.
 
-## Phase 3 — UI
+## Phase 3 — App Shell & UI ✅ COMPLETE
 
-- [ ] Design system: dark theme tokens, Inter font, accent `#00D4FF`
+- [x] **Plugin Registry System**: `KernPlugin` interface, `PluginSlot` enum, `PluginRegistry`
+- [x] **PluginSettings Table**: Persists user preferences for enabled state, slot, and order
+- [x] **AppShell & Navigation**: Dynamic bottom navigation that includes global fixed pages and navigable plugins
+- [x] **DashboardScreen**: Dynamic rendering zones (Header, Main, Footer) populated by registered plugins
+- [x] **PluginManagerScreen**: UI to toggle plugins on/off and configure dashboard slots
+- [x] **DataExplorerScreen**: Scaffolded basic fixed page
+- [x] **Plugin UI Implementations**: `ReadinessFeature`, `SleepFeature`, `StrainFeature` added to shell
+
+## Phase 4 — UI Polish & Missing States
+- [ ] Onboarding: Health Connect permission flow + calibration notice
+- [ ] Design system refinement: tokens, styling consistency
+- [ ] Empty/stale state handling (stale data badge if sync failed)
+
+## Phase 5 — AI Coach
 - [ ] Dashboard screen: readiness ring + 3 insight cards + 1 recommendation
 - [ ] Onboarding: Health Connect permission flow + calibration notice (7-day baseline)
 - [ ] Navigation shell (single screen for v1)

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/database/app_database.dart';
 import 'core/sync/sync_notifier.dart';
+import 'plugins/raw/raw_providers.dart';
 import 'core/plugins/plugin_registry.dart';
 import 'plugins/readiness/readiness_feature.dart';
 import 'plugins/sleep/sleep_feature.dart';

@@ -26,6 +26,9 @@ class SleepFeature implements KernPlugin {
   Widget? buildDetailPage(BuildContext context) => null;
 
   @override
+  bool get hasDetailPage => false;
+
+  @override
   Widget? buildSettingsPage(BuildContext context) => null;
 }
 

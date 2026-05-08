@@ -29,6 +29,9 @@ class ReadinessFeature implements KernPlugin {
   Widget? buildDetailPage(BuildContext context) => null; // Future: Readiness detail page
 
   @override
+  bool get hasDetailPage => false;
+
+  @override
   Widget? buildSettingsPage(BuildContext context) => null;
 }
 

@@ -1,8 +1,10 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:drift/drift.dart';
 
 import '../database/app_database.dart';
+import '../../plugins/raw/raw_providers.dart';
 import 'plugin_interfaces.dart';
 
 part 'plugin_registry.g.dart';
@@ -73,7 +75,7 @@ class PluginRegistryState {
   /// Returns all enabled plugins that provide a detail page.
   List<KernPlugin> getNavigablePlugins() {
     return PluginRegistry.all
-        .where((p) => isEnabled(p.id) && p.buildDetailPage(null) != null)
+        .where((p) => isEnabled(p.id) && p.hasDetailPage)
         .toList();
   }
 }

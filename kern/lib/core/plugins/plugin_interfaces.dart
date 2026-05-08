@@ -39,7 +39,11 @@ abstract class KernPlugin {
 
   /// Optional: Builds a full-page detail view for this plugin.
   /// If provided, this plugin will be listed in the bottom navigation.
+  /// Ensure [hasDetailPage] is true if this is implemented.
   Widget? buildDetailPage(BuildContext context) => null;
+
+  /// Whether this plugin provides a detail page.
+  bool get hasDetailPage => false;
 
   /// Optional: Builds a settings screen for configuring this specific plugin.
   Widget? buildSettingsPage(BuildContext context) => null;

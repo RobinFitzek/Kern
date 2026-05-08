@@ -34,6 +34,7 @@ class HealthSyncState {
   const HealthSyncState({
     this.status = SyncStatus.idle,
     this.error,
+    this.lastSyncTime,
   });
 
   final SyncStatus status;
@@ -41,13 +42,17 @@ class HealthSyncState {
   /// Non-null when [status] is [SyncStatus.error].
   final Object? error;
 
+  /// Time of last successful sync attempt.
+  final DateTime? lastSyncTime;
+
   bool get isLoading =>
       status == SyncStatus.checkingPermissions ||
       status == SyncStatus.syncing;
 
-  HealthSyncState copyWith({SyncStatus? status, Object? error}) => HealthSyncState(
+  HealthSyncState copyWith({SyncStatus? status, Object? error, DateTime? lastSyncTime}) => HealthSyncState(
         status: status ?? this.status,
         error: error,
+        lastSyncTime: lastSyncTime ?? this.lastSyncTime,
       );
 
   @override
@@ -87,20 +92,18 @@ class SyncNotifier extends _$SyncNotifier {
 
     // Step 2a: request if not yet granted
     if (!hasPerms) {
-      final granted = await service.requestPermissions();
-      if (!granted) {
-        state = const HealthSyncState(status: SyncStatus.permissionDenied);
-        // We cannot force the OS to show the dialog again if blocked.
-        // We rely on the UI to show a "Please open settings" message.
-        return;
-      }
+      // It might return false if the user only granted *some* permissions,
+      // or if their phone doesn't support a specific metric.
+      // We do not block sync if it returns false, because they might have 
+      // granted partial permissions.
+      await service.requestPermissions();
     }
 
     // Step 3: delta sync (only fetches data newer than last watermark)
     state = const HealthSyncState(status: SyncStatus.syncing);
     try {
       await service.syncAll();
-      state = const HealthSyncState(status: SyncStatus.done);
+      state = HealthSyncState(status: SyncStatus.done, lastSyncTime: DateTime.now());
       // Step 4: run plugins — compute derived scores from fresh raw data.
       // Fire-and-forget: plugin errors don't affect the sync status shown in UI.
       ref
@@ -115,7 +118,7 @@ class SyncNotifier extends _$SyncNotifier {
   /// Manually re-triggers a sync (e.g. after the user grants permissions
   /// from the settings screen or pulls to refresh on the dashboard).
   Future<void> resync() async {
-    state = const HealthSyncState(status: SyncStatus.idle);
+    state = state.copyWith(status: SyncStatus.idle);
     await initialize();
   }
 }

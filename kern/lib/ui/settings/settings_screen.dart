@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:intl/intl.dart';
+
 import '../../core/sync/sync_notifier.dart';
 import '../plugins/plugin_manager_screen.dart';
 import 'navigation_manager_screen.dart';
@@ -49,7 +51,9 @@ class SettingsScreen extends ConsumerWidget {
                     ? 'Error - Tap to retry' 
                     : (syncState.status == SyncStatus.idle || syncState.status == SyncStatus.checkingPermissions)
                       ? 'Checking...'
-                      : 'Connected',
+                      : syncState.lastSyncTime != null 
+                          ? 'Last sync: ${DateFormat('HH:mm').format(syncState.lastSyncTime!)}' 
+                          : 'Connected',
                 style: TextStyle(
                   fontSize: 13, 
                   color: (syncState.status == SyncStatus.permissionDenied || syncState.status == SyncStatus.error) 

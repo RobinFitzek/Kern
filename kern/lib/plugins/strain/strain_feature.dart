@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/plugins/plugin_interfaces.dart';
 import '../derived/derived_providers.dart';
+import '../../ui/theme/app_theme.dart';
 
 class StrainFeature implements KernPlugin {
   @override
@@ -39,36 +40,39 @@ class _StrainFooterWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final scoreAsync = ref.watch(strainScoreProvider());
 
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFF16161D),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withOpacity(0.05)),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF59E0B).withOpacity(0.1),
-              shape: BoxShape.circle,
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: const BoxDecoration(
+                color: AppTheme.accentBlue,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.directions_run_rounded, color: AppTheme.textBlue),
             ),
-            child: const Icon(Icons.directions_run_rounded, color: Color(0xFFF59E0B)),
-          ),
-          const SizedBox(width: 16),
-          const Expanded(
-            child: Text('Strain', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
-          ),
-          scoreAsync.when(
-            data: (score) => Text(
-              score?.toStringAsFixed(0) ?? '--',
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFFF59E0B)),
+            const SizedBox(width: 16),
+            const Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Strain', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, color: AppTheme.textPrimary)),
+                  Text('Daily exertion', style: TextStyle(fontSize: 13, color: AppTheme.textSecondary)),
+                ],
+              ),
             ),
-            loading: () => const CircularProgressIndicator(),
-            error: (_, __) => const SizedBox(),
-          ),
-        ],
+            scoreAsync.when(
+              data: (score) => Text(
+                score?.toStringAsFixed(0) ?? '--',
+                style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
+              ),
+              loading: () => const CircularProgressIndicator(),
+              error: (_, __) => const SizedBox(),
+            ),
+          ],
+        ),
       ),
     );
   }

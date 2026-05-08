@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/plugins/plugin_interfaces.dart';
 import '../derived/derived_providers.dart';
+import '../../ui/theme/app_theme.dart';
 
 class SleepFeature implements KernPlugin {
   @override
@@ -40,51 +41,80 @@ class _SleepFooterWidget extends ConsumerWidget {
     final scoreAsync = ref.watch(sleepScoreProvider());
     final minsAsync = ref.watch(sleepMinutesProvider());
 
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFF16161D),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withOpacity(0.05)),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: const Color(0xFF8B5CF6).withOpacity(0.1),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(Icons.bedtime_rounded, color: Color(0xFF8B5CF6)),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
               children: [
-                const Text('Sleep', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
-                const SizedBox(height: 4),
-                minsAsync.when(
-                  data: (m) {
-                    final hrs = (m.total / 60).floor();
-                    final mins = (m.total % 60).floor();
-                    return Text('${hrs}h ${mins}m', style: TextStyle(color: Colors.white.withOpacity(0.6)));
-                  },
-                  loading: () => const Text('Loading...'),
-                  error: (_, __) => const Text('Error'),
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: const BoxDecoration(
+                    color: AppTheme.accentPurple,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.bedtime_rounded, color: AppTheme.textPurple, size: 16),
+                ),
+                const SizedBox(width: 8),
+                const Text('Sleep', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: AppTheme.textSecondary)),
+                const Spacer(),
+                const Icon(Icons.more_horiz, color: AppTheme.textTertiary),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Sleep score', style: TextStyle(fontSize: 13, color: AppTheme.textSecondary, fontWeight: FontWeight.w500)),
+                    const SizedBox(height: 4),
+                    scoreAsync.when(
+                      data: (score) => Text(
+                        score?.toStringAsFixed(0) ?? '--',
+                        style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
+                      ),
+                      loading: () => const CircularProgressIndicator(),
+                      error: (_, __) => const SizedBox(),
+                    ),
+                    const SizedBox(height: 4),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(color: AppTheme.accentMint, borderRadius: BorderRadius.circular(8)),
+                      child: const Text('Good', style: TextStyle(color: AppTheme.textMint, fontSize: 11, fontWeight: FontWeight.w600)),
+                    ),
+                  ],
+                ),
+                Container(width: 1, height: 60, color: AppTheme.divider),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Sleep duration', style: TextStyle(fontSize: 13, color: AppTheme.textSecondary, fontWeight: FontWeight.w500)),
+                    const SizedBox(height: 4),
+                    minsAsync.when(
+                      data: (m) {
+                        final hrs = (m.total / 60).floor();
+                        final mins = (m.total % 60).floor();
+                        return Text('${hrs}h ${mins}m', style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: AppTheme.textPrimary));
+                      },
+                      loading: () => const Text('Loading...'),
+                      error: (_, __) => const Text('Error'),
+                    ),
+                    const SizedBox(height: 4),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(color: AppTheme.accentOrange, borderRadius: BorderRadius.circular(8)),
+                      child: const Text('Goal not met', style: TextStyle(color: AppTheme.textOrange, fontSize: 11, fontWeight: FontWeight.w600)),
+                    ),
+                  ],
                 ),
               ],
             ),
-          ),
-          scoreAsync.when(
-            data: (score) => Text(
-              score?.toStringAsFixed(0) ?? '--',
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF8B5CF6)),
-            ),
-            loading: () => const CircularProgressIndicator(),
-            error: (_, __) => const SizedBox(),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

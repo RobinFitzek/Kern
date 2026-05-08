@@ -12,18 +12,13 @@ class DataExplorerScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0A0A0F),
       appBar: AppBar(
-        title: const Text('Data Explorer', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18)),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
+        title: const Text('Data Explorer'),
       ),
-      body: Center(
+      body: const Center(
         child: Text(
           'Raw Data Viewer\n(Coming soon)',
           textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.white.withOpacity(0.5)),
         ),
       ),
     );

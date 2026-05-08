@@ -19,16 +19,17 @@ class PluginManagerScreen extends ConsumerWidget {
     final pluginStateAsync = ref.watch(activePluginsProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0A0A0F),
+      backgroundColor: const Color(0xFFF4F7FB),
       appBar: AppBar(
-        title: const Text('Plugins', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18)),
+        title: const Text('Plugins', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18, color: Colors.black87)),
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
+        iconTheme: const IconThemeData(color: Colors.black87),
       ),
       body: pluginStateAsync.when(
         data: (state) => _buildList(context, state, ref),
-        loading: () => const Center(child: CircularProgressIndicator(color: Color(0xFF00D4FF))),
+        loading: () => const Center(child: CircularProgressIndicator(color: Color(0xFF1967D2))),
         error: (e, st) => Center(child: Text('Error loading plugins: $e')),
       ),
     );
@@ -51,23 +52,29 @@ class PluginManagerScreen extends ConsumerWidget {
 
         return Container(
           decoration: BoxDecoration(
-            color: const Color(0xFF16161D),
+            color: Colors.white,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.white.withOpacity(0.05)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.03),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
           child: Column(
             children: [
               SwitchListTile(
-                title: Text(plugin.name, style: const TextStyle(fontWeight: FontWeight.w600)),
+                title: Text(plugin.name, style: const TextStyle(fontWeight: FontWeight.w600, color: Colors.black87)),
                 subtitle: Padding(
                   padding: const EdgeInsets.only(top: 4),
                   child: Text(
                     plugin.description,
-                    style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 13),
+                    style: const TextStyle(color: Colors.black54, fontSize: 13),
                   ),
                 ),
                 value: isEnabled,
-                activeColor: const Color(0xFF00D4FF),
+                activeColor: const Color(0xFF1967D2), // Google Blue
                 onChanged: (val) {
                   ref.read(pluginConfiguratorProvider.notifier).updateSettings(
                         pluginId: plugin.id,
@@ -76,18 +83,18 @@ class PluginManagerScreen extends ConsumerWidget {
                 },
               ),
               if (isEnabled && plugin.supportedSlots.isNotEmpty) ...[
-                const Divider(height: 1, color: Colors.white10),
+                const Divider(height: 1, color: Colors.black12),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Dashboard Slot', style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 14)),
+                      const Text('Dashboard Slot', style: TextStyle(color: Colors.black54, fontSize: 14)),
                       DropdownButton<String>(
                         value: setting.dashboardSlot,
-                        dropdownColor: const Color(0xFF1E1E24),
+                        dropdownColor: Colors.white,
                         underline: const SizedBox(),
-                        style: const TextStyle(color: Color(0xFF00D4FF), fontSize: 14, fontWeight: FontWeight.w500),
+                        style: const TextStyle(color: Color(0xFF1967D2), fontSize: 14, fontWeight: FontWeight.w500),
                         items: [
                           const DropdownMenuItem(value: 'hidden', child: Text('Hidden')),
                           ...plugin.supportedSlots.map((slot) => DropdownMenuItem(
@@ -109,10 +116,10 @@ class PluginManagerScreen extends ConsumerWidget {
                 ),
               ],
               if (isEnabled && plugin.buildSettingsPage(context) != null) ...[
-                const Divider(height: 1, color: Colors.white10),
+                const Divider(height: 1, color: Colors.black12),
                 ListTile(
-                  title: const Text('Plugin Settings', style: TextStyle(fontSize: 14)),
-                  trailing: const Icon(Icons.chevron_right, color: Colors.white54),
+                  title: const Text('Plugin Settings', style: TextStyle(fontSize: 14, color: Colors.black87)),
+                  trailing: const Icon(Icons.chevron_right, color: Colors.black26),
                   onTap: () {
                     Navigator.push(
                       context,

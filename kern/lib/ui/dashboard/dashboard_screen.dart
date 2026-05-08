@@ -22,7 +22,6 @@ class DashboardScreen extends ConsumerWidget {
     final pluginStateAsync = ref.watch(activePluginsProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0A0A0F),
       body: SafeArea(
         child: pluginStateAsync.when(
           data: (state) => _buildZones(context, state, ref),
@@ -41,25 +40,23 @@ class DashboardScreen extends ConsumerWidget {
     final footerPlugins = state.getForSlot(PluginSlot.footer);
 
     return RefreshIndicator(
-      color: const Color(0xFF00D4FF),
-      backgroundColor: const Color(0xFF1E1E24),
       onRefresh: () => ref.read(syncNotifierProvider.notifier).resync(),
       child: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
         children: [
           // Header
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Text(
-                'kern',
+                'Google Health', // Matching the mockup for now
                 style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF00D4FF),
-                  letterSpacing: -1,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: -0.5,
                 ),
               ),
+              const SizedBox(width: 8),
               _SyncStatusBadge(state: ref.watch(syncNotifierProvider)),
             ],
           ),
@@ -117,7 +114,7 @@ class _SyncStatusBadge extends StatelessWidget {
       );
     }
     if (state.status == SyncStatus.error) {
-      return const Icon(Icons.warning_amber_rounded, color: Colors.redAccent, size: 20);
+      return const Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 16);
     }
     return const SizedBox.shrink(); // Hidden when done/idle
   }

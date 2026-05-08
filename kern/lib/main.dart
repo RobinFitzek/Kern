@@ -10,7 +10,8 @@ import 'plugins/sleep/sleep_feature.dart';
 import 'plugins/strain/strain_feature.dart';
 import 'ui/dashboard/dashboard_screen.dart';
 import 'ui/data/data_explorer_screen.dart';
-import 'ui/plugins/plugin_manager_screen.dart';
+import 'ui/settings/settings_screen.dart';
+import 'ui/theme/app_theme.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,10 +26,13 @@ void main() {
   runApp(
     ProviderScope(
       overrides: [
-        // Single DB connection shared by all providers.
         appDatabaseProvider.overrideWithValue(db),
       ],
-      child: const KernApp(),
+      child: MaterialApp(
+        title: 'Kern',
+        theme: AppTheme.lightTheme,
+        home: const _AppShell(),
+      ),
     ),
   );
 }
@@ -92,7 +96,7 @@ class _AppShellState extends ConsumerState<_AppShell> {
           const DashboardScreen(),
           const DataExplorerScreen(),
           ...navPlugins.map((p) => p.buildDetailPage(context)!),
-          const PluginManagerScreen(),
+          const SettingsScreen(),
         ];
 
         return Scaffold(
@@ -100,22 +104,16 @@ class _AppShellState extends ConsumerState<_AppShell> {
           bottomNavigationBar: BottomNavigationBar(
             currentIndex: _currentIndex,
             onTap: (index) => setState(() => _currentIndex = index),
-            backgroundColor: const Color(0xFF0A0A0F),
-            selectedItemColor: const Color(0xFF00D4FF),
-            unselectedItemColor: Colors.white.withOpacity(0.4),
-            type: BottomNavigationBarType.fixed,
-            showSelectedLabels: false,
-            showUnselectedLabels: false,
             items: [
-              const BottomNavigationBarItem(icon: Icon(Icons.dashboard_rounded), label: 'Dashboard'),
+              const BottomNavigationBarItem(icon: Icon(Icons.view_agenda_rounded), label: 'Today'),
               const BottomNavigationBarItem(icon: Icon(Icons.analytics_rounded), label: 'Data'),
               ...navPlugins.map((p) => BottomNavigationBarItem(icon: const Icon(Icons.extension), label: p.name)),
-              const BottomNavigationBarItem(icon: Icon(Icons.settings_rounded), label: 'Plugins'),
+              const BottomNavigationBarItem(icon: Icon(Icons.settings_rounded), label: 'Settings'),
             ],
           ),
         );
       },
-      loading: () => const Scaffold(backgroundColor: Color(0xFF0A0A0F), body: Center(child: CircularProgressIndicator())),
+      loading: () => const Scaffold(backgroundColor: Color(0xFFF4F7FB), body: Center(child: CircularProgressIndicator())),
       error: (e, _) => Scaffold(body: Center(child: Text('Error: $e'))),
     );
   }

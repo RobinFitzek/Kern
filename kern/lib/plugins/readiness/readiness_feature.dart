@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/plugins/plugin_interfaces.dart';
 import '../derived/derived_providers.dart';
+import '../../ui/theme/app_theme.dart';
 
 class ReadinessFeature implements KernPlugin {
   @override
@@ -43,36 +44,35 @@ class _ReadinessMainWidget extends ConsumerWidget {
     final scoreAsync = ref.watch(readinessScoreProvider());
     final calibratingAsync = ref.watch(readinessIsCalibratingProvider());
 
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            const Color(0xFF00D4FF).withOpacity(0.15),
-            Colors.transparent,
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.bolt_rounded, color: AppTheme.textMint, size: 20),
+                const SizedBox(width: 8),
+                const Text('Readiness', style: TextStyle(color: AppTheme.textSecondary, fontWeight: FontWeight.w600)),
+                const Spacer(),
+                const Icon(Icons.more_horiz, color: AppTheme.textTertiary),
+              ],
+            ),
+            const SizedBox(height: 24),
+            scoreAsync.when(
+              data: (score) {
+                final isCalibrating = calibratingAsync.value ?? false;
+                if (isCalibrating || score == null) {
+                  return _buildScoreRing('--', 'Calibrating...');
+                }
+                return _buildScoreRing(score.toStringAsFixed(0), 'Good');
+              },
+              loading: () => const Center(child: CircularProgressIndicator(color: AppTheme.primaryBlue)),
+              error: (_, __) => const Text('Error', style: TextStyle(color: AppTheme.textPink)),
+            ),
           ],
         ),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: const Color(0xFF00D4FF).withOpacity(0.3)),
-      ),
-      child: Column(
-        children: [
-          Text('Readiness', style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 16)),
-          const SizedBox(height: 16),
-          scoreAsync.when(
-            data: (score) {
-              final isCalibrating = calibratingAsync.value ?? false;
-              if (isCalibrating || score == null) {
-                return _buildScoreRing('--', 'Calibrating...');
-              }
-              return _buildScoreRing(score.toStringAsFixed(0), 'Good to go');
-            },
-            loading: () => const CircularProgressIndicator(color: Color(0xFF00D4FF)),
-            error: (_, __) => const Text('Error', style: TextStyle(color: Colors.red)),
-          ),
-        ],
       ),
     );
   }
@@ -84,24 +84,36 @@ class _ReadinessMainWidget extends ConsumerWidget {
           alignment: Alignment.center,
           children: [
             SizedBox(
-              width: 140,
-              height: 140,
+              width: 120,
+              height: 120,
               child: CircularProgressIndicator(
                 value: score == '--' ? 0 : double.parse(score) / 100,
-                strokeWidth: 8,
-                backgroundColor: Colors.white.withOpacity(0.05),
-                color: const Color(0xFF00D4FF),
+                strokeWidth: 12,
+                backgroundColor: AppTheme.divider,
+                color: AppTheme.primaryBlue,
                 strokeCap: StrokeCap.round,
               ),
             ),
-            Text(
-              score,
-              style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold, color: Colors.white),
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  score,
+                  style: const TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: AppTheme.textPrimary, height: 1),
+                ),
+              ],
             ),
           ],
         ),
         const SizedBox(height: 16),
-        Text(label, style: const TextStyle(color: Color(0xFF00D4FF), fontWeight: FontWeight.w500)),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          decoration: BoxDecoration(
+            color: AppTheme.accentMint,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Text(label, style: const TextStyle(color: AppTheme.textMint, fontWeight: FontWeight.w600, fontSize: 12)),
+        ),
       ],
     );
   }
@@ -114,21 +126,29 @@ class _ReadinessHeaderWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final scoreAsync = ref.watch(readinessScoreProvider());
     return Container(
+      width: 140,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF16161D),
-        borderRadius: BorderRadius.circular(16),
+        color: AppTheme.accentMint,
+        borderRadius: BorderRadius.circular(20),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Readiness', style: TextStyle(color: Colors.white70, fontSize: 16)),
+          const Row(
+            children: [
+              Icon(Icons.bolt_rounded, color: AppTheme.textMint, size: 16),
+              SizedBox(width: 6),
+              Text('Readiness', style: TextStyle(color: AppTheme.textMint, fontSize: 13, fontWeight: FontWeight.w600)),
+            ],
+          ),
+          const SizedBox(height: 12),
           scoreAsync.when(
             data: (score) => Text(
               score?.toStringAsFixed(0) ?? '--',
-              style: const TextStyle(color: Color(0xFF00D4FF), fontSize: 24, fontWeight: FontWeight.bold),
+              style: const TextStyle(color: AppTheme.textPrimary, fontSize: 28, fontWeight: FontWeight.bold),
             ),
-            loading: () => const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2)),
+            loading: () => const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)),
             error: (_, __) => const Text('!'),
           ),
         ],

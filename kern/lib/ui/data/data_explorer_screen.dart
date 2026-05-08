@@ -8,10 +8,14 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:fl_chart/fl_chart.dart';
 
 import 'data_providers.dart';
 import '../theme/app_theme.dart';
+import 'timeline_navigator.dart';
+import 'timeline_chart.dart';
+import 'data_explorer_state.dart';
+import 'aggregated_data_point.dart';
+import '../../core/data/data_type_config.dart';
 
 class DataExplorerScreen extends ConsumerStatefulWidget {
   const DataExplorerScreen({super.key});
@@ -39,37 +43,44 @@ class _DataExplorerScreenState extends ConsumerState<DataExplorerScreen> {
       body: Column(
         children: [
           _buildFilterBar(typesAsync),
-          Expanded(
-            child: entriesAsync.when(
-              data: (entries) {
-                if (entries.isEmpty) {
-                  return const Center(
-                    child: Text('No data found.\nConnect Health Connect and Sync.', textAlign: TextAlign.center, style: TextStyle(color: Colors.black54)),
-                  );
-                }
-                return Column(
-                  children: [
-                    if (_selectedType != null && entries.length > 1) 
-                      _buildChartSection(entries),
-                    Expanded(
-                      child: ListView.builder(
-                        padding: const EdgeInsets.all(16),
-                        itemCount: entries.length,
-                        itemBuilder: (context, index) {
-                          final entry = entries[index];
-                          return _buildDataCard(entry);
-                        },
-                      ),
-                    ),
-                  ],
-                );
-              },
-              loading: () => const Center(child: CircularProgressIndicator(color: AppTheme.primaryBlue)),
-              error: (e, st) => Center(child: Text('Error: $e')),
+          if (_selectedType != null) ...[
+            const TimelineNavigator(),
+            TimelineChart(dataType: _selectedType!),
+            Expanded(child: _buildAggregatedList(context, ref, _selectedType!)),
+          ] else
+            Expanded(
+              child: const Center(
+                child: Text('Please select a data type to explore.', textAlign: TextAlign.center, style: TextStyle(color: Colors.black54)),
+              ),
             ),
-          ),
         ],
       ),
+    );
+  }
+
+  Widget _buildAggregatedList(BuildContext context, WidgetRef ref, String type) {
+    final aggregatedAsync = ref.watch(aggregatedDataQueryProvider(type));
+    final config = DataTypeRegistry.getConfig(type);
+    final period = ref.watch(dataExplorerTimeRangeProvider);
+
+    return aggregatedAsync.when(
+      data: (points) {
+        if (points.isEmpty) return const SizedBox();
+
+        // Sort descending for the list
+        final sorted = List<AggregatedDataPoint>.from(points)..sort((a, b) => b.timestamp.compareTo(a.timestamp));
+
+        return ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: sorted.length,
+          itemBuilder: (context, index) {
+            final p = sorted[index];
+            return _buildAggregatedCard(p, config, period.granularity);
+          },
+        );
+      },
+      loading: () => const Center(child: CircularProgressIndicator(color: AppTheme.primaryBlue)),
+      error: (e, st) => const SizedBox(),
     );
   }
 
@@ -109,86 +120,21 @@ class _DataExplorerScreenState extends ConsumerState<DataExplorerScreen> {
     );
   }
 
-  Widget _buildChartSection(List<dynamic> entries) {
-    // Entries are sorted desc, so reverse them for the chart (oldest to newest)
-    final sorted = List.from(entries).reversed.toList();
-    
-    final spots = <FlSpot>[];
-    double minY = double.infinity;
-    double maxY = double.negativeInfinity;
-    
-    for (int i = 0; i < sorted.length; i++) {
-      final entry = sorted[i];
-      final y = entry.value as double;
-      if (y < minY) minY = y;
-      if (y > maxY) maxY = y;
-      // Use index for X to keep points evenly spaced, or use timestamp differences
-      spots.add(FlSpot(i.toDouble(), y));
+  Widget _buildAggregatedCard(AggregatedDataPoint p, DataTypeConfig config, TimeGranularity g) {
+    String dateStr;
+    switch (g) {
+      case TimeGranularity.day:
+        dateStr = DateFormat('HH:mm').format(p.timestamp);
+        break;
+      case TimeGranularity.week:
+      case TimeGranularity.month:
+        dateStr = DateFormat('E, MMM d').format(p.timestamp);
+        break;
+      case TimeGranularity.year:
+        dateStr = DateFormat('MMMM yyyy').format(p.timestamp);
+        break;
     }
 
-    if (minY == double.infinity) return const SizedBox();
-
-    return Container(
-      height: 200,
-      width: double.infinity,
-      margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: LineChart(
-        LineChartData(
-          minY: minY - (maxY - minY) * 0.1,
-          maxY: maxY + (maxY - minY) * 0.1,
-          gridData: FlGridData(show: false),
-          titlesData: FlTitlesData(
-            leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          ),
-          borderData: FlBorderData(show: false),
-          lineBarsData: [
-            LineChartBarData(
-              spots: spots,
-              isCurved: true,
-              color: AppTheme.primaryBlue,
-              barWidth: 3,
-              isStrokeCapRound: true,
-              dotData: FlDotData(show: false),
-              belowBarData: BarAreaData(
-                show: true,
-                color: AppTheme.primaryBlue.withValues(alpha: 0.1),
-              ),
-            ),
-          ],
-          lineTouchData: LineTouchData(
-            touchTooltipData: LineTouchTooltipData(
-              getTooltipItems: (touchedSpots) {
-                return touchedSpots.map((spot) {
-                  return LineTooltipItem(
-                    spot.y.toStringAsFixed(1),
-                    const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                  );
-                }).toList();
-              },
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDataCard(dynamic entry) {
-    final dateFormat = DateFormat('MMM d, HH:mm');
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
@@ -210,46 +156,37 @@ class _DataExplorerScreenState extends ConsumerState<DataExplorerScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                entry.type.toUpperCase(),
-                style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: AppTheme.primaryBlue),
+                dateStr,
+                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: AppTheme.primaryBlue),
               ),
-              Text(
-                dateFormat.format(entry.timestamp),
-                style: const TextStyle(color: Colors.black45, fontSize: 12),
-              ),
+              if (p.count > 1)
+                Text(
+                  '${p.count} entries',
+                  style: const TextStyle(color: Colors.black45, fontSize: 11),
+                ),
             ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            entry.value.toStringAsFixed(2),
-            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
           ),
           const SizedBox(height: 8),
           Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              const Icon(Icons.source_outlined, size: 14, color: Colors.black38),
-              const SizedBox(width: 4),
-              Expanded(
-                child: Text(
-                  entry.sourceName,
-                  style: const TextStyle(color: Colors.black54, fontSize: 12),
-                  overflow: TextOverflow.ellipsis,
-                ),
+              Text(
+                config.formatValue(p.value),
+                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
               ),
+              const SizedBox(width: 4),
+              Text(
+                config.unit,
+                style: const TextStyle(fontSize: 14, color: Colors.black54, fontWeight: FontWeight.w500),
+              ),
+              const Spacer(),
+              if (p.min != null && p.max != null)
+                Text(
+                  'Min: ${config.formatValue(p.min!)}  Max: ${config.formatValue(p.max!)}',
+                  style: const TextStyle(fontSize: 12, color: Colors.black45),
+                ),
             ],
           ),
-          if (entry.metadata != null && entry.metadata!.isNotEmpty) ...[
-            const SizedBox(height: 8),
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(color: const Color(0xFFF4F7FB), borderRadius: BorderRadius.circular(8)),
-              width: double.infinity,
-              child: Text(
-                entry.metadata!,
-                style: const TextStyle(fontSize: 11, color: Colors.black54, fontFamily: 'monospace'),
-              ),
-            ),
-          ],
         ],
       ),
     );

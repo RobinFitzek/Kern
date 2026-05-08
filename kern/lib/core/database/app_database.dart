@@ -95,6 +95,26 @@ class AppDatabase extends _$AppDatabase {
     return q.get();
   }
 
+  /// Query raw entries of a given [type] within a precise [from]–[to] window.
+  /// Used by plugins that need a specific day's data (e.g. yesterday's sleep).
+  Future<List<RawEntry>> rawEntriesBetween({
+    required String type,
+    required DateTime from,
+    required DateTime to,
+    String? sourceName,
+  }) {
+    final q = select(rawEntries)
+      ..where(
+        (t) =>
+            t.type.equals(type) &
+            t.timestamp.isBiggerOrEqualValue(from) &
+            t.timestamp.isSmallerOrEqualValue(to) &
+            (sourceName != null ? t.sourceName.equals(sourceName) : const CustomExpression('1')),
+      )
+      ..orderBy([(t) => OrderingTerm.asc(t.timestamp)]);
+    return q.get();
+  }
+
   // -------------------------------------------------------------------------
   // Derived Store DAOs
   // -------------------------------------------------------------------------

@@ -1,26 +1,29 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'sync_notifier.dart';
+part of 'plugin_runner.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$syncNotifierHash() => r'7161fd4e6b01804d474827b5decc6007c93786b8';
+String _$pluginRunnerHash() => r'191cccc8fc9a512e2c67e0617278ec72c6cb4852';
 
-/// See also [SyncNotifier].
-@ProviderFor(SyncNotifier)
-final syncNotifierProvider =
-    AutoDisposeNotifierProvider<SyncNotifier, HealthSyncState>.internal(
-      SyncNotifier.new,
-      name: r'syncNotifierProvider',
+/// See also [PluginRunner].
+@ProviderFor(PluginRunner)
+final pluginRunnerProvider =
+    AutoDisposeNotifierProvider<
+      PluginRunner,
+      AsyncValue<PluginRunResult?>
+    >.internal(
+      PluginRunner.new,
+      name: r'pluginRunnerProvider',
       debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
           ? null
-          : _$syncNotifierHash,
+          : _$pluginRunnerHash,
       dependencies: null,
       allTransitiveDependencies: null,
     );
 
-typedef _$SyncNotifier = AutoDisposeNotifier<HealthSyncState>;
+typedef _$PluginRunner = AutoDisposeNotifier<AsyncValue<PluginRunResult?>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

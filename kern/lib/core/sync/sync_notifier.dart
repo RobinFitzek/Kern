@@ -1,6 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../services/service_providers.dart';
+import '../../plugins/plugin_runner.dart';
 
 part 'sync_notifier.g.dart';
 
@@ -98,6 +99,12 @@ class SyncNotifier extends _$SyncNotifier {
     try {
       await service.syncAll();
       state = const HealthSyncState(status: SyncStatus.done);
+      // Step 4: run plugins — compute derived scores from fresh raw data.
+      // Fire-and-forget: plugin errors don't affect the sync status shown in UI.
+      ref
+          .read(pluginRunnerProvider.notifier)
+          .runAll(todayDateString())
+          .ignore();
     } catch (e) {
       state = HealthSyncState(status: SyncStatus.error, error: e);
     }

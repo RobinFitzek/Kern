@@ -58,7 +58,7 @@ class HealthSyncState {
 // SyncNotifier — orchestrates permission check + sync on every app open
 // ---------------------------------------------------------------------------
 
-@riverpod
+@Riverpod(keepAlive: true)
 class SyncNotifier extends _$SyncNotifier {
   @override
   HealthSyncState build() => const HealthSyncState();
@@ -90,6 +90,8 @@ class SyncNotifier extends _$SyncNotifier {
       final granted = await service.requestPermissions();
       if (!granted) {
         state = const HealthSyncState(status: SyncStatus.permissionDenied);
+        // We cannot force the OS to show the dialog again if blocked.
+        // We rely on the UI to show a "Please open settings" message.
         return;
       }
     }

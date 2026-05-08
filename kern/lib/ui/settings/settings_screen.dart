@@ -47,19 +47,32 @@ class SettingsScreen extends ConsumerWidget {
                   ? 'Disconnected - Tap to connect' 
                   : syncState.status == SyncStatus.error 
                     ? 'Error - Tap to retry' 
-                    : 'Connected',
+                    : (syncState.status == SyncStatus.idle || syncState.status == SyncStatus.checkingPermissions)
+                      ? 'Checking...'
+                      : 'Connected',
                 style: TextStyle(
                   fontSize: 13, 
                   color: (syncState.status == SyncStatus.permissionDenied || syncState.status == SyncStatus.error) 
                     ? Colors.red 
-                    : Colors.green[700]
+                    : (syncState.status == SyncStatus.done ? Colors.green[700] : Colors.black54)
                 ),
               ),
-              trailing: syncState.status == SyncStatus.syncing
+              trailing: syncState.status == SyncStatus.syncing || syncState.status == SyncStatus.checkingPermissions
                 ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
                 : const Icon(Icons.sync, color: Colors.black54),
-              onTap: () {
-                ref.read(syncNotifierProvider.notifier).resync();
+              onTap: () async {
+                final notifier = ref.read(syncNotifierProvider.notifier);
+                await notifier.resync();
+                
+                // If it is still denied after resync, show a message
+                if (context.mounted && ref.read(syncNotifierProvider).status == SyncStatus.permissionDenied) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Please open Android Settings -> Health Connect and grant all permissions manually.'),
+                      duration: Duration(seconds: 4),
+                    )
+                  );
+                }
               },
             ),
           ]),

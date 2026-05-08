@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/plugins/plugin_interfaces.dart';
 import '../derived/derived_providers.dart';
 import '../../ui/theme/app_theme.dart';
+import '../../ui/widgets/bouncing_card.dart';
 
 class SleepFeature implements KernPlugin {
   @override
@@ -41,8 +42,10 @@ class _SleepFooterWidget extends ConsumerWidget {
     final scoreAsync = ref.watch(sleepScoreProvider());
     final minsAsync = ref.watch(sleepMinutesProvider());
 
-    return Card(
-      child: Padding(
+    return BouncingCard(
+      onTap: () {},
+      child: Card(
+        child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -114,6 +117,6 @@ class _SleepFooterWidget extends ConsumerWidget {
           ],
         ),
       ),
-    );
+    ));
   }
 }

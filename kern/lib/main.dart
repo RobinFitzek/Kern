@@ -11,6 +11,8 @@ import 'plugins/strain/strain_feature.dart';
 import 'ui/dashboard/dashboard_screen.dart';
 import 'ui/data/data_explorer_screen.dart';
 import 'ui/settings/settings_screen.dart';
+import 'ui/onboarding/onboarding_screen.dart';
+import 'ui/onboarding/onboarding_provider.dart';
 import 'ui/theme/app_theme.dart';
 import 'core/navigation/navigation_state.dart';
 
@@ -38,11 +40,13 @@ void main() {
   );
 }
 
-class KernApp extends StatelessWidget {
+class KernApp extends ConsumerWidget {
   const KernApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final hasCompletedOnboarding = ref.watch(onboardingCompletedProvider);
+
     return MaterialApp(
       title: 'Kern',
       debugShowCheckedModeBanner: false,
@@ -54,7 +58,7 @@ class KernApp extends StatelessWidget {
         ),
         fontFamily: 'Inter',
       ),
-      home: const _AppShell(),
+      home: hasCompletedOnboarding ? const _AppShell() : const OnboardingScreen(),
     );
   }
 }

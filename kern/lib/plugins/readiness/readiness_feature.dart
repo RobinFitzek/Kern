@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/plugins/plugin_interfaces.dart';
 import '../derived/derived_providers.dart';
 import '../../ui/theme/app_theme.dart';
+import '../../ui/widgets/bouncing_card.dart';
 
 class ReadinessFeature implements KernPlugin {
   @override
@@ -44,8 +45,10 @@ class _ReadinessMainWidget extends ConsumerWidget {
     final scoreAsync = ref.watch(readinessScoreProvider());
     final calibratingAsync = ref.watch(readinessIsCalibratingProvider());
 
-    return Card(
-      child: Padding(
+    return BouncingCard(
+      onTap: () {},
+      child: Card(
+        child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,7 +75,7 @@ class _ReadinessMainWidget extends ConsumerWidget {
           ],
         ),
       ),
-    );
+    ));
   }
 
   Widget _buildScoreRing(String score, String label) {

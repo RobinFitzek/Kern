@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 import 'data_providers.dart';
 import '../theme/app_theme.dart';
@@ -46,16 +47,24 @@ class _DataExplorerScreenState extends ConsumerState<DataExplorerScreen> {
                     child: Text('No data found.\nConnect Health Connect and Sync.', textAlign: TextAlign.center, style: TextStyle(color: Colors.black54)),
                   );
                 }
-                return ListView.builder(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: entries.length,
-                  itemBuilder: (context, index) {
-                    final entry = entries[index];
-                    return _buildDataCard(entry);
-                  },
+                return Column(
+                  children: [
+                    if (_selectedType != null && entries.length > 1) 
+                      _buildChartSection(entries),
+                    Expanded(
+                      child: ListView.builder(
+                        padding: const EdgeInsets.all(16),
+                        itemCount: entries.length,
+                        itemBuilder: (context, index) {
+                          final entry = entries[index];
+                          return _buildDataCard(entry);
+                        },
+                      ),
+                    ),
+                  ],
                 );
               },
-              loading: () => const Center(child: CircularProgressIndicator()),
+              loading: () => const Center(child: CircularProgressIndicator(color: AppTheme.primaryBlue)),
               error: (e, st) => Center(child: Text('Error: $e')),
             ),
           ),
@@ -96,6 +105,84 @@ class _DataExplorerScreenState extends ConsumerState<DataExplorerScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildChartSection(List<dynamic> entries) {
+    // Entries are sorted desc, so reverse them for the chart (oldest to newest)
+    final sorted = List.from(entries).reversed.toList();
+    
+    final spots = <FlSpot>[];
+    double minY = double.infinity;
+    double maxY = double.negativeInfinity;
+    
+    for (int i = 0; i < sorted.length; i++) {
+      final entry = sorted[i];
+      final y = entry.value as double;
+      if (y < minY) minY = y;
+      if (y > maxY) maxY = y;
+      // Use index for X to keep points evenly spaced, or use timestamp differences
+      spots.add(FlSpot(i.toDouble(), y));
+    }
+
+    if (minY == double.infinity) return const SizedBox();
+
+    return Container(
+      height: 200,
+      width: double.infinity,
+      margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: LineChart(
+        LineChartData(
+          minY: minY - (maxY - minY) * 0.1,
+          maxY: maxY + (maxY - minY) * 0.1,
+          gridData: FlGridData(show: false),
+          titlesData: FlTitlesData(
+            leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          ),
+          borderData: FlBorderData(show: false),
+          lineBarsData: [
+            LineChartBarData(
+              spots: spots,
+              isCurved: true,
+              color: AppTheme.primaryBlue,
+              barWidth: 3,
+              isStrokeCapRound: true,
+              dotData: FlDotData(show: false),
+              belowBarData: BarAreaData(
+                show: true,
+                color: AppTheme.primaryBlue.withValues(alpha: 0.1),
+              ),
+            ),
+          ],
+          lineTouchData: LineTouchData(
+            touchTooltipData: LineTouchTooltipData(
+              getTooltipItems: (touchedSpots) {
+                return touchedSpots.map((spot) {
+                  return LineTooltipItem(
+                    spot.y.toStringAsFixed(1),
+                    const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                  );
+                }).toList();
+              },
+            ),
+          ),
+        ),
       ),
     );
   }

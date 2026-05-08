@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/plugins/plugin_interfaces.dart';
 import '../derived/derived_providers.dart';
 import '../../ui/theme/app_theme.dart';
+import '../../ui/widgets/bouncing_card.dart';
 
 class StrainFeature implements KernPlugin {
   @override
@@ -40,8 +41,10 @@ class _StrainFooterWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final scoreAsync = ref.watch(strainScoreProvider());
 
-    return Card(
-      child: Padding(
+    return BouncingCard(
+      onTap: () {},
+      child: Card(
+        child: Padding(
         padding: const EdgeInsets.all(16),
         child: Row(
           children: [
@@ -74,6 +77,6 @@ class _StrainFooterWidget extends ConsumerWidget {
           ],
         ),
       ),
-    );
+    ));
   }
 }

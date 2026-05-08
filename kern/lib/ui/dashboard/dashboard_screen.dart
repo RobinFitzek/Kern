@@ -5,6 +5,7 @@ import '../../core/plugins/plugin_interfaces.dart';
 import '../../core/plugins/plugin_registry.dart';
 import '../../core/sync/sync_notifier.dart';
 import '../theme/app_theme.dart';
+import 'dashboard_skeleton.dart';
 
 // ---------------------------------------------------------------------------
 // DashboardScreen
@@ -26,9 +27,7 @@ class DashboardScreen extends ConsumerWidget {
       body: SafeArea(
         child: pluginStateAsync.when(
           data: (state) => _buildZones(context, state, ref),
-          loading: () => const Center(
-            child: CircularProgressIndicator(color: Color(0xFF00D4FF)),
-          ),
+          loading: () => const DashboardSkeleton(),
           error: (e, st) => Center(child: Text('Error loading dashboard: $e')),
         ),
       ),

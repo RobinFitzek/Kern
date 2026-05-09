@@ -37,3 +37,9 @@ class StrainKey {
   static const String steps7dAvg = 'steps_7d_avg';
   StrainKey._();
 }
+
+class AiKey {
+  static const String insightTitle = 'insight_title';
+  static const String insightText = 'insight_text';
+  AiKey._();
+}

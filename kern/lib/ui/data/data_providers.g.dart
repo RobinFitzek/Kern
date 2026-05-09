@@ -291,7 +291,7 @@ class _BaselineAverageProviderElement
 }
 
 String _$aggregatedDataQueryHash() =>
-    r'99101b8648adebc9c641b6e8635c61bb07a103cb';
+    r'94e2ce9208b8e02aa4d8e983fa428d1c6628c661';
 
 /// See also [aggregatedDataQuery].
 @ProviderFor(aggregatedDataQuery)

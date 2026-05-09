@@ -8,6 +8,8 @@ import '../plugins/plugin_manager_screen.dart';
 import '../theme/app_theme.dart';
 import 'navigation_manager_screen.dart';
 
+import 'appearance_settings_screen.dart';
+
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
@@ -25,31 +27,18 @@ class SettingsScreen extends ConsumerWidget {
         children: [
           _buildSectionHeader('General'),
           _buildCard(context, [
-            Consumer(builder: (context, ref, child) {
-              final isDark = ref.watch(themeModeProvider) == ThemeMode.dark;
-              return SwitchListTile(
-                secondary: const Icon(Icons.palette_outlined),
-                title: const Text('Dark Mode'),
-                subtitle: const Text('Switch between light and dark theme'),
-                value: isDark,
-                onChanged: (val) {
-                  ref.read(themeModeProvider.notifier).toggle();
-                },
-              );
-            }),
-            const Divider(height: 1, indent: 56),
-            Consumer(builder: (context, ref, child) {
-              final useDynamicColor = ref.watch(useDynamicColorProvider);
-              return SwitchListTile(
-                secondary: const Icon(Icons.color_lens_outlined),
-                title: const Text('Material 3 Dynamic Colors'),
-                subtitle: const Text('Extract colors from wallpaper'),
-                value: useDynamicColor,
-                onChanged: (val) {
-                  ref.read(useDynamicColorProvider.notifier).setMode(val);
-                },
-              );
-            }),
+            ListTile(
+              leading: const Icon(Icons.palette_outlined),
+              title: const Text('Appearance'),
+              subtitle: const Text('Dark mode, colors & themes'),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const AppearanceSettingsScreen()),
+                );
+              },
+            ),
           ]),
           const SizedBox(height: 24),
           
@@ -80,6 +69,8 @@ class SettingsScreen extends ConsumerWidget {
                       const SnackBar(content: Text('Please open Android Settings -> Health Connect and grant permissions manually.'))
                     );
                   }
+                } else {
+                  await ref.read(syncNotifierProvider.notifier).disconnect();
                 }
               },
             ),

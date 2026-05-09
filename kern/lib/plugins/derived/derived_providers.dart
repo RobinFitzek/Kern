@@ -5,6 +5,8 @@
 /// PluginRunner. The UI simply watches these and rebuilds when the DB changes.
 library;
 
+import 'dart:convert';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -123,4 +125,33 @@ Future<double?> strainScore(Ref ref, {String? date}) async {
     date: d,
   );
   return entry?.value;
+}
+
+// ---------------------------------------------------------------------------
+// AI Coach
+// ---------------------------------------------------------------------------
+
+/// Today's AI coaching insight, or null if not yet generated.
+@riverpod
+Future<Map<String, String>?> aiInsight(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.ai,
+    key: 'todays_insight',
+    date: d,
+  );
+
+  if (entry == null || entry.metadata == null) return null;
+
+  try {
+    final Map<String, dynamic> data = jsonDecode(entry.metadata!);
+    return {
+      'title': data[AiKey.insightTitle] as String? ?? 'Daily Insight',
+      'text': data[AiKey.insightText] as String? ?? '',
+    };
+  } catch (e) {
+    return null;
+  }
 }

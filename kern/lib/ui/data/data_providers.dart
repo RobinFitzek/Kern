@@ -122,6 +122,7 @@ Future<List<AggregatedDataPoint>> aggregatedDataQuery(AggregatedDataQueryRef ref
       min: min,
       max: max,
       count: entries.length,
+      rawEntries: entries,
       formattedAxisLabel: config.formatAxisLabel(bucketTs, period.granularity),
     ));
   }

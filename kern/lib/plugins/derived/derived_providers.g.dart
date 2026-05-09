@@ -867,5 +867,135 @@ class _StrainScoreProviderElement
   String? get date => (origin as StrainScoreProvider).date;
 }
 
+String _$aiInsightHash() => r'888d2d2a62fea02c05a601967c8e7818d7d3247c';
+
+/// Today's AI coaching insight, or null if not yet generated.
+///
+/// Copied from [aiInsight].
+@ProviderFor(aiInsight)
+const aiInsightProvider = AiInsightFamily();
+
+/// Today's AI coaching insight, or null if not yet generated.
+///
+/// Copied from [aiInsight].
+class AiInsightFamily extends Family<AsyncValue<Map<String, String>?>> {
+  /// Today's AI coaching insight, or null if not yet generated.
+  ///
+  /// Copied from [aiInsight].
+  const AiInsightFamily();
+
+  /// Today's AI coaching insight, or null if not yet generated.
+  ///
+  /// Copied from [aiInsight].
+  AiInsightProvider call({String? date}) {
+    return AiInsightProvider(date: date);
+  }
+
+  @override
+  AiInsightProvider getProviderOverride(covariant AiInsightProvider provider) {
+    return call(date: provider.date);
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'aiInsightProvider';
+}
+
+/// Today's AI coaching insight, or null if not yet generated.
+///
+/// Copied from [aiInsight].
+class AiInsightProvider
+    extends AutoDisposeFutureProvider<Map<String, String>?> {
+  /// Today's AI coaching insight, or null if not yet generated.
+  ///
+  /// Copied from [aiInsight].
+  AiInsightProvider({String? date})
+    : this._internal(
+        (ref) => aiInsight(ref as AiInsightRef, date: date),
+        from: aiInsightProvider,
+        name: r'aiInsightProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$aiInsightHash,
+        dependencies: AiInsightFamily._dependencies,
+        allTransitiveDependencies: AiInsightFamily._allTransitiveDependencies,
+        date: date,
+      );
+
+  AiInsightProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.date,
+  }) : super.internal();
+
+  final String? date;
+
+  @override
+  Override overrideWith(
+    FutureOr<Map<String, String>?> Function(AiInsightRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: AiInsightProvider._internal(
+        (ref) => create(ref as AiInsightRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        date: date,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<Map<String, String>?> createElement() {
+    return _AiInsightProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is AiInsightProvider && other.date == date;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, date.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin AiInsightRef on AutoDisposeFutureProviderRef<Map<String, String>?> {
+  /// The parameter `date` of this provider.
+  String? get date;
+}
+
+class _AiInsightProviderElement
+    extends AutoDisposeFutureProviderElement<Map<String, String>?>
+    with AiInsightRef {
+  _AiInsightProviderElement(super.provider);
+
+  @override
+  String? get date => (origin as AiInsightProvider).date;
+}
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

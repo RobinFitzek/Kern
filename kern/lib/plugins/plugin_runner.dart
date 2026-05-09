@@ -5,6 +5,7 @@ import '../plugins/raw/raw_providers.dart';
 import 'readiness/readiness_plugin.dart';
 import 'sleep/sleep_plugin.dart';
 import 'strain/strain_plugin.dart';
+import 'ai/ai_plugin.dart';
 
 part 'plugin_runner.g.dart';
 
@@ -92,6 +93,15 @@ class PluginRunner extends _$PluginRunner {
       strainOk: strainOk,
       errors: errors,
     );
+
+    // AI Coach depends on the derived scores from other plugins
+    try {
+      final aiPlugin = AiPlugin(db);
+      await _run('AiPlugin', () => aiPlugin.run(date));
+    } catch (e) {
+      errors['AiPlugin'] = e;
+      debugPrint('[PluginRunner] AiPlugin failed: $e');
+    }
 
     debugPrint('[PluginRunner] done: $result');
     state = AsyncValue.data(result);

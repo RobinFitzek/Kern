@@ -17,6 +17,8 @@ import 'ui/onboarding/onboarding_provider.dart';
 import 'ui/theme/app_theme.dart';
 import 'core/navigation/navigation_state.dart';
 
+import 'plugins/ai/ai_feature.dart';
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -24,6 +26,7 @@ void main() {
   PluginRegistry.register(ReadinessFeature());
   PluginRegistry.register(SleepFeature());
   PluginRegistry.register(StrainFeature());
+  PluginRegistry.register(AiFeature());
 
   final db = AppDatabase();
 

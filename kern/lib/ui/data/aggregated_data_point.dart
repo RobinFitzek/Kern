@@ -1,3 +1,5 @@
+import '../../core/database/app_database.dart';
+
 class AggregatedDataPoint {
   final DateTime timestamp; // Bucket timestamp
   final double value;
@@ -7,6 +9,7 @@ class AggregatedDataPoint {
   final double? min;
   final double? max;
   final int count;
+  final List<RawEntry> rawEntries;
 
   AggregatedDataPoint({
     required this.timestamp,
@@ -15,5 +18,6 @@ class AggregatedDataPoint {
     this.min,
     this.max,
     this.count = 1,
+    this.rawEntries = const [],
   });
 }

@@ -220,11 +220,12 @@ class _DataExplorerScreenState extends ConsumerState<DataExplorerScreen> {
         break;
     }
 
+    final theme = Theme.of(context);
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -234,46 +235,132 @@ class _DataExplorerScreenState extends ConsumerState<DataExplorerScreen> {
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                dateStr,
-                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: AppTheme.primaryBlue),
-              ),
-              if (p.count > 1)
-                Text(
-                  '${p.count} entries',
-                  style: const TextStyle(color: Colors.black45, fontSize: 11),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: p.rawEntries.isNotEmpty ? () => _showRawEntriesPopup(p, config) : null,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      dateStr,
+                      style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: theme.colorScheme.primary),
+                    ),
+                    if (p.count > 1)
+                      Row(
+                        children: [
+                          Text(
+                            '${p.count} entries',
+                            style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.5), fontSize: 11),
+                          ),
+                          const SizedBox(width: 4),
+                          Icon(Icons.chevron_right_rounded, size: 14, color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
+                        ],
+                      ),
+                  ],
                 ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                config.formatValue(p.value),
-                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
-              ),
-              const SizedBox(width: 4),
-              Text(
-                config.unit,
-                style: const TextStyle(fontSize: 14, color: Colors.black54, fontWeight: FontWeight.w500),
-              ),
-              const Spacer(),
-              if (p.min != null && p.max != null)
-                Text(
-                  'Min: ${config.formatValue(p.min!)}  Max: ${config.formatValue(p.max!)}',
-                  style: const TextStyle(fontSize: 12, color: Colors.black45),
+                const SizedBox(height: 8),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      config.formatValue(p.value),
+                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface),
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      config.unit,
+                      style: TextStyle(fontSize: 14, color: theme.colorScheme.onSurface.withValues(alpha: 0.6), fontWeight: FontWeight.w500),
+                    ),
+                    const Spacer(),
+                    if (p.min != null && p.max != null)
+                      Text(
+                        'Min: ${config.formatValue(p.min!)}  Max: ${config.formatValue(p.max!)}',
+                        style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
+                      ),
+                  ],
                 ),
-            ],
+              ],
+            ),
           ),
-        ],
+        ),
       ),
+    );
+  }
+
+  void _showRawEntriesPopup(AggregatedDataPoint p, DataTypeConfig config) {
+    final theme = Theme.of(context);
+    
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: theme.colorScheme.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 12),
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 24),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Row(
+                  children: [
+                    Text('Raw Data Entries', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface)),
+                    const Spacer(),
+                    Text('${p.rawEntries.length} items', style: TextStyle(color: theme.colorScheme.primary, fontWeight: FontWeight.w600)),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              Flexible(
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                  itemCount: p.rawEntries.length,
+                  separatorBuilder: (context, index) => Divider(color: theme.colorScheme.onSurface.withValues(alpha: 0.1)),
+                  itemBuilder: (context, index) {
+                    final entry = p.rawEntries[index];
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: Row(
+                        children: [
+                          Text(
+                            DateFormat('MMM d, HH:mm:ss').format(entry.timestamp),
+                            style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.7), fontSize: 14),
+                          ),
+                          const Spacer(),
+                          Text(
+                            '${config.formatValue(entry.value)} ${config.unit}',
+                            style: TextStyle(fontWeight: FontWeight.w600, color: theme.colorScheme.onSurface, fontSize: 16),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
+          ),
+        );
+      },
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../services/service_providers.dart';
 import '../../plugins/plugin_runner.dart';
@@ -77,6 +78,14 @@ class SyncNotifier extends _$SyncNotifier {
   Future<void> initialize() async {
     if (state.isLoading) return; // already running
 
+    final prefs = await SharedPreferences.getInstance();
+    final isExplicitlyDisabled = prefs.getBool('health_connect_disabled') ?? false;
+
+    if (isExplicitlyDisabled) {
+      state = const HealthSyncState(status: SyncStatus.permissionDenied);
+      return;
+    }
+
     final service = ref.read(healthConnectServiceProvider);
 
     // Step 1: check existing permissions
@@ -118,7 +127,18 @@ class SyncNotifier extends _$SyncNotifier {
   /// Manually re-triggers a sync (e.g. after the user grants permissions
   /// from the settings screen or pulls to refresh on the dashboard).
   Future<void> resync() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('health_connect_disabled', false);
+    
     state = state.copyWith(status: SyncStatus.idle);
     await initialize();
+  }
+
+  /// Explicitly disconnects Health Connect sync
+  Future<void> disconnect() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('health_connect_disabled', true);
+    
+    state = const HealthSyncState(status: SyncStatus.permissionDenied);
   }
 }

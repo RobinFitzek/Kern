@@ -37,6 +37,7 @@ class PluginManagerScreen extends ConsumerWidget {
 
   Widget _buildList(BuildContext context, PluginRegistryState state, WidgetRef ref) {
     final plugins = PluginRegistry.all;
+    final theme = Theme.of(context);
 
     return ListView.separated(
       padding: const EdgeInsets.all(16),
@@ -52,23 +53,23 @@ class PluginManagerScreen extends ConsumerWidget {
 
         return Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: theme.colorScheme.surface,
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.03),
+                color: Colors.black.withValues(alpha: theme.brightness == Brightness.dark ? 0.2 : 0.03),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
             ],
           ),
           child: ListTile(
-            title: Text(plugin.name, style: const TextStyle(fontWeight: FontWeight.w600, color: Colors.black87)),
+            title: Text(plugin.name, style: TextStyle(fontWeight: FontWeight.w600, color: theme.colorScheme.onSurface)),
             subtitle: Padding(
               padding: const EdgeInsets.only(top: 4),
               child: Text(
                 plugin.description,
-                style: const TextStyle(color: Colors.black54, fontSize: 13),
+                style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.6), fontSize: 13),
               ),
             ),
             trailing: Switch(
@@ -91,9 +92,12 @@ class PluginManagerScreen extends ConsumerWidget {
   }
 
   void _showPluginDetailsPopup(BuildContext context, KernPlugin plugin, bool isEnabled, dynamic setting, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.white,
+      backgroundColor: theme.colorScheme.surface,
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (context) {
         return SafeArea(
@@ -106,26 +110,26 @@ class PluginManagerScreen extends ConsumerWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(plugin.name, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black87)),
-                    const Text('v1.0.0', style: TextStyle(color: Colors.black38, fontSize: 12, fontWeight: FontWeight.w600)),
+                    Text(plugin.name, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface)),
+                    Text('v1.0.0', style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.4), fontSize: 12, fontWeight: FontWeight.w600)),
                   ],
                 ),
                 const SizedBox(height: 8),
-                Text(plugin.description, style: const TextStyle(color: Colors.black54, fontSize: 14)),
+                Text(plugin.description, style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.6), fontSize: 14)),
                 const SizedBox(height: 24),
                 
                 if (isEnabled && plugin.supportedSlots.isNotEmpty) ...[
-                  const Text('Dashboard Position', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: Colors.black87)),
+                  Text('Dashboard Position', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: theme.colorScheme.onSurface)),
                   const SizedBox(height: 8),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF4F7FB),
+                      color: isDark ? const Color(0xFF2A2A2A) : const Color(0xFFF4F7FB),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: DropdownButton<String>(
                       value: setting.dashboardSlot,
-                      dropdownColor: Colors.white,
+                      dropdownColor: theme.colorScheme.surface,
                       isExpanded: true,
                       underline: const SizedBox(),
                       style: const TextStyle(color: Color(0xFF1967D2), fontSize: 14, fontWeight: FontWeight.w600),
@@ -150,18 +154,18 @@ class PluginManagerScreen extends ConsumerWidget {
                   const SizedBox(height: 24),
                 ],
 
-                const Text('Settings', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: Colors.black87)),
+                Text('Settings', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: theme.colorScheme.onSurface)),
                 const SizedBox(height: 8),
                 
                 if (plugin.buildSettingsPage(context) != null)
                   Container(
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF4F7FB),
+                      color: isDark ? const Color(0xFF2A2A2A) : const Color(0xFFF4F7FB),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: ListTile(
-                      title: const Text('Open Plugin Settings', style: TextStyle(fontSize: 14, color: Colors.black87)),
-                      trailing: const Icon(Icons.chevron_right, color: Colors.black26),
+                      title: Text('Open Plugin Settings', style: TextStyle(fontSize: 14, color: theme.colorScheme.onSurface)),
+                      trailing: Icon(Icons.chevron_right, color: theme.colorScheme.onSurface.withValues(alpha: 0.3)),
                       onTap: () {
                         Navigator.pop(context);
                         Navigator.push(context, MaterialPageRoute(builder: (_) => plugin.buildSettingsPage(context)!));
@@ -172,14 +176,14 @@ class PluginManagerScreen extends ConsumerWidget {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF4F7FB),
+                      color: isDark ? const Color(0xFF2A2A2A) : const Color(0xFFF4F7FB),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Row(
+                    child: Row(
                       children: [
-                        Icon(Icons.info_outline, color: Colors.black38, size: 20),
-                        SizedBox(width: 12),
-                        Text('No advanced settings available.', style: TextStyle(color: Colors.black54, fontSize: 13)),
+                        Icon(Icons.info_outline, color: theme.colorScheme.onSurface.withValues(alpha: 0.4), size: 20),
+                        const SizedBox(width: 12),
+                        Text('No advanced settings available.', style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.6), fontSize: 13)),
                       ],
                     ),
                   ),

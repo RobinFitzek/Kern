@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-/// Centralized design tokens matching the light "Google Health" aesthetic.
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 class AppTheme {
   // Brand Colors
   static const Color primaryBlue = Color(0xFF1A73E8);
@@ -40,12 +39,12 @@ class AppTheme {
     ),
   ];
 
-  static ThemeData get lightTheme {
+  static ThemeData lightTheme(ColorScheme? dynamicColorScheme) {
     return ThemeData(
       useMaterial3: true,
       fontFamily: 'Inter',
       scaffoldBackgroundColor: background,
-      colorScheme: ColorScheme.fromSeed(
+      colorScheme: dynamicColorScheme ?? ColorScheme.fromSeed(
         seedColor: primaryBlue,
         surface: surface,
         primary: primaryBlue,
@@ -64,7 +63,7 @@ class AppTheme {
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: surface,
-        selectedItemColor: primaryBlue,
+        selectedItemColor: dynamicColorScheme?.primary ?? primaryBlue,
         unselectedItemColor: textTertiary,
         elevation: 16,
         type: BottomNavigationBarType.fixed,
@@ -86,5 +85,88 @@ class AppTheme {
         contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       ),
     );
+  }
+
+  static ThemeData darkTheme(ColorScheme? dynamicColorScheme) {
+    return ThemeData(
+      useMaterial3: true,
+      fontFamily: 'Inter',
+      scaffoldBackgroundColor: const Color(0xFF121212),
+      colorScheme: dynamicColorScheme ?? ColorScheme.fromSeed(
+        seedColor: primaryBlue,
+        brightness: Brightness.dark,
+        surface: const Color(0xFF1E1E1E),
+        primary: primaryBlue,
+        onSurface: Colors.white,
+      ),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
+        iconTheme: IconThemeData(color: Colors.white),
+        titleTextStyle: TextStyle(
+          color: Colors.white,
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
+        backgroundColor: const Color(0xFF1E1E1E),
+        selectedItemColor: dynamicColorScheme?.primary ?? primaryBlue,
+        unselectedItemColor: Colors.white54,
+        elevation: 16,
+        type: BottomNavigationBarType.fixed,
+        selectedLabelStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+        unselectedLabelStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+      ),
+      cardTheme: CardThemeData(
+        color: const Color(0xFF1E1E1E),
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+          side: const BorderSide(color: Colors.white12, width: 1),
+        ),
+        margin: EdgeInsets.zero,
+      ),
+      listTileTheme: const ListTileThemeData(
+        iconColor: Colors.white70,
+        textColor: Colors.white,
+        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      ),
+    );
+  }
+}
+
+// Global theme mode provider
+
+final themeModeProvider = StateNotifierProvider<ThemeModeNotifier, ThemeMode>((ref) {
+  return ThemeModeNotifier();
+});
+
+class ThemeModeNotifier extends StateNotifier<ThemeMode> {
+  ThemeModeNotifier() : super(ThemeMode.light);
+
+  void toggle() {
+    state = state == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+  }
+  
+  void setMode(ThemeMode mode) {
+    state = mode;
+  }
+}
+
+final useDynamicColorProvider = StateNotifierProvider<DynamicColorNotifier, bool>((ref) {
+  return DynamicColorNotifier();
+});
+
+class DynamicColorNotifier extends StateNotifier<bool> {
+  DynamicColorNotifier() : super(true);
+
+  void toggle() {
+    state = !state;
+  }
+
+  void setMode(bool useDynamicColor) {
+    state = useDynamicColor;
   }
 }

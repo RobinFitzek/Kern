@@ -72,9 +72,10 @@ class DashboardScreen extends ConsumerWidget {
                 padEnds: false,
                 itemCount: headerPlugins.length,
                 itemBuilder: (context, index) {
+                  final p = headerPlugins[index];
                   return Padding(
                     padding: const EdgeInsets.only(right: 16),
-                    child: headerPlugins[index].buildDashboardWidget(context, PluginSlot.header),
+                    child: _wrapWithNavigation(context, p, p.buildDashboardWidget(context, PluginSlot.header)),
                   );
                 },
               ),
@@ -86,16 +87,36 @@ class DashboardScreen extends ConsumerWidget {
           if (mainPlugins.isNotEmpty)
             ...mainPlugins.map((p) => Padding(
                   padding: const EdgeInsets.only(bottom: 32),
-                  child: p.buildDashboardWidget(context, PluginSlot.main),
+                  child: _wrapWithNavigation(context, p, p.buildDashboardWidget(context, PluginSlot.main)),
                 )),
 
           // Footer Zone (List of smaller widgets, e.g. Sleep details, Strain)
           if (footerPlugins.isNotEmpty)
             ...footerPlugins.map((p) => Padding(
                   padding: const EdgeInsets.only(bottom: 16),
-                  child: p.buildDashboardWidget(context, PluginSlot.footer),
+                  child: _wrapWithNavigation(context, p, p.buildDashboardWidget(context, PluginSlot.footer)),
                 )),
         ],
+      ),
+    );
+  }
+
+  Widget _wrapWithNavigation(BuildContext context, KernPlugin plugin, Widget child) {
+    if (!plugin.hasDetailPage) return child;
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        final detailPage = plugin.buildDetailPage(context);
+        if (detailPage != null) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => detailPage),
+          );
+        }
+      },
+      child: IgnorePointer(
+        ignoring: false,
+        child: child,
       ),
     );
   }

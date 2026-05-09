@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:dynamic_color/dynamic_color.dart';
 
 import 'core/database/app_database.dart';
 import 'core/sync/sync_notifier.dart';
@@ -31,11 +32,7 @@ void main() {
       overrides: [
         appDatabaseProvider.overrideWithValue(db),
       ],
-      child: MaterialApp(
-        title: 'Kern',
-        theme: AppTheme.lightTheme,
-        home: const _AppShell(),
-      ),
+      child: const KernApp(),
     ),
   );
 }
@@ -46,19 +43,20 @@ class KernApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final hasCompletedOnboarding = ref.watch(onboardingCompletedProvider);
+    final themeMode = ref.watch(themeModeProvider);
+    final useDynamicColor = ref.watch(useDynamicColorProvider);
 
-    return MaterialApp(
-      title: 'Kern',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF00D4FF),
-          brightness: Brightness.dark,
-        ),
-        fontFamily: 'Inter',
-      ),
-      home: hasCompletedOnboarding ? const _AppShell() : const OnboardingScreen(),
+    return DynamicColorBuilder(
+      builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
+        return MaterialApp(
+          title: 'Kern',
+          debugShowCheckedModeBanner: false,
+          themeMode: themeMode,
+          theme: AppTheme.lightTheme(useDynamicColor ? lightDynamic : null),
+          darkTheme: AppTheme.darkTheme(useDynamicColor ? darkDynamic : null),
+          home: hasCompletedOnboarding ? const _AppShell() : const OnboardingScreen(),
+        );
+      },
     );
   }
 }

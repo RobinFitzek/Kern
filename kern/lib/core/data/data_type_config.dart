@@ -128,7 +128,7 @@ String _defaultAxisFormat(DateTime date, TimeGranularity g) {
     case TimeGranularity.month:
       return '${date.day}';
     case TimeGranularity.year:
-      final months = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
+      final months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
       return months[date.month - 1];
   }
 }

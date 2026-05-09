@@ -42,7 +42,7 @@ class _DataExplorerScreenState extends ConsumerState<DataExplorerScreen> {
       ),
       body: Column(
         children: [
-          _buildFilterBar(typesAsync),
+          _buildFilterBar(context, typesAsync),
           if (_selectedType != null) ...[
             const TimelineNavigator(),
             TimelineChart(dataType: _selectedType!),
@@ -84,39 +84,124 @@ class _DataExplorerScreenState extends ConsumerState<DataExplorerScreen> {
     );
   }
 
-  Widget _buildFilterBar(AsyncValue<List<String>> typesAsync) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      color: Colors.white,
-      width: double.infinity,
+  Widget _buildFilterBar(BuildContext context, AsyncValue<List<String>> typesAsync) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
       child: Row(
         children: [
-          const Icon(Icons.filter_list, color: Colors.black54, size: 20),
-          const SizedBox(width: 12),
           Expanded(
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton<String>(
-                value: _selectedType,
-                hint: const Text('All Data Types', style: TextStyle(color: Colors.black54)),
-                isExpanded: true,
-                items: [
-                  const DropdownMenuItem<String>(value: null, child: Text('All Data Types')),
-                  if (typesAsync.value != null)
-                    ...typesAsync.value!.map((type) => DropdownMenuItem(
-                          value: type,
-                          child: Text(type.toUpperCase()),
-                        )),
-                ],
-                onChanged: (val) {
-                  setState(() {
-                    _selectedType = val;
-                  });
-                },
+            child: FilledButton.tonalIcon(
+              onPressed: () => _showTypeSelectionModal(context, typesAsync),
+              icon: const Icon(Icons.filter_list_rounded, size: 20),
+              label: Text(
+                _selectedType != null ? _selectedType!.toUpperCase() : 'Select Data Type',
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
+              style: FilledButton.styleFrom(
+                alignment: Alignment.centerLeft,
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
               ),
             ),
           ),
         ],
       ),
+    );
+  }
+
+  void _showTypeSelectionModal(BuildContext context, AsyncValue<List<String>> typesAsync) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: theme.colorScheme.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 12),
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 24),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Row(
+                  children: [
+                    Text('Select Data Type', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface)),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              if (typesAsync.value != null) ...[
+                Flexible(
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemCount: typesAsync.value!.length,
+                    itemBuilder: (context, index) {
+                      final type = typesAsync.value![index];
+                      final isSelected = type == _selectedType;
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: InkWell(
+                          onTap: () {
+                            setState(() => _selectedType = type);
+                            Navigator.pop(context);
+                          },
+                          borderRadius: BorderRadius.circular(16),
+                          child: Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: isSelected ? theme.colorScheme.primaryContainer : (isDark ? const Color(0xFF2A2A2A) : const Color(0xFFF4F7FB)),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: isSelected ? theme.colorScheme.primary : Colors.transparent,
+                                width: 2,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.bar_chart_rounded, 
+                                  color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                                ),
+                                const SizedBox(width: 16),
+                                Text(
+                                  type.toUpperCase(),
+                                  style: TextStyle(
+                                    fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                                    color: isSelected ? theme.colorScheme.onPrimaryContainer : theme.colorScheme.onSurface,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                const Spacer(),
+                                if (isSelected)
+                                  Icon(Icons.check_circle_rounded, color: theme.colorScheme.primary),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+              const SizedBox(height: 16),
+            ],
+          ),
+        );
+      },
     );
   }
 

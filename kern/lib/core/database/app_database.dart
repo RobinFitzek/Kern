@@ -13,12 +13,12 @@ part 'app_database.g.dart';
 // Database — two isolated stores + sync watermark state
 // ---------------------------------------------------------------------------
 
-@DriftDatabase(tables: [RawEntries, DerivedEntries, SyncStates, PluginSettings])
+@DriftDatabase(tables: [RawEntries, DerivedEntries, SyncStates, PluginSettings, UserFeedback])
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -60,6 +60,10 @@ class AppDatabase extends _$AppDatabase {
           }
           if (from < 4) {
             await m.addColumn(rawEntries, rawEntries.metadata);
+          }
+          if (from < 5) {
+            // v4 → v5: add UserFeedback table for Bayesian morning check-in.
+            await m.createTable(userFeedback);
           }
         },
         // Enforce foreign-key constraints and enable WAL mode for better
@@ -199,6 +203,25 @@ class AppDatabase extends _$AppDatabase {
       batch.insertAllOnConflictUpdate(pluginSettings, defaults);
     });
   }
+
+  // -------------------------------------------------------------------------
+  // User Feedback DAOs (Bayesian morning check-in)
+  // -------------------------------------------------------------------------
+
+  /// Insert or replace today's user feedback (Soreness, Energy, Stress).
+  Future<void> upsertFeedback(UserFeedbackCompanion entry) =>
+      into(userFeedback).insertOnConflictUpdate(entry);
+
+  /// Read the feedback entry for a specific [date] string (e.g. "2026-05-09").
+  /// Returns null if the user has not submitted a check-in for that day.
+  Future<UserFeedbackData?> getFeedback(String date) =>
+      (select(userFeedback)..where((t) => t.date.equals(date)))
+          .getSingleOrNull();
+
+  /// Watch the feedback entry for a specific [date] — rebuilds UI when saved.
+  Stream<UserFeedbackData?> watchFeedback(String date) =>
+      (select(userFeedback)..where((t) => t.date.equals(date)))
+          .watchSingleOrNull();
 }
 
 // ---------------------------------------------------------------------------

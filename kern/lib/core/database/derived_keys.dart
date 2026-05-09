@@ -9,16 +9,54 @@ class DerivedNamespace {
   static const String sleep = 'sleep';
   static const String strain = 'strain';
   static const String ai = 'ai';
+  static const String feedback = 'feedback';
   DerivedNamespace._();
 }
 
 class ReadinessKey {
+  // Legacy monolithic score — kept for backward-compatible reads during transition.
   static const String score = 'score';
+  static const String isCalibrating = 'is_calibrating';
+
+  // Legacy component keys
   static const String hrvContribution = 'hrv_contribution';
   static const String sleepContribution = 'sleep_contribution';
   static const String strainContribution = 'strain_contribution';
+
+  // ── Bimodal Algorithm (v2) ──────────────────────────────────────────────────
+
+  /// Objective physical readiness score (0–100) before Bayesian update.
+  static const String physicalScoreObj = 'physical_score_obj';
+
+  /// Final physical readiness score (0–100) after Bayesian user feedback fusion.
+  static const String physicalScore = 'physical_score';
+
+  /// Objective mental/cognitive readiness score (0–100) before Bayesian update.
+  static const String mentalScoreObj = 'mental_score_obj';
+
+  /// Final mental/cognitive readiness score (0–100) after Bayesian user feedback fusion.
+  static const String mentalScore = 'mental_score';
+
+  /// JSON blob: {hrv, rhr, deep, tst, acwr} — contributions to physical score.
+  /// Each sub-value is a score on 0–100 scale before weighting.
+  static const String physicalComponents = 'physical_components';
+
+  /// JSON blob: {rem, sri, cv, efficiency} — contributions to mental score.
+  static const String mentalComponents = 'mental_components';
+
+  /// Acute:Chronic Workload Ratio (stored for display/debugging).
+  static const String acwr = 'acwr';
+
+  /// Sleep Regularity Index value (-100 to +100, stored for display).
+  static const String sri = 'sri';
+
+  /// Current objective weight w_obj used in Bayesian fusion (0.0–1.0).
+  /// Starts at 0.8; adapts over time as subjective data accumulates.
+  static const String wObjWeight = 'w_obj_weight';
+
   /// 1.0 = still calibrating (< 7 days HRV), 0.0 = ready.
-  static const String isCalibrating = 'is_calibrating';
+  static const String isCalibrating2 = 'is_calibrating_v2';
+
   ReadinessKey._();
 }
 
@@ -42,4 +80,17 @@ class AiKey {
   static const String insightTitle = 'insight_title';
   static const String insightText = 'insight_text';
   AiKey._();
+}
+
+class FeedbackKey {
+  /// Soreness rating 1–10 (1 = no pain, 10 = extreme).
+  static const String soreness = 'soreness';
+
+  /// Perceived energy & mood 1–10 (10 = high energy, 1 = lethargic).
+  static const String energy = 'energy';
+
+  /// Stress level 1–10 (1 = relaxed, 10 = extreme stress).
+  static const String stress = 'stress';
+
+  FeedbackKey._();
 }

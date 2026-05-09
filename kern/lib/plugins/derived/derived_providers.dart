@@ -17,10 +17,11 @@ import '../plugin_runner.dart';
 part 'derived_providers.g.dart';
 
 // ---------------------------------------------------------------------------
-// Readiness
+// Readiness — Legacy (v1, backward-compatible)
 // ---------------------------------------------------------------------------
 
-/// Today's readiness score (0–100), or null if not yet computed.
+/// Today's composite readiness score (0–100), or null if not yet computed.
+/// This is the average of physical and mental for backward compatibility.
 @riverpod
 Future<double?> readinessScore(Ref ref, {String? date}) async {
   final db = ref.watch(appDatabaseProvider);
@@ -67,6 +68,153 @@ Future<({double? hrv, double? sleep, double? strain})> readinessComponents(
     sleep: results[1]?.value,
     strain: results[2]?.value,
   );
+}
+
+// ---------------------------------------------------------------------------
+// Readiness — Bimodal (v2)
+// ---------------------------------------------------------------------------
+
+/// Today's Physical Readiness Score (0–100), final after Bayesian fusion.
+@riverpod
+Future<double?> readinessPhysicalScore(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.readiness,
+    key: ReadinessKey.physicalScore,
+    date: d,
+  );
+  return entry?.value;
+}
+
+/// Today's Mental/Cognitive Readiness Score (0–100), final after Bayesian fusion.
+@riverpod
+Future<double?> readinessMentalScore(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.readiness,
+    key: ReadinessKey.mentalScore,
+    date: d,
+  );
+  return entry?.value;
+}
+
+/// Both bimodal scores as a single record — prevents double-fetch in UI.
+@riverpod
+Future<({double? physical, double? mental})> readinessBimodalScores(
+  Ref ref, {
+  String? date,
+}) async {
+  final physical = await ref.watch(readinessPhysicalScoreProvider(date: date).future);
+  final mental = await ref.watch(readinessMentalScoreProvider(date: date).future);
+  return (physical: physical, mental: mental);
+}
+
+/// Physical score component breakdown, parsed from JSON metadata.
+@riverpod
+Future<Map<String, double>?> readinessPhysicalComponents(
+  Ref ref, {
+  String? date,
+}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.readiness,
+    key: ReadinessKey.physicalComponents,
+    date: d,
+  );
+  if (entry?.metadata == null) return null;
+  try {
+    final Map<String, dynamic> raw = jsonDecode(entry!.metadata!);
+    return raw.map((k, v) => MapEntry(k, (v as num?)?.toDouble() ?? 0.0));
+  } catch (_) {
+    return null;
+  }
+}
+
+/// Mental score component breakdown, parsed from JSON metadata.
+@riverpod
+Future<Map<String, double>?> readinessMentalComponents(
+  Ref ref, {
+  String? date,
+}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.readiness,
+    key: ReadinessKey.mentalComponents,
+    date: d,
+  );
+  if (entry?.metadata == null) return null;
+  try {
+    final Map<String, dynamic> raw = jsonDecode(entry!.metadata!);
+    return raw.map((k, v) => MapEntry(k, (v as num?)?.toDouble() ?? 0.0));
+  } catch (_) {
+    return null;
+  }
+}
+
+/// Sleep Regularity Index value (-100 to +100) for display.
+@riverpod
+Future<double?> readinessSri(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.readiness,
+    key: ReadinessKey.sri,
+    date: d,
+  );
+  return entry?.value;
+}
+
+/// ACWR (Acute:Chronic Workload Ratio) for display.
+@riverpod
+Future<double?> readinessAcwr(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.readiness,
+    key: ReadinessKey.acwr,
+    date: d,
+  );
+  return entry?.value;
+}
+
+// ---------------------------------------------------------------------------
+// User Feedback (Morning Check-in)
+// ---------------------------------------------------------------------------
+
+/// Today's user feedback entry (Soreness, Energy, Stress).
+/// Returns null if the user has not submitted today's check-in yet.
+@riverpod
+Stream<UserFeedbackViewModel?> todayFeedback(Ref ref) {
+  final db = ref.watch(appDatabaseProvider);
+  final today = todayDateString();
+  return db.watchFeedback(today).map((data) {
+    if (data == null) return null;
+    return UserFeedbackViewModel(
+      soreness: data.soreness,
+      energy: data.energy,
+      stress: data.stress,
+      recordedAt: data.recordedAt,
+    );
+  });
+}
+
+/// View-model carrying today's submitted feedback.
+class UserFeedbackViewModel {
+  const UserFeedbackViewModel({
+    required this.soreness,
+    required this.energy,
+    required this.stress,
+    required this.recordedAt,
+  });
+
+  final double soreness; // 1–10
+  final double energy;   // 1–10
+  final double stress;   // 1–10
+  final DateTime recordedAt;
 }
 
 // ---------------------------------------------------------------------------

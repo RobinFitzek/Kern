@@ -29,22 +29,26 @@ class _SystemHash {
   }
 }
 
-/// Today's readiness score (0–100), or null if not yet computed.
+/// Today's composite readiness score (0–100), or null if not yet computed.
+/// This is the average of physical and mental for backward compatibility.
 ///
 /// Copied from [readinessScore].
 @ProviderFor(readinessScore)
 const readinessScoreProvider = ReadinessScoreFamily();
 
-/// Today's readiness score (0–100), or null if not yet computed.
+/// Today's composite readiness score (0–100), or null if not yet computed.
+/// This is the average of physical and mental for backward compatibility.
 ///
 /// Copied from [readinessScore].
 class ReadinessScoreFamily extends Family<AsyncValue<double?>> {
-  /// Today's readiness score (0–100), or null if not yet computed.
+  /// Today's composite readiness score (0–100), or null if not yet computed.
+  /// This is the average of physical and mental for backward compatibility.
   ///
   /// Copied from [readinessScore].
   const ReadinessScoreFamily();
 
-  /// Today's readiness score (0–100), or null if not yet computed.
+  /// Today's composite readiness score (0–100), or null if not yet computed.
+  /// This is the average of physical and mental for backward compatibility.
   ///
   /// Copied from [readinessScore].
   ReadinessScoreProvider call({String? date}) {
@@ -73,11 +77,13 @@ class ReadinessScoreFamily extends Family<AsyncValue<double?>> {
   String? get name => r'readinessScoreProvider';
 }
 
-/// Today's readiness score (0–100), or null if not yet computed.
+/// Today's composite readiness score (0–100), or null if not yet computed.
+/// This is the average of physical and mental for backward compatibility.
 ///
 /// Copied from [readinessScore].
 class ReadinessScoreProvider extends AutoDisposeFutureProvider<double?> {
-  /// Today's readiness score (0–100), or null if not yet computed.
+  /// Today's composite readiness score (0–100), or null if not yet computed.
+  /// This is the average of physical and mental for backward compatibility.
   ///
   /// Copied from [readinessScore].
   ReadinessScoreProvider({String? date})
@@ -452,6 +458,990 @@ class _ReadinessComponentsProviderElement
   String? get date => (origin as ReadinessComponentsProvider).date;
 }
 
+String _$readinessPhysicalScoreHash() =>
+    r'b15fd504f9ac1f9f53a5ccbc7e255be7da8876dd';
+
+/// Today's Physical Readiness Score (0–100), final after Bayesian fusion.
+///
+/// Copied from [readinessPhysicalScore].
+@ProviderFor(readinessPhysicalScore)
+const readinessPhysicalScoreProvider = ReadinessPhysicalScoreFamily();
+
+/// Today's Physical Readiness Score (0–100), final after Bayesian fusion.
+///
+/// Copied from [readinessPhysicalScore].
+class ReadinessPhysicalScoreFamily extends Family<AsyncValue<double?>> {
+  /// Today's Physical Readiness Score (0–100), final after Bayesian fusion.
+  ///
+  /// Copied from [readinessPhysicalScore].
+  const ReadinessPhysicalScoreFamily();
+
+  /// Today's Physical Readiness Score (0–100), final after Bayesian fusion.
+  ///
+  /// Copied from [readinessPhysicalScore].
+  ReadinessPhysicalScoreProvider call({String? date}) {
+    return ReadinessPhysicalScoreProvider(date: date);
+  }
+
+  @override
+  ReadinessPhysicalScoreProvider getProviderOverride(
+    covariant ReadinessPhysicalScoreProvider provider,
+  ) {
+    return call(date: provider.date);
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'readinessPhysicalScoreProvider';
+}
+
+/// Today's Physical Readiness Score (0–100), final after Bayesian fusion.
+///
+/// Copied from [readinessPhysicalScore].
+class ReadinessPhysicalScoreProvider
+    extends AutoDisposeFutureProvider<double?> {
+  /// Today's Physical Readiness Score (0–100), final after Bayesian fusion.
+  ///
+  /// Copied from [readinessPhysicalScore].
+  ReadinessPhysicalScoreProvider({String? date})
+    : this._internal(
+        (ref) => readinessPhysicalScore(
+          ref as ReadinessPhysicalScoreRef,
+          date: date,
+        ),
+        from: readinessPhysicalScoreProvider,
+        name: r'readinessPhysicalScoreProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$readinessPhysicalScoreHash,
+        dependencies: ReadinessPhysicalScoreFamily._dependencies,
+        allTransitiveDependencies:
+            ReadinessPhysicalScoreFamily._allTransitiveDependencies,
+        date: date,
+      );
+
+  ReadinessPhysicalScoreProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.date,
+  }) : super.internal();
+
+  final String? date;
+
+  @override
+  Override overrideWith(
+    FutureOr<double?> Function(ReadinessPhysicalScoreRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: ReadinessPhysicalScoreProvider._internal(
+        (ref) => create(ref as ReadinessPhysicalScoreRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        date: date,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<double?> createElement() {
+    return _ReadinessPhysicalScoreProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is ReadinessPhysicalScoreProvider && other.date == date;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, date.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin ReadinessPhysicalScoreRef on AutoDisposeFutureProviderRef<double?> {
+  /// The parameter `date` of this provider.
+  String? get date;
+}
+
+class _ReadinessPhysicalScoreProviderElement
+    extends AutoDisposeFutureProviderElement<double?>
+    with ReadinessPhysicalScoreRef {
+  _ReadinessPhysicalScoreProviderElement(super.provider);
+
+  @override
+  String? get date => (origin as ReadinessPhysicalScoreProvider).date;
+}
+
+String _$readinessMentalScoreHash() =>
+    r'60c2ee70305673fdf06968a8cd374193b9bc7ee7';
+
+/// Today's Mental/Cognitive Readiness Score (0–100), final after Bayesian fusion.
+///
+/// Copied from [readinessMentalScore].
+@ProviderFor(readinessMentalScore)
+const readinessMentalScoreProvider = ReadinessMentalScoreFamily();
+
+/// Today's Mental/Cognitive Readiness Score (0–100), final after Bayesian fusion.
+///
+/// Copied from [readinessMentalScore].
+class ReadinessMentalScoreFamily extends Family<AsyncValue<double?>> {
+  /// Today's Mental/Cognitive Readiness Score (0–100), final after Bayesian fusion.
+  ///
+  /// Copied from [readinessMentalScore].
+  const ReadinessMentalScoreFamily();
+
+  /// Today's Mental/Cognitive Readiness Score (0–100), final after Bayesian fusion.
+  ///
+  /// Copied from [readinessMentalScore].
+  ReadinessMentalScoreProvider call({String? date}) {
+    return ReadinessMentalScoreProvider(date: date);
+  }
+
+  @override
+  ReadinessMentalScoreProvider getProviderOverride(
+    covariant ReadinessMentalScoreProvider provider,
+  ) {
+    return call(date: provider.date);
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'readinessMentalScoreProvider';
+}
+
+/// Today's Mental/Cognitive Readiness Score (0–100), final after Bayesian fusion.
+///
+/// Copied from [readinessMentalScore].
+class ReadinessMentalScoreProvider extends AutoDisposeFutureProvider<double?> {
+  /// Today's Mental/Cognitive Readiness Score (0–100), final after Bayesian fusion.
+  ///
+  /// Copied from [readinessMentalScore].
+  ReadinessMentalScoreProvider({String? date})
+    : this._internal(
+        (ref) =>
+            readinessMentalScore(ref as ReadinessMentalScoreRef, date: date),
+        from: readinessMentalScoreProvider,
+        name: r'readinessMentalScoreProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$readinessMentalScoreHash,
+        dependencies: ReadinessMentalScoreFamily._dependencies,
+        allTransitiveDependencies:
+            ReadinessMentalScoreFamily._allTransitiveDependencies,
+        date: date,
+      );
+
+  ReadinessMentalScoreProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.date,
+  }) : super.internal();
+
+  final String? date;
+
+  @override
+  Override overrideWith(
+    FutureOr<double?> Function(ReadinessMentalScoreRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: ReadinessMentalScoreProvider._internal(
+        (ref) => create(ref as ReadinessMentalScoreRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        date: date,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<double?> createElement() {
+    return _ReadinessMentalScoreProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is ReadinessMentalScoreProvider && other.date == date;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, date.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin ReadinessMentalScoreRef on AutoDisposeFutureProviderRef<double?> {
+  /// The parameter `date` of this provider.
+  String? get date;
+}
+
+class _ReadinessMentalScoreProviderElement
+    extends AutoDisposeFutureProviderElement<double?>
+    with ReadinessMentalScoreRef {
+  _ReadinessMentalScoreProviderElement(super.provider);
+
+  @override
+  String? get date => (origin as ReadinessMentalScoreProvider).date;
+}
+
+String _$readinessBimodalScoresHash() =>
+    r'3a141280c0ea634f938e5cf7dffc4b43838ba533';
+
+/// Both bimodal scores as a single record — prevents double-fetch in UI.
+///
+/// Copied from [readinessBimodalScores].
+@ProviderFor(readinessBimodalScores)
+const readinessBimodalScoresProvider = ReadinessBimodalScoresFamily();
+
+/// Both bimodal scores as a single record — prevents double-fetch in UI.
+///
+/// Copied from [readinessBimodalScores].
+class ReadinessBimodalScoresFamily
+    extends Family<AsyncValue<({double? physical, double? mental})>> {
+  /// Both bimodal scores as a single record — prevents double-fetch in UI.
+  ///
+  /// Copied from [readinessBimodalScores].
+  const ReadinessBimodalScoresFamily();
+
+  /// Both bimodal scores as a single record — prevents double-fetch in UI.
+  ///
+  /// Copied from [readinessBimodalScores].
+  ReadinessBimodalScoresProvider call({String? date}) {
+    return ReadinessBimodalScoresProvider(date: date);
+  }
+
+  @override
+  ReadinessBimodalScoresProvider getProviderOverride(
+    covariant ReadinessBimodalScoresProvider provider,
+  ) {
+    return call(date: provider.date);
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'readinessBimodalScoresProvider';
+}
+
+/// Both bimodal scores as a single record — prevents double-fetch in UI.
+///
+/// Copied from [readinessBimodalScores].
+class ReadinessBimodalScoresProvider
+    extends AutoDisposeFutureProvider<({double? physical, double? mental})> {
+  /// Both bimodal scores as a single record — prevents double-fetch in UI.
+  ///
+  /// Copied from [readinessBimodalScores].
+  ReadinessBimodalScoresProvider({String? date})
+    : this._internal(
+        (ref) => readinessBimodalScores(
+          ref as ReadinessBimodalScoresRef,
+          date: date,
+        ),
+        from: readinessBimodalScoresProvider,
+        name: r'readinessBimodalScoresProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$readinessBimodalScoresHash,
+        dependencies: ReadinessBimodalScoresFamily._dependencies,
+        allTransitiveDependencies:
+            ReadinessBimodalScoresFamily._allTransitiveDependencies,
+        date: date,
+      );
+
+  ReadinessBimodalScoresProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.date,
+  }) : super.internal();
+
+  final String? date;
+
+  @override
+  Override overrideWith(
+    FutureOr<({double? physical, double? mental})> Function(
+      ReadinessBimodalScoresRef provider,
+    )
+    create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: ReadinessBimodalScoresProvider._internal(
+        (ref) => create(ref as ReadinessBimodalScoresRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        date: date,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<({double? physical, double? mental})>
+  createElement() {
+    return _ReadinessBimodalScoresProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is ReadinessBimodalScoresProvider && other.date == date;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, date.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin ReadinessBimodalScoresRef
+    on AutoDisposeFutureProviderRef<({double? physical, double? mental})> {
+  /// The parameter `date` of this provider.
+  String? get date;
+}
+
+class _ReadinessBimodalScoresProviderElement
+    extends
+        AutoDisposeFutureProviderElement<({double? physical, double? mental})>
+    with ReadinessBimodalScoresRef {
+  _ReadinessBimodalScoresProviderElement(super.provider);
+
+  @override
+  String? get date => (origin as ReadinessBimodalScoresProvider).date;
+}
+
+String _$readinessPhysicalComponentsHash() =>
+    r'b45ae6a96e494229e436cc8317340daa82c70001';
+
+/// Physical score component breakdown, parsed from JSON metadata.
+///
+/// Copied from [readinessPhysicalComponents].
+@ProviderFor(readinessPhysicalComponents)
+const readinessPhysicalComponentsProvider = ReadinessPhysicalComponentsFamily();
+
+/// Physical score component breakdown, parsed from JSON metadata.
+///
+/// Copied from [readinessPhysicalComponents].
+class ReadinessPhysicalComponentsFamily
+    extends Family<AsyncValue<Map<String, double>?>> {
+  /// Physical score component breakdown, parsed from JSON metadata.
+  ///
+  /// Copied from [readinessPhysicalComponents].
+  const ReadinessPhysicalComponentsFamily();
+
+  /// Physical score component breakdown, parsed from JSON metadata.
+  ///
+  /// Copied from [readinessPhysicalComponents].
+  ReadinessPhysicalComponentsProvider call({String? date}) {
+    return ReadinessPhysicalComponentsProvider(date: date);
+  }
+
+  @override
+  ReadinessPhysicalComponentsProvider getProviderOverride(
+    covariant ReadinessPhysicalComponentsProvider provider,
+  ) {
+    return call(date: provider.date);
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'readinessPhysicalComponentsProvider';
+}
+
+/// Physical score component breakdown, parsed from JSON metadata.
+///
+/// Copied from [readinessPhysicalComponents].
+class ReadinessPhysicalComponentsProvider
+    extends AutoDisposeFutureProvider<Map<String, double>?> {
+  /// Physical score component breakdown, parsed from JSON metadata.
+  ///
+  /// Copied from [readinessPhysicalComponents].
+  ReadinessPhysicalComponentsProvider({String? date})
+    : this._internal(
+        (ref) => readinessPhysicalComponents(
+          ref as ReadinessPhysicalComponentsRef,
+          date: date,
+        ),
+        from: readinessPhysicalComponentsProvider,
+        name: r'readinessPhysicalComponentsProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$readinessPhysicalComponentsHash,
+        dependencies: ReadinessPhysicalComponentsFamily._dependencies,
+        allTransitiveDependencies:
+            ReadinessPhysicalComponentsFamily._allTransitiveDependencies,
+        date: date,
+      );
+
+  ReadinessPhysicalComponentsProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.date,
+  }) : super.internal();
+
+  final String? date;
+
+  @override
+  Override overrideWith(
+    FutureOr<Map<String, double>?> Function(
+      ReadinessPhysicalComponentsRef provider,
+    )
+    create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: ReadinessPhysicalComponentsProvider._internal(
+        (ref) => create(ref as ReadinessPhysicalComponentsRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        date: date,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<Map<String, double>?> createElement() {
+    return _ReadinessPhysicalComponentsProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is ReadinessPhysicalComponentsProvider && other.date == date;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, date.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin ReadinessPhysicalComponentsRef
+    on AutoDisposeFutureProviderRef<Map<String, double>?> {
+  /// The parameter `date` of this provider.
+  String? get date;
+}
+
+class _ReadinessPhysicalComponentsProviderElement
+    extends AutoDisposeFutureProviderElement<Map<String, double>?>
+    with ReadinessPhysicalComponentsRef {
+  _ReadinessPhysicalComponentsProviderElement(super.provider);
+
+  @override
+  String? get date => (origin as ReadinessPhysicalComponentsProvider).date;
+}
+
+String _$readinessMentalComponentsHash() =>
+    r'599c96e759c1308052dba54d48734fa325d1900b';
+
+/// Mental score component breakdown, parsed from JSON metadata.
+///
+/// Copied from [readinessMentalComponents].
+@ProviderFor(readinessMentalComponents)
+const readinessMentalComponentsProvider = ReadinessMentalComponentsFamily();
+
+/// Mental score component breakdown, parsed from JSON metadata.
+///
+/// Copied from [readinessMentalComponents].
+class ReadinessMentalComponentsFamily
+    extends Family<AsyncValue<Map<String, double>?>> {
+  /// Mental score component breakdown, parsed from JSON metadata.
+  ///
+  /// Copied from [readinessMentalComponents].
+  const ReadinessMentalComponentsFamily();
+
+  /// Mental score component breakdown, parsed from JSON metadata.
+  ///
+  /// Copied from [readinessMentalComponents].
+  ReadinessMentalComponentsProvider call({String? date}) {
+    return ReadinessMentalComponentsProvider(date: date);
+  }
+
+  @override
+  ReadinessMentalComponentsProvider getProviderOverride(
+    covariant ReadinessMentalComponentsProvider provider,
+  ) {
+    return call(date: provider.date);
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'readinessMentalComponentsProvider';
+}
+
+/// Mental score component breakdown, parsed from JSON metadata.
+///
+/// Copied from [readinessMentalComponents].
+class ReadinessMentalComponentsProvider
+    extends AutoDisposeFutureProvider<Map<String, double>?> {
+  /// Mental score component breakdown, parsed from JSON metadata.
+  ///
+  /// Copied from [readinessMentalComponents].
+  ReadinessMentalComponentsProvider({String? date})
+    : this._internal(
+        (ref) => readinessMentalComponents(
+          ref as ReadinessMentalComponentsRef,
+          date: date,
+        ),
+        from: readinessMentalComponentsProvider,
+        name: r'readinessMentalComponentsProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$readinessMentalComponentsHash,
+        dependencies: ReadinessMentalComponentsFamily._dependencies,
+        allTransitiveDependencies:
+            ReadinessMentalComponentsFamily._allTransitiveDependencies,
+        date: date,
+      );
+
+  ReadinessMentalComponentsProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.date,
+  }) : super.internal();
+
+  final String? date;
+
+  @override
+  Override overrideWith(
+    FutureOr<Map<String, double>?> Function(
+      ReadinessMentalComponentsRef provider,
+    )
+    create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: ReadinessMentalComponentsProvider._internal(
+        (ref) => create(ref as ReadinessMentalComponentsRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        date: date,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<Map<String, double>?> createElement() {
+    return _ReadinessMentalComponentsProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is ReadinessMentalComponentsProvider && other.date == date;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, date.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin ReadinessMentalComponentsRef
+    on AutoDisposeFutureProviderRef<Map<String, double>?> {
+  /// The parameter `date` of this provider.
+  String? get date;
+}
+
+class _ReadinessMentalComponentsProviderElement
+    extends AutoDisposeFutureProviderElement<Map<String, double>?>
+    with ReadinessMentalComponentsRef {
+  _ReadinessMentalComponentsProviderElement(super.provider);
+
+  @override
+  String? get date => (origin as ReadinessMentalComponentsProvider).date;
+}
+
+String _$readinessSriHash() => r'f5ec67a4394200adaef8066ef3c3bbbe893edf77';
+
+/// Sleep Regularity Index value (-100 to +100) for display.
+///
+/// Copied from [readinessSri].
+@ProviderFor(readinessSri)
+const readinessSriProvider = ReadinessSriFamily();
+
+/// Sleep Regularity Index value (-100 to +100) for display.
+///
+/// Copied from [readinessSri].
+class ReadinessSriFamily extends Family<AsyncValue<double?>> {
+  /// Sleep Regularity Index value (-100 to +100) for display.
+  ///
+  /// Copied from [readinessSri].
+  const ReadinessSriFamily();
+
+  /// Sleep Regularity Index value (-100 to +100) for display.
+  ///
+  /// Copied from [readinessSri].
+  ReadinessSriProvider call({String? date}) {
+    return ReadinessSriProvider(date: date);
+  }
+
+  @override
+  ReadinessSriProvider getProviderOverride(
+    covariant ReadinessSriProvider provider,
+  ) {
+    return call(date: provider.date);
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'readinessSriProvider';
+}
+
+/// Sleep Regularity Index value (-100 to +100) for display.
+///
+/// Copied from [readinessSri].
+class ReadinessSriProvider extends AutoDisposeFutureProvider<double?> {
+  /// Sleep Regularity Index value (-100 to +100) for display.
+  ///
+  /// Copied from [readinessSri].
+  ReadinessSriProvider({String? date})
+    : this._internal(
+        (ref) => readinessSri(ref as ReadinessSriRef, date: date),
+        from: readinessSriProvider,
+        name: r'readinessSriProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$readinessSriHash,
+        dependencies: ReadinessSriFamily._dependencies,
+        allTransitiveDependencies:
+            ReadinessSriFamily._allTransitiveDependencies,
+        date: date,
+      );
+
+  ReadinessSriProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.date,
+  }) : super.internal();
+
+  final String? date;
+
+  @override
+  Override overrideWith(
+    FutureOr<double?> Function(ReadinessSriRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: ReadinessSriProvider._internal(
+        (ref) => create(ref as ReadinessSriRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        date: date,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<double?> createElement() {
+    return _ReadinessSriProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is ReadinessSriProvider && other.date == date;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, date.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin ReadinessSriRef on AutoDisposeFutureProviderRef<double?> {
+  /// The parameter `date` of this provider.
+  String? get date;
+}
+
+class _ReadinessSriProviderElement
+    extends AutoDisposeFutureProviderElement<double?>
+    with ReadinessSriRef {
+  _ReadinessSriProviderElement(super.provider);
+
+  @override
+  String? get date => (origin as ReadinessSriProvider).date;
+}
+
+String _$readinessAcwrHash() => r'd6520d15b3f9dac40142531146311d121cadaa02';
+
+/// ACWR (Acute:Chronic Workload Ratio) for display.
+///
+/// Copied from [readinessAcwr].
+@ProviderFor(readinessAcwr)
+const readinessAcwrProvider = ReadinessAcwrFamily();
+
+/// ACWR (Acute:Chronic Workload Ratio) for display.
+///
+/// Copied from [readinessAcwr].
+class ReadinessAcwrFamily extends Family<AsyncValue<double?>> {
+  /// ACWR (Acute:Chronic Workload Ratio) for display.
+  ///
+  /// Copied from [readinessAcwr].
+  const ReadinessAcwrFamily();
+
+  /// ACWR (Acute:Chronic Workload Ratio) for display.
+  ///
+  /// Copied from [readinessAcwr].
+  ReadinessAcwrProvider call({String? date}) {
+    return ReadinessAcwrProvider(date: date);
+  }
+
+  @override
+  ReadinessAcwrProvider getProviderOverride(
+    covariant ReadinessAcwrProvider provider,
+  ) {
+    return call(date: provider.date);
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'readinessAcwrProvider';
+}
+
+/// ACWR (Acute:Chronic Workload Ratio) for display.
+///
+/// Copied from [readinessAcwr].
+class ReadinessAcwrProvider extends AutoDisposeFutureProvider<double?> {
+  /// ACWR (Acute:Chronic Workload Ratio) for display.
+  ///
+  /// Copied from [readinessAcwr].
+  ReadinessAcwrProvider({String? date})
+    : this._internal(
+        (ref) => readinessAcwr(ref as ReadinessAcwrRef, date: date),
+        from: readinessAcwrProvider,
+        name: r'readinessAcwrProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$readinessAcwrHash,
+        dependencies: ReadinessAcwrFamily._dependencies,
+        allTransitiveDependencies:
+            ReadinessAcwrFamily._allTransitiveDependencies,
+        date: date,
+      );
+
+  ReadinessAcwrProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.date,
+  }) : super.internal();
+
+  final String? date;
+
+  @override
+  Override overrideWith(
+    FutureOr<double?> Function(ReadinessAcwrRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: ReadinessAcwrProvider._internal(
+        (ref) => create(ref as ReadinessAcwrRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        date: date,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<double?> createElement() {
+    return _ReadinessAcwrProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is ReadinessAcwrProvider && other.date == date;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, date.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin ReadinessAcwrRef on AutoDisposeFutureProviderRef<double?> {
+  /// The parameter `date` of this provider.
+  String? get date;
+}
+
+class _ReadinessAcwrProviderElement
+    extends AutoDisposeFutureProviderElement<double?>
+    with ReadinessAcwrRef {
+  _ReadinessAcwrProviderElement(super.provider);
+
+  @override
+  String? get date => (origin as ReadinessAcwrProvider).date;
+}
+
+String _$todayFeedbackHash() => r'c69a3722d92c6138349804f51fe0beafa00724ed';
+
+/// Today's user feedback entry (Soreness, Energy, Stress).
+/// Returns null if the user has not submitted today's check-in yet.
+///
+/// Copied from [todayFeedback].
+@ProviderFor(todayFeedback)
+final todayFeedbackProvider =
+    AutoDisposeStreamProvider<UserFeedbackViewModel?>.internal(
+      todayFeedback,
+      name: r'todayFeedbackProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$todayFeedbackHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef TodayFeedbackRef = AutoDisposeStreamProviderRef<UserFeedbackViewModel?>;
 String _$sleepScoreHash() => r'2cc1efa7991d84b4cd3b37121419e8f8c2b30209';
 
 /// Today's sleep quality score (0–100), or null if not computed.

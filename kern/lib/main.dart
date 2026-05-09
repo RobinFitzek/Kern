@@ -16,6 +16,7 @@ import 'ui/onboarding/onboarding_screen.dart';
 import 'ui/onboarding/onboarding_provider.dart';
 import 'ui/theme/app_theme.dart';
 import 'core/navigation/navigation_state.dart';
+import 'ui/widgets/readiness_checkin_sheet.dart';
 
 import 'plugins/ai/ai_feature.dart';
 
@@ -86,6 +87,8 @@ class _AppShellState extends ConsumerState<_AppShell> {
       await ref.read(pluginConfiguratorProvider.notifier).initializeDefaults();
       // 2. Start sync
       ref.read(syncNotifierProvider.notifier).initialize();
+      // 3. Show readiness check-in if needed
+      ReadinessCheckInSheet.showIfNeeded(context, ref);
     });
   }
 

@@ -145,3 +145,37 @@ class PluginSettings extends Table {
   @override
   Set<Column> get primaryKey => {pluginId};
 }
+
+// ---------------------------------------------------------------------------
+// User Feedback — daily morning check-in for Bayesian score calibration
+// ---------------------------------------------------------------------------
+
+/// Stores the user's morning self-assessment for each day.
+///
+/// One row per calendar day (ISO-8601 date string is the primary key).
+/// Used by [ReadinessPlugin] to perform Bayesian updating of the objective
+/// sensor-derived scores with subjective perception data.
+///
+/// Modelled after the Hooper Index / Acute Readiness Monitoring Scale (ARMS).
+class UserFeedback extends Table {
+  /// Calendar date in ISO-8601 format ("2026-05-09"). Acts as primary key.
+  TextColumn get date => text()();
+
+  /// Perceived muscular soreness / fatigue.
+  /// Scale 1–10: 1 = no pain / fully rested, 10 = extreme soreness.
+  RealColumn get soreness => real()();
+
+  /// Perceived energy level and mood.
+  /// Scale 1–10: 10 = highly energetic / motivated, 1 = exhausted / lethargic.
+  RealColumn get energy => real()();
+
+  /// Perceived psychological stress from external stressors.
+  /// Scale 1–10: 1 = completely relaxed, 10 = massive stress.
+  RealColumn get stress => real()();
+
+  /// UTC timestamp when the user submitted this check-in.
+  DateTimeColumn get recordedAt => dateTime()();
+
+  @override
+  Set<Column> get primaryKey => {date};
+}

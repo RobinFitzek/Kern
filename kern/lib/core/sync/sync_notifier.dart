@@ -115,10 +115,10 @@ class SyncNotifier extends _$SyncNotifier {
       state = HealthSyncState(status: SyncStatus.done, lastSyncTime: DateTime.now());
       // Step 4: run plugins — compute derived scores from fresh raw data.
       // Fire-and-forget: plugin errors don't affect the sync status shown in UI.
-      ref
-          .read(pluginRunnerProvider.notifier)
-          .runAll(todayDateString())
-          .ignore();
+      final runner = ref.read(pluginRunnerProvider.notifier);
+      runner.runAll(todayDateString()).ignore();
+      // Backfill past dates retroactively (skips dates already computed).
+      runner.runBackfill().ignore();
     } catch (e) {
       state = HealthSyncState(status: SyncStatus.error, error: e);
     }

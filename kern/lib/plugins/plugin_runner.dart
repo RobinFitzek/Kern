@@ -112,6 +112,50 @@ class PluginRunner extends _$PluginRunner {
     await fn();
     debugPrint('[PluginRunner] $name complete');
   }
+
+  /// Retroactively compute scores for past dates that have raw data but
+  /// no derived Readiness score yet. Called once after the initial sync
+  /// so existing Health Connect data is used immediately.
+  ///
+  /// Backfills up to [maxDays] days into the past (default 30).
+  Future<void> runBackfill({int maxDays = 30}) async {
+    final db = ref.read(appDatabaseProvider);
+    final readinessPlugin = ReadinessPlugin(db);
+    final sleepPlugin = SleepPlugin(db);
+    final strainPlugin = StrainPlugin(db);
+
+    final today = DateTime.now();
+    int computed = 0;
+
+    for (var i = 1; i <= maxDays; i++) {
+      final day = today.subtract(Duration(days: i));
+      final dateStr = '${day.year}-'
+          '${day.month.toString().padLeft(2, '0')}-'
+          '${day.day.toString().padLeft(2, '0')}';
+
+      // Skip if score already computed for this date
+      final existing = await db.latestDerived(
+        namespace: 'readiness',
+        key: 'physical_score',
+        date: dateStr,
+      );
+      if (existing != null) continue;
+
+      try {
+        await Future.wait([
+          readinessPlugin.run(dateStr),
+          sleepPlugin.run(dateStr),
+          strainPlugin.run(dateStr),
+        ]);
+        computed++;
+        debugPrint('[PluginRunner] backfilled $dateStr');
+      } catch (e) {
+        debugPrint('[PluginRunner] backfill failed for $dateStr: $e');
+      }
+    }
+
+    debugPrint('[PluginRunner] backfill complete: $computed dates computed');
+  }
 }
 
 // ---------------------------------------------------------------------------

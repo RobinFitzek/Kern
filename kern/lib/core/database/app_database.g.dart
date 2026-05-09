@@ -1545,6 +1545,382 @@ class PluginSettingsCompanion extends UpdateCompanion<PluginSetting> {
   }
 }
 
+class $UserFeedbackTable extends UserFeedback
+    with TableInfo<$UserFeedbackTable, UserFeedbackData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $UserFeedbackTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _dateMeta = const VerificationMeta('date');
+  @override
+  late final GeneratedColumn<String> date = GeneratedColumn<String>(
+    'date',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _sorenessMeta = const VerificationMeta(
+    'soreness',
+  );
+  @override
+  late final GeneratedColumn<double> soreness = GeneratedColumn<double>(
+    'soreness',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _energyMeta = const VerificationMeta('energy');
+  @override
+  late final GeneratedColumn<double> energy = GeneratedColumn<double>(
+    'energy',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _stressMeta = const VerificationMeta('stress');
+  @override
+  late final GeneratedColumn<double> stress = GeneratedColumn<double>(
+    'stress',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _recordedAtMeta = const VerificationMeta(
+    'recordedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> recordedAt = GeneratedColumn<DateTime>(
+    'recorded_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    date,
+    soreness,
+    energy,
+    stress,
+    recordedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'user_feedback';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<UserFeedbackData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('date')) {
+      context.handle(
+        _dateMeta,
+        date.isAcceptableOrUnknown(data['date']!, _dateMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_dateMeta);
+    }
+    if (data.containsKey('soreness')) {
+      context.handle(
+        _sorenessMeta,
+        soreness.isAcceptableOrUnknown(data['soreness']!, _sorenessMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_sorenessMeta);
+    }
+    if (data.containsKey('energy')) {
+      context.handle(
+        _energyMeta,
+        energy.isAcceptableOrUnknown(data['energy']!, _energyMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_energyMeta);
+    }
+    if (data.containsKey('stress')) {
+      context.handle(
+        _stressMeta,
+        stress.isAcceptableOrUnknown(data['stress']!, _stressMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_stressMeta);
+    }
+    if (data.containsKey('recorded_at')) {
+      context.handle(
+        _recordedAtMeta,
+        recordedAt.isAcceptableOrUnknown(data['recorded_at']!, _recordedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_recordedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {date};
+  @override
+  UserFeedbackData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return UserFeedbackData(
+      date: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}date'],
+      )!,
+      soreness: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}soreness'],
+      )!,
+      energy: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}energy'],
+      )!,
+      stress: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}stress'],
+      )!,
+      recordedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}recorded_at'],
+      )!,
+    );
+  }
+
+  @override
+  $UserFeedbackTable createAlias(String alias) {
+    return $UserFeedbackTable(attachedDatabase, alias);
+  }
+}
+
+class UserFeedbackData extends DataClass
+    implements Insertable<UserFeedbackData> {
+  /// Calendar date in ISO-8601 format ("2026-05-09"). Acts as primary key.
+  final String date;
+
+  /// Perceived muscular soreness / fatigue.
+  /// Scale 1–10: 1 = no pain / fully rested, 10 = extreme soreness.
+  final double soreness;
+
+  /// Perceived energy level and mood.
+  /// Scale 1–10: 10 = highly energetic / motivated, 1 = exhausted / lethargic.
+  final double energy;
+
+  /// Perceived psychological stress from external stressors.
+  /// Scale 1–10: 1 = completely relaxed, 10 = massive stress.
+  final double stress;
+
+  /// UTC timestamp when the user submitted this check-in.
+  final DateTime recordedAt;
+  const UserFeedbackData({
+    required this.date,
+    required this.soreness,
+    required this.energy,
+    required this.stress,
+    required this.recordedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['date'] = Variable<String>(date);
+    map['soreness'] = Variable<double>(soreness);
+    map['energy'] = Variable<double>(energy);
+    map['stress'] = Variable<double>(stress);
+    map['recorded_at'] = Variable<DateTime>(recordedAt);
+    return map;
+  }
+
+  UserFeedbackCompanion toCompanion(bool nullToAbsent) {
+    return UserFeedbackCompanion(
+      date: Value(date),
+      soreness: Value(soreness),
+      energy: Value(energy),
+      stress: Value(stress),
+      recordedAt: Value(recordedAt),
+    );
+  }
+
+  factory UserFeedbackData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return UserFeedbackData(
+      date: serializer.fromJson<String>(json['date']),
+      soreness: serializer.fromJson<double>(json['soreness']),
+      energy: serializer.fromJson<double>(json['energy']),
+      stress: serializer.fromJson<double>(json['stress']),
+      recordedAt: serializer.fromJson<DateTime>(json['recordedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'date': serializer.toJson<String>(date),
+      'soreness': serializer.toJson<double>(soreness),
+      'energy': serializer.toJson<double>(energy),
+      'stress': serializer.toJson<double>(stress),
+      'recordedAt': serializer.toJson<DateTime>(recordedAt),
+    };
+  }
+
+  UserFeedbackData copyWith({
+    String? date,
+    double? soreness,
+    double? energy,
+    double? stress,
+    DateTime? recordedAt,
+  }) => UserFeedbackData(
+    date: date ?? this.date,
+    soreness: soreness ?? this.soreness,
+    energy: energy ?? this.energy,
+    stress: stress ?? this.stress,
+    recordedAt: recordedAt ?? this.recordedAt,
+  );
+  UserFeedbackData copyWithCompanion(UserFeedbackCompanion data) {
+    return UserFeedbackData(
+      date: data.date.present ? data.date.value : this.date,
+      soreness: data.soreness.present ? data.soreness.value : this.soreness,
+      energy: data.energy.present ? data.energy.value : this.energy,
+      stress: data.stress.present ? data.stress.value : this.stress,
+      recordedAt: data.recordedAt.present
+          ? data.recordedAt.value
+          : this.recordedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('UserFeedbackData(')
+          ..write('date: $date, ')
+          ..write('soreness: $soreness, ')
+          ..write('energy: $energy, ')
+          ..write('stress: $stress, ')
+          ..write('recordedAt: $recordedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(date, soreness, energy, stress, recordedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is UserFeedbackData &&
+          other.date == this.date &&
+          other.soreness == this.soreness &&
+          other.energy == this.energy &&
+          other.stress == this.stress &&
+          other.recordedAt == this.recordedAt);
+}
+
+class UserFeedbackCompanion extends UpdateCompanion<UserFeedbackData> {
+  final Value<String> date;
+  final Value<double> soreness;
+  final Value<double> energy;
+  final Value<double> stress;
+  final Value<DateTime> recordedAt;
+  final Value<int> rowid;
+  const UserFeedbackCompanion({
+    this.date = const Value.absent(),
+    this.soreness = const Value.absent(),
+    this.energy = const Value.absent(),
+    this.stress = const Value.absent(),
+    this.recordedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  UserFeedbackCompanion.insert({
+    required String date,
+    required double soreness,
+    required double energy,
+    required double stress,
+    required DateTime recordedAt,
+    this.rowid = const Value.absent(),
+  }) : date = Value(date),
+       soreness = Value(soreness),
+       energy = Value(energy),
+       stress = Value(stress),
+       recordedAt = Value(recordedAt);
+  static Insertable<UserFeedbackData> custom({
+    Expression<String>? date,
+    Expression<double>? soreness,
+    Expression<double>? energy,
+    Expression<double>? stress,
+    Expression<DateTime>? recordedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (date != null) 'date': date,
+      if (soreness != null) 'soreness': soreness,
+      if (energy != null) 'energy': energy,
+      if (stress != null) 'stress': stress,
+      if (recordedAt != null) 'recorded_at': recordedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  UserFeedbackCompanion copyWith({
+    Value<String>? date,
+    Value<double>? soreness,
+    Value<double>? energy,
+    Value<double>? stress,
+    Value<DateTime>? recordedAt,
+    Value<int>? rowid,
+  }) {
+    return UserFeedbackCompanion(
+      date: date ?? this.date,
+      soreness: soreness ?? this.soreness,
+      energy: energy ?? this.energy,
+      stress: stress ?? this.stress,
+      recordedAt: recordedAt ?? this.recordedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (date.present) {
+      map['date'] = Variable<String>(date.value);
+    }
+    if (soreness.present) {
+      map['soreness'] = Variable<double>(soreness.value);
+    }
+    if (energy.present) {
+      map['energy'] = Variable<double>(energy.value);
+    }
+    if (stress.present) {
+      map['stress'] = Variable<double>(stress.value);
+    }
+    if (recordedAt.present) {
+      map['recorded_at'] = Variable<DateTime>(recordedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('UserFeedbackCompanion(')
+          ..write('date: $date, ')
+          ..write('soreness: $soreness, ')
+          ..write('energy: $energy, ')
+          ..write('stress: $stress, ')
+          ..write('recordedAt: $recordedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -1552,6 +1928,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $DerivedEntriesTable derivedEntries = $DerivedEntriesTable(this);
   late final $SyncStatesTable syncStates = $SyncStatesTable(this);
   late final $PluginSettingsTable pluginSettings = $PluginSettingsTable(this);
+  late final $UserFeedbackTable userFeedback = $UserFeedbackTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -1561,6 +1938,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     derivedEntries,
     syncStates,
     pluginSettings,
+    userFeedback,
   ];
 }
 
@@ -2378,6 +2756,208 @@ typedef $$PluginSettingsTableProcessedTableManager =
       PluginSetting,
       PrefetchHooks Function()
     >;
+typedef $$UserFeedbackTableCreateCompanionBuilder =
+    UserFeedbackCompanion Function({
+      required String date,
+      required double soreness,
+      required double energy,
+      required double stress,
+      required DateTime recordedAt,
+      Value<int> rowid,
+    });
+typedef $$UserFeedbackTableUpdateCompanionBuilder =
+    UserFeedbackCompanion Function({
+      Value<String> date,
+      Value<double> soreness,
+      Value<double> energy,
+      Value<double> stress,
+      Value<DateTime> recordedAt,
+      Value<int> rowid,
+    });
+
+class $$UserFeedbackTableFilterComposer
+    extends Composer<_$AppDatabase, $UserFeedbackTable> {
+  $$UserFeedbackTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get date => $composableBuilder(
+    column: $table.date,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get soreness => $composableBuilder(
+    column: $table.soreness,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get energy => $composableBuilder(
+    column: $table.energy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get stress => $composableBuilder(
+    column: $table.stress,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get recordedAt => $composableBuilder(
+    column: $table.recordedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$UserFeedbackTableOrderingComposer
+    extends Composer<_$AppDatabase, $UserFeedbackTable> {
+  $$UserFeedbackTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get date => $composableBuilder(
+    column: $table.date,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get soreness => $composableBuilder(
+    column: $table.soreness,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get energy => $composableBuilder(
+    column: $table.energy,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get stress => $composableBuilder(
+    column: $table.stress,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get recordedAt => $composableBuilder(
+    column: $table.recordedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$UserFeedbackTableAnnotationComposer
+    extends Composer<_$AppDatabase, $UserFeedbackTable> {
+  $$UserFeedbackTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get date =>
+      $composableBuilder(column: $table.date, builder: (column) => column);
+
+  GeneratedColumn<double> get soreness =>
+      $composableBuilder(column: $table.soreness, builder: (column) => column);
+
+  GeneratedColumn<double> get energy =>
+      $composableBuilder(column: $table.energy, builder: (column) => column);
+
+  GeneratedColumn<double> get stress =>
+      $composableBuilder(column: $table.stress, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get recordedAt => $composableBuilder(
+    column: $table.recordedAt,
+    builder: (column) => column,
+  );
+}
+
+class $$UserFeedbackTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $UserFeedbackTable,
+          UserFeedbackData,
+          $$UserFeedbackTableFilterComposer,
+          $$UserFeedbackTableOrderingComposer,
+          $$UserFeedbackTableAnnotationComposer,
+          $$UserFeedbackTableCreateCompanionBuilder,
+          $$UserFeedbackTableUpdateCompanionBuilder,
+          (
+            UserFeedbackData,
+            BaseReferences<_$AppDatabase, $UserFeedbackTable, UserFeedbackData>,
+          ),
+          UserFeedbackData,
+          PrefetchHooks Function()
+        > {
+  $$UserFeedbackTableTableManager(_$AppDatabase db, $UserFeedbackTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$UserFeedbackTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$UserFeedbackTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$UserFeedbackTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> date = const Value.absent(),
+                Value<double> soreness = const Value.absent(),
+                Value<double> energy = const Value.absent(),
+                Value<double> stress = const Value.absent(),
+                Value<DateTime> recordedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => UserFeedbackCompanion(
+                date: date,
+                soreness: soreness,
+                energy: energy,
+                stress: stress,
+                recordedAt: recordedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String date,
+                required double soreness,
+                required double energy,
+                required double stress,
+                required DateTime recordedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => UserFeedbackCompanion.insert(
+                date: date,
+                soreness: soreness,
+                energy: energy,
+                stress: stress,
+                recordedAt: recordedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$UserFeedbackTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $UserFeedbackTable,
+      UserFeedbackData,
+      $$UserFeedbackTableFilterComposer,
+      $$UserFeedbackTableOrderingComposer,
+      $$UserFeedbackTableAnnotationComposer,
+      $$UserFeedbackTableCreateCompanionBuilder,
+      $$UserFeedbackTableUpdateCompanionBuilder,
+      (
+        UserFeedbackData,
+        BaseReferences<_$AppDatabase, $UserFeedbackTable, UserFeedbackData>,
+      ),
+      UserFeedbackData,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -2390,4 +2970,6 @@ class $AppDatabaseManager {
       $$SyncStatesTableTableManager(_db, _db.syncStates);
   $$PluginSettingsTableTableManager get pluginSettings =>
       $$PluginSettingsTableTableManager(_db, _db.pluginSettings);
+  $$UserFeedbackTableTableManager get userFeedback =>
+      $$UserFeedbackTableTableManager(_db, _db.userFeedback);
 }

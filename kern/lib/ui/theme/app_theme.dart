@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 class AppTheme {
   // Brand Colors
   static const Color primaryBlue = Color(0xFF1A73E8);
@@ -144,14 +146,29 @@ final themeModeProvider = StateNotifierProvider<ThemeModeNotifier, ThemeMode>((r
 });
 
 class ThemeModeNotifier extends StateNotifier<ThemeMode> {
-  ThemeModeNotifier() : super(ThemeMode.light);
+  static const _key = 'kern_theme_mode';
 
-  void toggle() {
-    state = state == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+  ThemeModeNotifier() : super(ThemeMode.light) {
+    _load();
   }
-  
-  void setMode(ThemeMode mode) {
+
+  Future<void> _load() async {
+    final prefs = await SharedPreferences.getInstance();
+    final stored = prefs.getString(_key);
+    state = stored == 'dark' ? ThemeMode.dark : ThemeMode.light;
+  }
+
+  Future<void> toggle() async {
+    final newMode = state == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+    state = newMode;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_key, newMode == ThemeMode.dark ? 'dark' : 'light');
+  }
+
+  Future<void> setMode(ThemeMode mode) async {
     state = mode;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_key, mode == ThemeMode.dark ? 'dark' : 'light');
   }
 }
 
@@ -160,13 +177,26 @@ final useDynamicColorProvider = StateNotifierProvider<DynamicColorNotifier, bool
 });
 
 class DynamicColorNotifier extends StateNotifier<bool> {
-  DynamicColorNotifier() : super(true);
+  static const _key = 'kern_dynamic_color';
 
-  void toggle() {
-    state = !state;
+  DynamicColorNotifier() : super(true) {
+    _load();
   }
 
-  void setMode(bool useDynamicColor) {
+  Future<void> _load() async {
+    final prefs = await SharedPreferences.getInstance();
+    state = prefs.getBool(_key) ?? true;
+  }
+
+  Future<void> toggle() async {
+    state = !state;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_key, state);
+  }
+
+  Future<void> setMode(bool useDynamicColor) async {
     state = useDynamicColor;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_key, state);
   }
 }

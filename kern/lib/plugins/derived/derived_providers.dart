@@ -303,3 +303,53 @@ Future<Map<String, String>?> aiInsight(Ref ref, {String? date}) async {
     return null;
   }
 }
+
+// ---------------------------------------------------------------------------
+// Calibration & Historical
+// ---------------------------------------------------------------------------
+
+/// Counts distinct days with raw data per type (for calibration progress UI).
+@riverpod
+Future<({int hrvDays, int sleepNights})> readinessDataCounts(Ref ref) async {
+  final db = ref.watch(appDatabaseProvider);
+  final counts = await db.rawDataDateCounts();
+  return (
+    hrvDays: counts['hrv'] ?? 0,
+    sleepNights: counts['sleep_deep'] ?? 0,
+  );
+}
+
+/// Historical readiness scores over [days] for trend chart.
+@riverpod
+Future<List<({String date, double? physical, double? mental})>>
+    historicalReadinessScores(Ref ref, {int days = 14}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final end = DateTime.now();
+  final start = end.subtract(Duration(days: days));
+
+  final startStr =
+      '${start.year}-${start.month.toString().padLeft(2, '0')}-${start.day.toString().padLeft(2, '0')}';
+  final endStr =
+      '${end.year}-${end.month.toString().padLeft(2, '0')}-${end.day.toString().padLeft(2, '0')}';
+
+  final physEntries = await db.derivedForDateRange(
+    namespace: DerivedNamespace.readiness,
+    key: ReadinessKey.physicalScore,
+    startDate: startStr,
+    endDate: endStr,
+  );
+  final mentEntries = await db.derivedForDateRange(
+    namespace: DerivedNamespace.readiness,
+    key: ReadinessKey.mentalScore,
+    startDate: startStr,
+    endDate: endStr,
+  );
+
+  final physMap = {for (final e in physEntries) e.date: e.value};
+  final mentMap = {for (final e in mentEntries) e.date: e.value};
+
+  final allDates = {...physMap.keys, ...mentMap.keys}.toList()..sort();
+  return allDates
+      .map((d) => (date: d, physical: physMap[d], mental: mentMap[d]))
+      .toList();
+}

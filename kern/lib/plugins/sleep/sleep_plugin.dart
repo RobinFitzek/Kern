@@ -44,9 +44,9 @@ class SleepPlugin {
       to: now,
     );
 
-    final deepMins = deepEntries.fold(0.0, (s, e) => s + e.value);
-    final remMins = remEntries.fold(0.0, (s, e) => s + e.value);
-    final lightMins = lightEntries.fold(0.0, (s, e) => s + e.value);
+    final deepMins = _sumDuration(deepEntries);
+    final remMins = _sumDuration(remEntries);
+    final lightMins = _sumDuration(lightEntries);
     final totalMins = deepMins + remMins + lightMins;
 
     if (totalMins == 0) {
@@ -84,5 +84,20 @@ class SleepPlugin {
       write(SleepKey.lightMinutes, lightMins),
       write(SleepKey.totalMinutes, totalMins),
     ]);
+  }
+
+  /// Sums the duration of sleep stage entries in minutes from timestamps.
+  /// Uses timestampEnd - timestamp; falls back to value field for legacy data.
+  double _sumDuration(List<RawEntry> entries) {
+    double total = 0.0;
+    for (final e in entries) {
+      if (e.timestampEnd != null) {
+        final mins = e.timestampEnd!.difference(e.timestamp).inSeconds / 60.0;
+        if (mins > 0 && mins < 480) total += mins;
+      } else {
+        if (e.value > 0 && e.value < 480) total += e.value;
+      }
+    }
+    return total;
   }
 }

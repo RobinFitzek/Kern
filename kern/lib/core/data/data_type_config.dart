@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import '../../core/database/tables.dart';
 
 enum TimeGranularity { day, week, month, year }

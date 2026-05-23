@@ -2,9 +2,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'package:drift/drift.dart';
 
-import '../../core/database/tables.dart';
 import '../../core/database/app_database.dart';
-import '../../core/services/service_providers.dart';
 import '../../plugins/raw/raw_providers.dart';
 import '../../core/data/data_type_config.dart';
 import 'data_explorer_state.dart';

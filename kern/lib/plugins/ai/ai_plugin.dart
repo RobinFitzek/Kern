@@ -79,8 +79,31 @@ Return your response strictly in the following JSON format without Markdown form
 
     } catch (e) {
       debugPrint('[AiPlugin] Error generating insight: $e');
-      await _saveInsight(date, 'Insight Unavailable', 'Could not generate your daily coaching insight at this time.');
+      // Only save fallback if no cached insight exists for today.
+      final cached = await _getInsightForDate(date);
+      if (cached == null) {
+        await _saveInsight(date, 'Insight Unavailable',
+            'Could not generate your daily coaching insight at this time.');
+      }
       rethrow;
+    }
+  }
+
+  Future<Map<String, String>?> _getInsightForDate(String date) async {
+    final entry = await db.latestDerived(
+      namespace: DerivedNamespace.ai,
+      key: 'todays_insight',
+      date: date,
+    );
+    if (entry == null || entry.metadata == null) return null;
+    try {
+      final Map<String, dynamic> data = jsonDecode(entry.metadata!);
+      return {
+        'title': data[AiKey.insightTitle] as String? ?? 'Daily Insight',
+        'text': data[AiKey.insightText] as String? ?? '',
+      };
+    } catch (_) {
+      return null;
     }
   }
 

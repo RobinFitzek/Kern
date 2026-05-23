@@ -12,51 +12,62 @@ class DashboardSkeleton extends StatelessWidget {
       child: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
         children: [
-          // Header (Title & badge)
+          // Status bar chip
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(width: 80, height: 32, decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8))),
+              Container(
+                width: 180,
+                height: 28,
+                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
+              ),
             ],
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 24),
 
-          // Main Header Row (Carousel items)
+          // Main zone (Readiness rings or calibration banner)
+          Container(
+            height: 200,
+            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(24)),
+          ),
+          const SizedBox(height: 24),
+
+          // Insight row (Sleep + Strain side by side)
           Row(
             children: [
               Expanded(
-                flex: 2,
                 child: Container(
-                  height: 100,
+                  height: 110,
                   decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(24)),
                 ),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 12),
               Expanded(
                 child: Container(
-                  height: 100,
+                  height: 110,
                   decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(24)),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 24),
 
-          // Main Zone Large Card (e.g. Readiness)
+          // Recommendation card
           Container(
-            height: 250,
-            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(32)),
+            height: 130,
+            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(24)),
           ),
           const SizedBox(height: 32),
 
-          // Footer Cards (e.g. Sleep / Strain)
-          Container(
-            height: 120,
-            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(24)),
+          // Trend chart
+          Row(
+            children: [
+              Container(width: 80, height: 18, decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(4))),
+            ],
           ),
           const SizedBox(height: 16),
           Container(
-            height: 120,
+            height: 180,
             decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(24)),
           ),
         ],

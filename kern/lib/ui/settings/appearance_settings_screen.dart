@@ -39,7 +39,7 @@ class AppearanceSettingsScreen extends ConsumerWidget {
                     title: const Text('Dark Mode'),
                     subtitle: const Text('Switch between light and dark theme'),
                     value: isDark,
-                    activeColor: theme.colorScheme.primary,
+                    activeTrackColor: theme.colorScheme.primary,
                     onChanged: (val) {
                       ref.read(themeModeProvider.notifier).setMode(val ? ThemeMode.dark : ThemeMode.light);
                     },
@@ -53,7 +53,7 @@ class AppearanceSettingsScreen extends ConsumerWidget {
                     title: const Text('Material 3 Dynamic Colors'),
                     subtitle: const Text('Extract colors from wallpaper'),
                     value: useDynamicColor,
-                    activeColor: theme.colorScheme.primary,
+                    activeTrackColor: theme.colorScheme.primary,
                     onChanged: (val) {
                       ref.read(useDynamicColorProvider.notifier).setMode(val);
                     },

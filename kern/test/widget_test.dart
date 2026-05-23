@@ -1,30 +1,34 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:kern/main.dart';
+import 'package:kern/plugins/readiness/readiness_algorithm.dart';
 
+/// Smoke test: ensures the algorithm module loads without errors
+/// and produces valid output for nominal inputs.
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const KernApp());
+  test('ReadinessAlgorithm produces valid score range', () {
+    const algo = ReadinessAlgorithm();
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    final inputs = ReadinessInputs(
+      zHrv: 1.0,
+      zRhr: -1.0,
+      zDeep: 1.0,
+      zTst: 1.0,
+      zRem: 1.0,
+      zCv: -1.0,
+      sri: 50.0,
+      sleepEfficiency: 0.9,
+      acwrValue: 1.0,
+      hasHrvData: true,
+      hasSleepData: true,
+      sriDaysAvailable: 14,
+    );
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    final result = algo.compute(inputs: inputs);
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    expect(result.physFinal, greaterThanOrEqualTo(0.0));
+    expect(result.physFinal, lessThanOrEqualTo(100.0));
+    expect(result.mentFinal, greaterThanOrEqualTo(0.0));
+    expect(result.mentFinal, lessThanOrEqualTo(100.0));
+    expect(result.isCalibrating, false);
   });
 }

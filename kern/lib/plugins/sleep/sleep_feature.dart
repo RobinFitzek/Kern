@@ -45,6 +45,9 @@ class _SleepFooterWidget extends ConsumerWidget {
     final scoreAsync = ref.watch(sleepScoreProvider());
     final minsAsync = ref.watch(sleepMinutesProvider());
 
+    final score = scoreAsync.valueOrNull;
+    final mins = minsAsync.valueOrNull;
+
     return BouncingCard(
       onTap: () {},
       child: Card(
@@ -76,19 +79,25 @@ class _SleepFooterWidget extends ConsumerWidget {
                   children: [
                     const Text('Sleep score', style: TextStyle(fontSize: 13, color: AppTheme.textSecondary, fontWeight: FontWeight.w500)),
                     const SizedBox(height: 4),
-                    scoreAsync.when(
-                      data: (score) => Text(
-                        score?.toStringAsFixed(0) ?? '--',
-                        style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
-                      ),
-                      loading: () => const CircularProgressIndicator(),
-                      error: (_, __) => const SizedBox(),
+                    Text(
+                      score?.toStringAsFixed(0) ?? '--',
+                      style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
                     ),
                     const SizedBox(height: 4),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                      decoration: BoxDecoration(color: AppTheme.accentMint, borderRadius: BorderRadius.circular(8)),
-                      child: const Text('Good', style: TextStyle(color: AppTheme.textMint, fontSize: 11, fontWeight: FontWeight.w600)),
+                      decoration: BoxDecoration(
+                        color: (score != null && score >= 70) ? AppTheme.accentMint : (score != null && score >= 50) ? AppTheme.accentOrange : AppTheme.accentPink,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        (score != null && score >= 70) ? 'Gut' : (score != null && score >= 50) ? 'Mittel' : (score != null ? 'Niedrig' : '--'),
+                        style: TextStyle(
+                          color: (score != null && score >= 70) ? AppTheme.textMint : (score != null && score >= 50) ? AppTheme.textOrange : AppTheme.textPink,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -104,14 +113,24 @@ class _SleepFooterWidget extends ConsumerWidget {
                         final mins = (m.total % 60).floor();
                         return Text('${hrs}h ${mins}m', style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: AppTheme.textPrimary));
                       },
-                      loading: () => const Text('Loading...'),
-                      error: (_, __) => const Text('Error'),
+                      loading: () => const CircularProgressIndicator(),
+                      error: (_, __) => const SizedBox(),
                     ),
                     const SizedBox(height: 4),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                      decoration: BoxDecoration(color: AppTheme.accentOrange, borderRadius: BorderRadius.circular(8)),
-                      child: const Text('Goal not met', style: TextStyle(color: AppTheme.textOrange, fontSize: 11, fontWeight: FontWeight.w600)),
+                      decoration: BoxDecoration(
+                        color: (mins != null && mins.total >= 420) ? AppTheme.accentMint : AppTheme.accentOrange,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        (mins != null && mins.total >= 420) ? 'Ziel erreicht' : 'Ziel verfehlt',
+                        style: TextStyle(
+                          color: (mins != null && mins.total >= 420) ? AppTheme.textMint : AppTheme.textOrange,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -184,83 +203,108 @@ class SleepDetailScreen extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
         children: [
-          Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF2E243A) : AppTheme.accentPurple,
-              borderRadius: BorderRadius.circular(32),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'A good night\'s sleep',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w700,
-                  ),
+          minsAsync.when(
+            data: (m) {
+              final hrs = (m.total / 60).floor();
+              final mins = (m.total % 60).floor();
+              final goalMet = m.total >= 420;
+              return Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF2E243A) : AppTheme.accentPurple,
+                  borderRadius: BorderRadius.circular(32),
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  'You got the quality sleep needed to build a strong foundation for your day',
-                  style: TextStyle(
-                    fontSize: 15,
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
-                    height: 1.4,
-                  ),
-                ),
-                const SizedBox(height: 32),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('Sleep score', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
-                        const SizedBox(height: 4),
-                        scoreAsync.when(
-                          data: (score) => Text(
-                            score?.toStringAsFixed(0) ?? '--',
-                            style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface),
-                          ),
-                          loading: () => const CircularProgressIndicator(),
-                          error: (_, __) => const Text('--'),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                          decoration: BoxDecoration(color: isDark ? const Color(0xFF1B2E24) : AppTheme.accentMint, borderRadius: BorderRadius.circular(12)),
-                          child: const Text('Excellent', style: TextStyle(color: AppTheme.textMint, fontSize: 12, fontWeight: FontWeight.w600)),
-                        ),
-                      ],
+                    Text(
+                      goalMet ? 'Gute Nacht' : 'Schlaf optimieren',
+                      style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    const SizedBox(height: 8),
+                    Text(
+                      goalMet
+                          ? 'Du hast genug Schlaf für eine solide Erholung bekommen.'
+                          : 'Deine Schlafdauer lag unter dem Ziel von 7 Stunden.',
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
+                        height: 1.4,
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('Sleep duration', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
-                        const SizedBox(height: 4),
-                        minsAsync.when(
-                          data: (m) {
-                            final hrs = (m.total / 60).floor();
-                            final mins = (m.total % 60).floor();
-                            return Text(
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('Sleep score', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+                            const SizedBox(height: 4),
+                            scoreAsync.when(
+                              data: (score) => Text(
+                                score?.toStringAsFixed(0) ?? '--',
+                                style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface),
+                              ),
+                              loading: () => const CircularProgressIndicator(),
+                              error: (_, __) => const Text('--'),
+                            ),
+                            scoreAsync.when(
+                              data: (score) {
+                                final label = score != null
+                                    ? (score >= 70 ? 'Gut' : score >= 50 ? 'Mittel' : 'Niedrig')
+                                    : '--';
+                                final labelColor = score != null
+                                    ? (score >= 70 ? AppTheme.textMint : score >= 50 ? AppTheme.textOrange : AppTheme.textPink)
+                                    : theme.colorScheme.onSurface;
+                                return Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: isDark ? const Color(0xFF1B2E24) : AppTheme.accentMint,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Text(label, style: TextStyle(color: labelColor, fontSize: 12, fontWeight: FontWeight.w600)),
+                                );
+                              },
+                              loading: () => const SizedBox(),
+                              error: (_, __) => const SizedBox(),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('Sleep duration', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+                            const SizedBox(height: 4),
+                            Text(
                               '${hrs}h ${mins}m',
                               style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface),
-                            );
-                          },
-                          loading: () => const CircularProgressIndicator(),
-                          error: (_, __) => const Text('--'),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                          decoration: BoxDecoration(color: isDark ? const Color(0xFF1B2E24) : AppTheme.accentMint, borderRadius: BorderRadius.circular(12)),
-                          child: const Text('Excellent', style: TextStyle(color: AppTheme.textMint, fontSize: 12, fontWeight: FontWeight.w600)),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: goalMet ? (isDark ? const Color(0xFF1B2E24) : AppTheme.accentMint) : (isDark ? const Color(0xFF3C0D0D) : AppTheme.accentPink),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                goalMet ? 'Ziel erreicht' : 'Ziel: 7h',
+                                style: TextStyle(
+                                  color: goalMet ? AppTheme.textMint : AppTheme.textPink,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
                   ],
                 ),
-              ],
-            ),
+              );
+            },
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (_, __) => const Center(child: Text('Fehler beim Laden')),
           ),
           const SizedBox(height: 24),
           const Text(
@@ -268,16 +312,51 @@ class SleepDetailScreen extends ConsumerWidget {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
-          _buildStageCard(context, 'Awake', '1h 12m', Colors.pinkAccent),
-          const SizedBox(height: 12),
-          _buildStageCard(context, 'REM', '2h 05m', Colors.purpleAccent),
-          const SizedBox(height: 12),
-          _buildStageCard(context, 'Light', '4h 15m', Colors.lightBlueAccent),
-          const SizedBox(height: 12),
-          _buildStageCard(context, 'Deep', '1h 30m', Colors.blueAccent),
+          minsAsync.when(
+            data: (m) {
+              final deep = m.deep;
+              final rem = m.rem;
+              final light = m.light;
+              final awakeMins = (m.total - (deep + rem + light)).clamp(0.0, double.infinity);
+
+              if (deep == 0 && rem == 0 && light == 0) {
+                return const Center(
+                  child: Text('Keine Schlafphasen-Daten verfügbar', style: TextStyle(color: AppTheme.textTertiary)),
+                );
+              }
+
+              return Column(
+                children: [
+                  if (awakeMins > 0)
+                    _buildStageCard(context, 'Wach', _formatMinutes(awakeMins), Colors.pinkAccent),
+                  if (rem > 0) ...[
+                    const SizedBox(height: 12),
+                    _buildStageCard(context, 'REM', _formatMinutes(rem), Colors.purpleAccent),
+                  ],
+                  if (light > 0) ...[
+                    const SizedBox(height: 12),
+                    _buildStageCard(context, 'Leicht', _formatMinutes(light), Colors.lightBlueAccent),
+                  ],
+                  if (deep > 0) ...[
+                    const SizedBox(height: 12),
+                    _buildStageCard(context, 'Tief', _formatMinutes(deep), Colors.blueAccent),
+                  ],
+                ],
+              );
+            },
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (_, __) => const SizedBox(),
+          ),
         ],
       ),
     );
+  }
+
+  String _formatMinutes(double totalMinutes) {
+    final hrs = (totalMinutes / 60).floor();
+    final mins = (totalMinutes % 60).floor();
+    if (hrs > 0) return '${hrs}h ${mins}m';
+    return '${mins}m';
   }
 
   Widget _buildStageCard(BuildContext context, String title, String duration, Color color) {
@@ -321,22 +400,22 @@ class SleepSettingsScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         children: [
           ListTile(
-            title: const Text('Sleep Goal'),
-            subtitle: const Text('8 hours 0 minutes'),
+            title: const Text('Ziel'),
+            subtitle: const Text('7 Stunden'),
             trailing: const Icon(Icons.chevron_right),
-            onTap: () {},
+            enabled: false,
           ),
           SwitchListTile(
-            title: const Text('Bedtime Reminder'),
-            subtitle: const Text('Notify me 30 mins before bedtime'),
-            value: true,
-            onChanged: (val) {},
+            title: const Text('Schlafenszeit-Erinnerung'),
+            subtitle: const Text('Demnächst verfügbar'),
+            value: false,
+            onChanged: null,
           ),
           SwitchListTile(
             title: const Text('Smart Alarm'),
-            subtitle: const Text('Wake me up in light sleep phase'),
+            subtitle: const Text('Demnächst verfügbar'),
             value: false,
-            onChanged: (val) {},
+            onChanged: null,
           ),
         ],
       ),

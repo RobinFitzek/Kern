@@ -68,6 +68,34 @@ class OnboardingScreen extends ConsumerWidget {
                 textAlign: TextAlign.center,
               ),
               
+              const SizedBox(height: 24),
+
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE6F4EA),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: const Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(Icons.hourglass_top_rounded, color: Color(0xFF137333), size: 20),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'Deine ersten Readiness Scores erscheinen nach 7–14 Tagen. '
+                        'Je länger du dein Wearable trägst, desto genauer werden deine Werte.',
+                        style: TextStyle(
+                          fontSize: 13,
+                          height: 1.5,
+                          color: Colors.black54,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              
               const Spacer(),
               
               if (syncState.status == SyncStatus.permissionDenied)

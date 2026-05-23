@@ -1987,5 +1987,184 @@ class _AiInsightProviderElement
   String? get date => (origin as AiInsightProvider).date;
 }
 
+String _$readinessDataCountsHash() =>
+    r'4d09229f5ce7ddf3ed30f0830ab795629bfaa48c';
+
+/// Counts distinct days with raw data per type (for calibration progress UI).
+///
+/// Copied from [readinessDataCounts].
+@ProviderFor(readinessDataCounts)
+final readinessDataCountsProvider =
+    AutoDisposeFutureProvider<({int hrvDays, int sleepNights})>.internal(
+      readinessDataCounts,
+      name: r'readinessDataCountsProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$readinessDataCountsHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef ReadinessDataCountsRef =
+    AutoDisposeFutureProviderRef<({int hrvDays, int sleepNights})>;
+String _$historicalReadinessScoresHash() =>
+    r'542ea85ff9d4037158f993572981f9f8d6ebf270';
+
+/// Historical readiness scores over [days] for trend chart.
+///
+/// Copied from [historicalReadinessScores].
+@ProviderFor(historicalReadinessScores)
+const historicalReadinessScoresProvider = HistoricalReadinessScoresFamily();
+
+/// Historical readiness scores over [days] for trend chart.
+///
+/// Copied from [historicalReadinessScores].
+class HistoricalReadinessScoresFamily
+    extends
+        Family<
+          AsyncValue<List<({String date, double? physical, double? mental})>>
+        > {
+  /// Historical readiness scores over [days] for trend chart.
+  ///
+  /// Copied from [historicalReadinessScores].
+  const HistoricalReadinessScoresFamily();
+
+  /// Historical readiness scores over [days] for trend chart.
+  ///
+  /// Copied from [historicalReadinessScores].
+  HistoricalReadinessScoresProvider call({int days = 14}) {
+    return HistoricalReadinessScoresProvider(days: days);
+  }
+
+  @override
+  HistoricalReadinessScoresProvider getProviderOverride(
+    covariant HistoricalReadinessScoresProvider provider,
+  ) {
+    return call(days: provider.days);
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'historicalReadinessScoresProvider';
+}
+
+/// Historical readiness scores over [days] for trend chart.
+///
+/// Copied from [historicalReadinessScores].
+class HistoricalReadinessScoresProvider
+    extends
+        AutoDisposeFutureProvider<
+          List<({String date, double? physical, double? mental})>
+        > {
+  /// Historical readiness scores over [days] for trend chart.
+  ///
+  /// Copied from [historicalReadinessScores].
+  HistoricalReadinessScoresProvider({int days = 14})
+    : this._internal(
+        (ref) => historicalReadinessScores(
+          ref as HistoricalReadinessScoresRef,
+          days: days,
+        ),
+        from: historicalReadinessScoresProvider,
+        name: r'historicalReadinessScoresProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$historicalReadinessScoresHash,
+        dependencies: HistoricalReadinessScoresFamily._dependencies,
+        allTransitiveDependencies:
+            HistoricalReadinessScoresFamily._allTransitiveDependencies,
+        days: days,
+      );
+
+  HistoricalReadinessScoresProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.days,
+  }) : super.internal();
+
+  final int days;
+
+  @override
+  Override overrideWith(
+    FutureOr<List<({String date, double? physical, double? mental})>> Function(
+      HistoricalReadinessScoresRef provider,
+    )
+    create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: HistoricalReadinessScoresProvider._internal(
+        (ref) => create(ref as HistoricalReadinessScoresRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        days: days,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<
+    List<({String date, double? physical, double? mental})>
+  >
+  createElement() {
+    return _HistoricalReadinessScoresProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is HistoricalReadinessScoresProvider && other.days == days;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, days.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin HistoricalReadinessScoresRef
+    on
+        AutoDisposeFutureProviderRef<
+          List<({String date, double? physical, double? mental})>
+        > {
+  /// The parameter `days` of this provider.
+  int get days;
+}
+
+class _HistoricalReadinessScoresProviderElement
+    extends
+        AutoDisposeFutureProviderElement<
+          List<({String date, double? physical, double? mental})>
+        >
+    with HistoricalReadinessScoresRef {
+  _HistoricalReadinessScoresProviderElement(super.provider);
+
+  @override
+  int get days => (origin as HistoricalReadinessScoresProvider).days;
+}
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

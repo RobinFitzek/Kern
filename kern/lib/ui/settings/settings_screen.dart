@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 
 import '../../core/sync/sync_notifier.dart';
 import '../plugins/plugin_manager_screen.dart';
-import '../theme/app_theme.dart';
 import 'navigation_manager_screen.dart';
 
 import 'appearance_settings_screen.dart';

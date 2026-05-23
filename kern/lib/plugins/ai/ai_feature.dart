@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/plugins/plugin_interfaces.dart';
-import '../../core/plugins/plugin_registry.dart';
 import '../derived/derived_providers.dart';
+import '../../ui/widgets/error_state_widget.dart';
 
 class AiFeature implements KernPlugin {
   @override
@@ -16,19 +16,15 @@ class AiFeature implements KernPlugin {
   @override
   String get description => 'Proactive daily health insights powered by Gemini.';
 
-  @override
   IconData get icon => Icons.auto_awesome_rounded;
 
-  @override
-  Color get accentColor => const Color(0xFF673AB7); // Deep Purple
+  Color get accentColor => const Color(0xFF673AB7);
 
   @override
   List<PluginSlot> get supportedSlots => [PluginSlot.header, PluginSlot.main];
 
-  @override
   PluginSlot get defaultSlot => PluginSlot.header;
 
-  @override
   int get defaultSortOrder => 0;
 
   @override
@@ -118,14 +114,20 @@ class _AiDashboardWidget extends ConsumerWidget {
       },
       loading: () => Container(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        height: 100,
+        height: 80,
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(24),
         ),
         child: const Center(child: CircularProgressIndicator()),
       ),
-      error: (e, _) => const SizedBox(),
+      error: (e, _) => Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: ErrorStateWidget(
+          type: ErrorDisplayType.error,
+          message: 'AI Insight konnte nicht geladen werden',
+        ),
+      ),
     );
   }
 }

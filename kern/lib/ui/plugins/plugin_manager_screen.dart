@@ -72,10 +72,10 @@ class PluginManagerScreen extends ConsumerWidget {
                 style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.6), fontSize: 13),
               ),
             ),
-            trailing: Switch(
-              value: isEnabled,
-              activeColor: const Color(0xFF1967D2), // Google Blue
-              onChanged: (val) {
+              trailing: Switch(
+                value: isEnabled,
+                activeTrackColor: const Color(0xFF1967D2),
+                onChanged: (val) {
                 ref.read(pluginConfiguratorProvider.notifier).updateSettings(
                       pluginId: plugin.id,
                       isEnabled: val,

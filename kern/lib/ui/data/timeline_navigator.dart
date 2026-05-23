@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../core/data/data_type_config.dart';
-import '../theme/app_theme.dart';
 import 'data_explorer_state.dart';
 
 class TimelineNavigator extends ConsumerWidget {

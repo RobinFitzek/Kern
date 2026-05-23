@@ -162,6 +162,23 @@ class AppDatabase extends _$AppDatabase {
             ..orderBy([(t) => OrderingTerm.desc(t.computedAt)]))
           .get();
 
+  /// Read derived entries for a [namespace]+[key] across a date range.
+  /// Dates are ISO-8601 strings (e.g. "2026-05-01").
+  Future<List<DerivedEntry>> derivedForDateRange({
+    required String namespace,
+    required String key,
+    required String startDate,
+    required String endDate,
+  }) {
+    return (select(derivedEntries)
+          ..where((t) =>
+              t.namespace.equals(namespace) &
+              t.key.equals(key) &
+              t.date.isBetweenValues(startDate, endDate))
+          ..orderBy([(t) => OrderingTerm.asc(t.date)]))
+        .get();
+  }
+
   // -------------------------------------------------------------------------
   // Sync State DAOs
   // -------------------------------------------------------------------------
@@ -222,6 +239,20 @@ class AppDatabase extends _$AppDatabase {
   Stream<UserFeedbackData?> watchFeedback(String date) =>
       (select(userFeedback)..where((t) => t.date.equals(date)))
           .watchSingleOrNull();
+
+  /// Counts distinct calendar dates per raw data type.
+  /// Used for calibration progress (how many days of HRV, sleep, etc.).
+  Future<Map<String, int>> rawDataDateCounts() async {
+    final result = await customSelect(
+      'SELECT type, COUNT(DISTINCT date(timestamp)) as cnt '
+      'FROM raw_entries GROUP BY type',
+    ).get();
+    final map = <String, int>{};
+    for (final row in result) {
+      map[row.read<String>('type')] = row.read<int>('cnt');
+    }
+    return map;
+  }
 }
 
 // ---------------------------------------------------------------------------

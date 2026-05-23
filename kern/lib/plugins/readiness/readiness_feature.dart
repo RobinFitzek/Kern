@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/plugins/plugin_interfaces.dart';
 import '../derived/derived_providers.dart';
 import '../../ui/theme/app_theme.dart';
 import '../../ui/widgets/bouncing_card.dart';
 import '../../ui/widgets/readiness_checkin_sheet.dart';
+import '../../ui/widgets/calibration_banner.dart';
+import '../../ui/widgets/error_state_widget.dart';
 
 class ReadinessFeature implements KernPlugin {
   @override
@@ -113,7 +116,7 @@ class _ReadinessMainWidget extends ConsumerWidget {
                   final phys = scores.physical;
                   final ment = scores.mental;
                   if (phys == null && ment == null) {
-                    return _buildCalibrating(isDark);
+                    return const CalibrationBanner();
                   }
                   return Row(
                     children: [
@@ -136,7 +139,10 @@ class _ReadinessMainWidget extends ConsumerWidget {
                   );
                 },
                 loading: () => const SizedBox(height: 100, child: Center(child: CircularProgressIndicator())),
-                error: (_, __) => const Text('Fehler', style: TextStyle(color: AppTheme.textPink)),
+                error: (_, __) => const ErrorStateWidget(
+                  type: ErrorDisplayType.error,
+                  message: 'Readiness Score konnte nicht geladen werden',
+                ),
               ),
             ],
           ),
@@ -145,17 +151,6 @@ class _ReadinessMainWidget extends ConsumerWidget {
     );
   }
 
-  Widget _buildCalibrating(bool isDark) {
-    return Column(
-      children: [
-        Icon(Icons.hourglass_top_rounded, size: 40, color: isDark ? Colors.white38 : AppTheme.textTertiary),
-        const SizedBox(height: 8),
-        Text('Kalibrierung läuft...', style: TextStyle(color: isDark ? Colors.white60 : AppTheme.textSecondary, fontWeight: FontWeight.w500)),
-        const SizedBox(height: 4),
-        Text('Mehr Daten werden gesammelt', style: TextStyle(fontSize: 12, color: isDark ? Colors.white38 : AppTheme.textTertiary)),
-      ],
-    );
-  }
 }
 
 class _ScoreRingMini extends StatelessWidget {
@@ -462,14 +457,9 @@ class ReadinessDetailScreen extends ConsumerWidget {
   }
 
   Widget _buildNoDataCard(BuildContext context, bool isDark) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Theme.of(context).dividerColor),
-      ),
-      child: const Center(child: Text('Noch nicht genug Daten', style: TextStyle(color: AppTheme.textTertiary))),
+    return const ErrorStateWidget(
+      type: ErrorDisplayType.noData,
+      message: 'Noch nicht genug Daten',
     );
   }
 
@@ -610,11 +600,46 @@ class _AcwrBar extends StatelessWidget {
 
 // ── Settings ──────────────────────────────────────────────────────────────────
 
-class ReadinessSettingsScreen extends StatelessWidget {
+class ReadinessSettingsScreen extends ConsumerStatefulWidget {
   const ReadinessSettingsScreen({super.key});
 
   @override
+  ConsumerState<ReadinessSettingsScreen> createState() => _ReadinessSettingsScreenState();
+}
+
+class _ReadinessSettingsScreenState extends ConsumerState<ReadinessSettingsScreen> {
+  bool _includeHrv = true;
+  bool _includeSleep = true;
+  bool _morningReminder = false;
+  bool _loaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _includeHrv = prefs.getBool('readiness_include_hrv') ?? true;
+      _includeSleep = prefs.getBool('readiness_include_sleep') ?? true;
+      _morningReminder = prefs.getBool('readiness_morning_reminder') ?? false;
+      _loaded = true;
+    });
+  }
+
+  Future<void> _save() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('readiness_include_hrv', _includeHrv);
+    await prefs.setBool('readiness_include_sleep', _includeSleep);
+    await prefs.setBool('readiness_morning_reminder', _morningReminder);
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (!_loaded) return const Scaffold(body: Center(child: CircularProgressIndicator()));
+
     return Scaffold(
       appBar: AppBar(title: const Text('Readiness Einstellungen')),
       body: ListView(
@@ -623,17 +648,26 @@ class ReadinessSettingsScreen extends StatelessWidget {
           SwitchListTile(
             title: const Text('HRV-Daten einbeziehen'),
             subtitle: const Text('RMSSD als primären Biomarker verwenden'),
-            value: true, onChanged: (_) {},
+            value: _includeHrv,
+            onChanged: (val) {
+              setState(() => _includeHrv = val);
+              _save();
+            },
           ),
           SwitchListTile(
             title: const Text('Schlafdaten einbeziehen'),
             subtitle: const Text('Tiefschlaf, REM und Schlafregularität'),
-            value: true, onChanged: (_) {},
+            value: _includeSleep,
+            onChanged: (val) {
+              setState(() => _includeSleep = val);
+              _save();
+            },
           ),
           SwitchListTile(
             title: const Text('Morgen-Benachrichtigung'),
-            subtitle: const Text('Täglichen Check-in erinnern'),
-            value: false, onChanged: (_) {},
+            subtitle: const Text('Täglichen Check-in erinnern (demnächst verfügbar)'),
+            value: false,
+            onChanged: null,
           ),
           const Divider(),
           const ListTile(

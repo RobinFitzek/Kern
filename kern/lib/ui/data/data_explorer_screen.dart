@@ -29,7 +29,6 @@ class _DataExplorerScreenState extends ConsumerState<DataExplorerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final entriesAsync = ref.watch(recentRawEntriesProvider(filterType: _selectedType));
     final typesAsync = ref.watch(availableDataTypesProvider);
 
     return Scaffold(

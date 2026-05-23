@@ -417,7 +417,7 @@ class ReadinessAlgorithm {
       acwr: inputs.acwrValue,
       sriValue: inputs.sri,
       wObj: wObj,
-      isCalibrating: !inputs.hasHrvData,
+      isCalibrating: !inputs.hasHrvData || !inputs.hasSleepData,
     );
   }
 
@@ -434,7 +434,8 @@ class ReadinessAlgorithm {
     return sqrt(variance);
   }
 
-  // tanh shim — dart:math has sinh/cosh but not tanh directly pre-3.x
+  // tanh — dart:math does not export hyperbolic functions; manual impl is stable
+  // for the Z-score range (±3 typically, safe up to ±20).
   double _tanh(double x) => (exp(x) - exp(-x)) / (exp(x) + exp(-x));
 }
 

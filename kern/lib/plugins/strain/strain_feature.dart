@@ -139,80 +139,85 @@ class StrainDetailScreen extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
         children: [
-          Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1E2835) : AppTheme.accentBlue,
-              borderRadius: BorderRadius.circular(32),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          scoreAsync.when(
+            data: (score) {
+              final v = score ?? 0;
+              final label = v >= 70 ? 'Hohe Belastung' : v >= 40 ? 'Moderate Belastung' : 'Geringe Belastung';
+              final strainColor = v >= 70 ? AppTheme.textPink : v >= 40 ? AppTheme.textOrange : AppTheme.textMint;
+              return Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF1E2835) : AppTheme.accentBlue,
+                  borderRadius: BorderRadius.circular(32),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Daily exertion',
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w700,
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Tägliche Belastung',
+                          style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: isDark ? Colors.black26 : Colors.white54,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(Icons.directions_run_rounded, color: isDark ? Colors.white : AppTheme.textBlue),
+                        ),
+                      ],
                     ),
+                    const SizedBox(height: 32),
+                    Text(
+                      v.toStringAsFixed(0),
+                      style: TextStyle(fontSize: 64, fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface, height: 1),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      label,
+                      style: TextStyle(fontSize: 16, color: strainColor),
+                    ),
+                    const SizedBox(height: 24),
                     Container(
-                      padding: const EdgeInsets.all(10),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       decoration: BoxDecoration(
-                        color: isDark ? Colors.black26 : Colors.white54,
-                        shape: BoxShape.circle,
+                        color: strainColor.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(16),
                       ),
-                      child: Icon(Icons.directions_run_rounded, color: isDark ? Colors.white : AppTheme.textBlue),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.trending_up_rounded, color: strainColor, size: 20),
+                          const SizedBox(width: 8),
+                          Text(label, style: TextStyle(color: strainColor, fontWeight: FontWeight.bold)),
+                        ],
+                      ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 32),
-                scoreAsync.when(
-                  data: (score) => Text(
-                    score?.toStringAsFixed(0) ?? '--',
-                    style: TextStyle(fontSize: 64, fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface, height: 1),
-                  ),
-                  loading: () => const CircularProgressIndicator(),
-                  error: (_, __) => const Text('--'),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Cardiovascular load',
-                  style: TextStyle(fontSize: 16, color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
-                ),
-                const SizedBox(height: 24),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  decoration: BoxDecoration(color: isDark ? AppTheme.textBlue : Colors.white, borderRadius: BorderRadius.circular(16)),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.trending_up_rounded, color: isDark ? Colors.white : AppTheme.textBlue, size: 20),
-                      const SizedBox(width: 8),
-                      Text('Optimal building', style: TextStyle(color: isDark ? Colors.white : AppTheme.textBlue, fontWeight: FontWeight.bold)),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+              );
+            },
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (_, __) => const Center(child: Text('Fehler beim Laden')),
           ),
           const SizedBox(height: 24),
           const Text(
-            'Recent activities',
+            'Info',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
-          _buildActivityCard(context, 'Running', '10:30 AM • 45 min', 'High impact', Icons.directions_run_rounded, Colors.orangeAccent),
+          _buildInfoCard(context, 'Der Strain Score basiert auf deiner täglichen Schrittzahl im Vergleich zu deinem 28-Tage-Durchschnitt.', Icons.info_outline_rounded),
           const SizedBox(height: 12),
-          _buildActivityCard(context, 'Walking', '8:00 AM • 20 min', 'Recovery', Icons.directions_walk_rounded, Colors.greenAccent),
+          _buildInfoCard(context, 'Verbinde Garmin oder eine andere Quelle für detailliertere Aktivitätsdaten wie Workouts und Kalorien.', Icons.link_rounded),
         ],
       ),
     );
   }
 
-  Widget _buildActivityCard(BuildContext context, String title, String subtitle, String tag, IconData icon, Color color) {
+  Widget _buildInfoCard(BuildContext context, String text, IconData icon) {
     final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.all(16),
@@ -222,27 +227,16 @@ class StrainDetailScreen extends ConsumerWidget {
         border: Border.all(color: theme.dividerColor),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.2),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, color: color),
-          ),
-          const SizedBox(width: 16),
+          Icon(icon, color: AppTheme.textTertiary, size: 20),
+          const SizedBox(width: 14),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
-                const SizedBox(height: 4),
-                Text(subtitle, style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.6), fontSize: 14)),
-              ],
+            child: Text(
+              text,
+              style: TextStyle(fontSize: 13, color: theme.colorScheme.onSurface.withValues(alpha: 0.7), height: 1.4),
             ),
           ),
-          Text(tag, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: theme.colorScheme.primary)),
         ],
       ),
     );
@@ -260,22 +254,22 @@ class StrainSettingsScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         children: [
           ListTile(
-            title: const Text('Daily Goal'),
-            subtitle: const Text('10,000 steps'),
+            title: const Text('Tägliches Ziel'),
+            subtitle: const Text('10.000 Schritte'),
             trailing: const Icon(Icons.chevron_right),
-            onTap: () {},
+            enabled: false,
           ),
           SwitchListTile(
-            title: const Text('Include Workouts'),
-            subtitle: const Text('Sync external workout data'),
+            title: const Text('Workouts einbeziehen'),
+            subtitle: const Text('Demnächst verfügbar'),
             value: true,
-            onChanged: (val) {},
+            onChanged: null,
           ),
           SwitchListTile(
-            title: const Text('High Strain Alerts'),
-            subtitle: const Text('Notify when overreaching'),
+            title: const Text('Hohe-Belastung-Warnung'),
+            subtitle: const Text('Demnächst verfügbar'),
             value: true,
-            onChanged: (val) {},
+            onChanged: null,
           ),
         ],
       ),

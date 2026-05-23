@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/database/app_database.dart';
-import '../../core/database/tables.dart';
 import '../../plugins/derived/derived_providers.dart';
 import '../../plugins/plugin_runner.dart' show todayDateString;
 import '../../plugins/raw/raw_providers.dart';

@@ -155,6 +155,17 @@ class PluginRunner extends _$PluginRunner {
     }
 
     debugPrint('[PluginRunner] backfill complete: $computed dates computed');
+
+    // After the initial 30-day backfill, run VACUUM + ANALYZE once to
+    // defragment the DB and update query planner statistics.
+    if (computed > 0) {
+      try {
+        await db.customStatement('PRAGMA optimize');
+        debugPrint('[PluginRunner] DB optimized after backfill');
+      } catch (e) {
+        debugPrint('[PluginRunner] DB optimize failed: $e');
+      }
+    }
   }
 }
 

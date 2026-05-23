@@ -58,9 +58,11 @@ class StrainPlugin {
       byDay[key] = (byDay[key] ?? 0) + e.value;
     }
 
-    final avg7d = byDay.isEmpty
+    // 7-day baseline: exclude days with 0 steps (device not worn)
+    final nonZeroDays = byDay.entries.where((e) => e.value > 0).toList();
+    final avg7d = nonZeroDays.length < 3
         ? 0.0
-        : byDay.values.fold(0.0, (s, v) => s + v) / byDay.length;
+        : nonZeroDays.fold(0.0, (s, e) => s + e.value) / nonZeroDays.length;
 
     final strain = avg7d == 0
         ? (yesterdaySteps > 0 ? 50.0 : 0.0) // neutral when no baseline

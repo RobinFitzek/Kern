@@ -37,6 +37,7 @@ class HealthConnectService {
     HealthDataType.SLEEP_LIGHT,
     HealthDataType.STEPS,
     HealthDataType.ACTIVE_ENERGY_BURNED,
+    HealthDataType.WATER,
   ];
 
   static List<HealthDataAccess> get _permissions =>

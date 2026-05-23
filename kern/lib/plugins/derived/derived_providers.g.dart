@@ -2253,7 +2253,7 @@ class _StrainSteps7dAvgProviderElement
   String? get date => (origin as StrainSteps7dAvgProvider).date;
 }
 
-String _$dailyInsightsHash() => r'808ce84e97ac21d8a497b0b73c7a0657091dc169';
+String _$dailyInsightsHash() => r'0f51cb53fa90aa1731c769fe060575b4fe83984b';
 
 /// Three daily insights (Erholung, Schlaf, Belastung) generated from
 /// readiness, sleep, and strain data.
@@ -2569,6 +2569,272 @@ class _HistoricalReadinessScoresProviderElement
 
   @override
   int get days => (origin as HistoricalReadinessScoresProvider).days;
+}
+
+String _$hydrationDailyMlHash() => r'd6fa20e21fc75ff8a5c5a4b2435460cb1a5b4314';
+
+/// Today's total water intake in ml, or null.
+///
+/// Copied from [hydrationDailyMl].
+@ProviderFor(hydrationDailyMl)
+const hydrationDailyMlProvider = HydrationDailyMlFamily();
+
+/// Today's total water intake in ml, or null.
+///
+/// Copied from [hydrationDailyMl].
+class HydrationDailyMlFamily extends Family<AsyncValue<double?>> {
+  /// Today's total water intake in ml, or null.
+  ///
+  /// Copied from [hydrationDailyMl].
+  const HydrationDailyMlFamily();
+
+  /// Today's total water intake in ml, or null.
+  ///
+  /// Copied from [hydrationDailyMl].
+  HydrationDailyMlProvider call({String? date}) {
+    return HydrationDailyMlProvider(date: date);
+  }
+
+  @override
+  HydrationDailyMlProvider getProviderOverride(
+    covariant HydrationDailyMlProvider provider,
+  ) {
+    return call(date: provider.date);
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'hydrationDailyMlProvider';
+}
+
+/// Today's total water intake in ml, or null.
+///
+/// Copied from [hydrationDailyMl].
+class HydrationDailyMlProvider extends AutoDisposeFutureProvider<double?> {
+  /// Today's total water intake in ml, or null.
+  ///
+  /// Copied from [hydrationDailyMl].
+  HydrationDailyMlProvider({String? date})
+    : this._internal(
+        (ref) => hydrationDailyMl(ref as HydrationDailyMlRef, date: date),
+        from: hydrationDailyMlProvider,
+        name: r'hydrationDailyMlProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$hydrationDailyMlHash,
+        dependencies: HydrationDailyMlFamily._dependencies,
+        allTransitiveDependencies:
+            HydrationDailyMlFamily._allTransitiveDependencies,
+        date: date,
+      );
+
+  HydrationDailyMlProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.date,
+  }) : super.internal();
+
+  final String? date;
+
+  @override
+  Override overrideWith(
+    FutureOr<double?> Function(HydrationDailyMlRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: HydrationDailyMlProvider._internal(
+        (ref) => create(ref as HydrationDailyMlRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        date: date,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<double?> createElement() {
+    return _HydrationDailyMlProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is HydrationDailyMlProvider && other.date == date;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, date.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin HydrationDailyMlRef on AutoDisposeFutureProviderRef<double?> {
+  /// The parameter `date` of this provider.
+  String? get date;
+}
+
+class _HydrationDailyMlProviderElement
+    extends AutoDisposeFutureProviderElement<double?>
+    with HydrationDailyMlRef {
+  _HydrationDailyMlProviderElement(super.provider);
+
+  @override
+  String? get date => (origin as HydrationDailyMlProvider).date;
+}
+
+String _$hydrationGoalPercentHash() =>
+    r'a4e738e4a76c36da8c71e72fd1007165cc34eaab';
+
+/// Today's hydration goal percentage (0–100), or null.
+///
+/// Copied from [hydrationGoalPercent].
+@ProviderFor(hydrationGoalPercent)
+const hydrationGoalPercentProvider = HydrationGoalPercentFamily();
+
+/// Today's hydration goal percentage (0–100), or null.
+///
+/// Copied from [hydrationGoalPercent].
+class HydrationGoalPercentFamily extends Family<AsyncValue<double?>> {
+  /// Today's hydration goal percentage (0–100), or null.
+  ///
+  /// Copied from [hydrationGoalPercent].
+  const HydrationGoalPercentFamily();
+
+  /// Today's hydration goal percentage (0–100), or null.
+  ///
+  /// Copied from [hydrationGoalPercent].
+  HydrationGoalPercentProvider call({String? date}) {
+    return HydrationGoalPercentProvider(date: date);
+  }
+
+  @override
+  HydrationGoalPercentProvider getProviderOverride(
+    covariant HydrationGoalPercentProvider provider,
+  ) {
+    return call(date: provider.date);
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'hydrationGoalPercentProvider';
+}
+
+/// Today's hydration goal percentage (0–100), or null.
+///
+/// Copied from [hydrationGoalPercent].
+class HydrationGoalPercentProvider extends AutoDisposeFutureProvider<double?> {
+  /// Today's hydration goal percentage (0–100), or null.
+  ///
+  /// Copied from [hydrationGoalPercent].
+  HydrationGoalPercentProvider({String? date})
+    : this._internal(
+        (ref) =>
+            hydrationGoalPercent(ref as HydrationGoalPercentRef, date: date),
+        from: hydrationGoalPercentProvider,
+        name: r'hydrationGoalPercentProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$hydrationGoalPercentHash,
+        dependencies: HydrationGoalPercentFamily._dependencies,
+        allTransitiveDependencies:
+            HydrationGoalPercentFamily._allTransitiveDependencies,
+        date: date,
+      );
+
+  HydrationGoalPercentProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.date,
+  }) : super.internal();
+
+  final String? date;
+
+  @override
+  Override overrideWith(
+    FutureOr<double?> Function(HydrationGoalPercentRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: HydrationGoalPercentProvider._internal(
+        (ref) => create(ref as HydrationGoalPercentRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        date: date,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<double?> createElement() {
+    return _HydrationGoalPercentProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is HydrationGoalPercentProvider && other.date == date;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, date.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin HydrationGoalPercentRef on AutoDisposeFutureProviderRef<double?> {
+  /// The parameter `date` of this provider.
+  String? get date;
+}
+
+class _HydrationGoalPercentProviderElement
+    extends AutoDisposeFutureProviderElement<double?>
+    with HydrationGoalPercentRef {
+  _HydrationGoalPercentProviderElement(super.provider);
+
+  @override
+  String? get date => (origin as HydrationGoalPercentProvider).date;
 }
 
 // ignore_for_file: type=lint

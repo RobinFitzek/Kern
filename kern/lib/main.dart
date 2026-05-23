@@ -19,6 +19,9 @@ import 'core/navigation/navigation_state.dart';
 import 'ui/widgets/readiness_checkin_sheet.dart';
 
 import 'plugins/ai/ai_feature.dart';
+import 'plugins/insights/insights_feature.dart';
+import 'plugins/trends/trends_feature.dart';
+import 'plugins/hydration/hydration_feature.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,6 +31,9 @@ void main() {
   PluginRegistry.register(SleepFeature());
   PluginRegistry.register(StrainFeature());
   PluginRegistry.register(AiFeature());
+  PluginRegistry.register(InsightsFeature());
+  PluginRegistry.register(TrendsFeature());
+  PluginRegistry.register(HydrationFeature());
 
   final db = AppDatabase();
 

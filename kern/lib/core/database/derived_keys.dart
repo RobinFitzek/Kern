@@ -10,6 +10,7 @@ class DerivedNamespace {
   static const String strain = 'strain';
   static const String ai = 'ai';
   static const String feedback = 'feedback';
+  static const String hydration = 'hydration';
   DerivedNamespace._();
 }
 
@@ -92,4 +93,10 @@ class FeedbackKey {
   static const String stress = 'stress';
 
   FeedbackKey._();
+}
+
+class HydrationKey {
+  static const String dailyMl = 'daily_ml';
+  static const String goalPercent = 'goal_percent';
+  HydrationKey._();
 }

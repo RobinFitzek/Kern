@@ -6,6 +6,7 @@ import 'readiness/readiness_plugin.dart';
 import 'sleep/sleep_plugin.dart';
 import 'strain/strain_plugin.dart';
 import 'ai/ai_plugin.dart';
+import 'hydration/hydration_plugin.dart';
 
 part 'plugin_runner.g.dart';
 
@@ -58,6 +59,7 @@ class PluginRunner extends _$PluginRunner {
     final readinessPlugin = ReadinessPlugin(db);
     final sleepPlugin = SleepPlugin(db);
     final strainPlugin = StrainPlugin(db);
+    final hydrationPlugin = HydrationPlugin(db);
 
     bool readinessOk = false;
     bool sleepOk = false;
@@ -83,6 +85,10 @@ class PluginRunner extends _$PluginRunner {
       }).catchError((Object e) {
         errors['StrainPlugin'] = e;
         debugPrint('[PluginRunner] StrainPlugin failed: $e');
+      }),
+      _run('HydrationPlugin', () => hydrationPlugin.run(date)).catchError((Object e) {
+        errors['HydrationPlugin'] = e;
+        debugPrint('[PluginRunner] HydrationPlugin failed: $e');
       }),
     ]);
 
@@ -123,6 +129,7 @@ class PluginRunner extends _$PluginRunner {
     final readinessPlugin = ReadinessPlugin(db);
     final sleepPlugin = SleepPlugin(db);
     final strainPlugin = StrainPlugin(db);
+    final hydrationPlugin = HydrationPlugin(db);
 
     final today = DateTime.now();
     int computed = 0;
@@ -146,6 +153,7 @@ class PluginRunner extends _$PluginRunner {
           readinessPlugin.run(dateStr),
           sleepPlugin.run(dateStr),
           strainPlugin.run(dateStr),
+          hydrationPlugin.run(dateStr),
         ]);
         computed++;
         debugPrint('[PluginRunner] backfilled $dateStr');

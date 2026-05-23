@@ -441,3 +441,33 @@ Future<List<({String date, double? physical, double? mental})>>
       .map((d) => (date: d, physical: physMap[d], mental: mentMap[d]))
       .toList();
 }
+
+// ---------------------------------------------------------------------------
+// Hydration
+// ---------------------------------------------------------------------------
+
+/// Today's total water intake in ml, or null.
+@riverpod
+Future<double?> hydrationDailyMl(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.hydration,
+    key: HydrationKey.dailyMl,
+    date: d,
+  );
+  return entry?.value;
+}
+
+/// Today's hydration goal percentage (0–100), or null.
+@riverpod
+Future<double?> hydrationGoalPercent(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.hydration,
+    key: HydrationKey.goalPercent,
+    date: d,
+  );
+  return entry?.value;
+}

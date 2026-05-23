@@ -6,7 +6,7 @@ part of 'plugin_runner.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$pluginRunnerHash() => r'b4ba7fcb1f245ed9cb01e96f020fec4956e349db';
+String _$pluginRunnerHash() => r'f204445ad4d169aa50657371a37d911c26966062';
 
 /// See also [PluginRunner].
 @ProviderFor(PluginRunner)

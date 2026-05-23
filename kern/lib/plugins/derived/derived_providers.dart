@@ -12,6 +12,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../core/database/derived_keys.dart';
 import '../../plugins/raw/raw_providers.dart';
+import 'insight_engine.dart';
 import '../plugin_runner.dart';
 
 part 'derived_providers.g.dart';
@@ -302,6 +303,93 @@ Future<Map<String, String>?> aiInsight(Ref ref, {String? date}) async {
   } catch (e) {
     return null;
   }
+}
+
+// ---------------------------------------------------------------------------
+// Strain — Steps
+// ---------------------------------------------------------------------------
+
+/// Yesterday's total steps from Derived Store.
+@riverpod
+Future<double?> strainStepsYesterday(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.strain,
+    key: StrainKey.stepsYesterday,
+    date: d,
+  );
+  return entry?.value;
+}
+
+/// 7-day average steps from Derived Store.
+@riverpod
+Future<double?> strainSteps7dAvg(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.strain,
+    key: StrainKey.steps7dAvg,
+    date: d,
+  );
+  return entry?.value;
+}
+
+/// Three daily insights (Erholung, Schlaf, Belastung) generated from
+/// readiness, sleep, and strain data.
+@riverpod
+Future<List<DailyInsight>> dailyInsights(Ref ref, {String? date}) async {
+  final physCompAsync =
+      ref.watch(readinessPhysicalComponentsProvider(date: date).future);
+  final mentCompAsync =
+      ref.watch(readinessMentalComponentsProvider(date: date).future);
+  final sleepScoreAsync =
+      ref.watch(sleepScoreProvider(date: date).future);
+  final sleepMinsAsync =
+      ref.watch(sleepMinutesProvider(date: date).future);
+  final strainScoreAsync =
+      ref.watch(strainScoreProvider(date: date).future);
+  final acwrAsync =
+      ref.watch(readinessAcwrProvider(date: date).future);
+  final sriAsync =
+      ref.watch(readinessSriProvider(date: date).future);
+  final stepsYesterdayAsync =
+      ref.watch(strainStepsYesterdayProvider(date: date).future);
+  final steps7dAvgAsync =
+      ref.watch(strainSteps7dAvgProvider(date: date).future);
+  final physScoreAsync =
+      ref.watch(readinessPhysicalScoreProvider(date: date).future);
+
+  final physComp = await physCompAsync;
+  final mentComp = await mentCompAsync;
+  final sleepScore = await sleepScoreAsync;
+  final sleepMins = await sleepMinsAsync;
+  final strainScore = await strainScoreAsync;
+  final acwr = await acwrAsync;
+  final sri = await sriAsync;
+  final stepsYesterday = await stepsYesterdayAsync;
+  final steps7dAvg = await steps7dAvgAsync;
+  final physScore = await physScoreAsync;
+
+  final ctx = InsightContext(
+    hrvScore: physComp?['hrv_score'],
+    todayHrvMs: physComp?['today_hrv_ms'],
+    rhrScore: physComp?['rhr_score'],
+    todayRhrBpm: physComp?['today_rhr_bpm'],
+    physicalScore: physScore,
+    sleepQualityScore: sleepScore,
+    deepMins: sleepMins.deep,
+    remMins: sleepMins.rem,
+    totalSleepMins: sleepMins.total,
+    sleepEfficiencyPct: mentComp?['today_efficiency_pct'],
+    sriValue: sri,
+    strainScore: strainScore,
+    acwrValue: acwr,
+    stepsYesterday: stepsYesterday,
+    steps7dAvg: steps7dAvg,
+  );
+
+  return const InsightEngine().generateInsights(ctx);
 }
 
 // ---------------------------------------------------------------------------

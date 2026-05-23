@@ -16,7 +16,6 @@ class DerivedNamespace {
 class ReadinessKey {
   // Legacy monolithic score — kept for backward-compatible reads during transition.
   static const String score = 'score';
-  static const String isCalibrating = 'is_calibrating';
 
   // Legacy component keys
   static const String hrvContribution = 'hrv_contribution';
@@ -54,8 +53,8 @@ class ReadinessKey {
   /// Starts at 0.8; adapts over time as subjective data accumulates.
   static const String wObjWeight = 'w_obj_weight';
 
-  /// 1.0 = still calibrating (< 7 days HRV), 0.0 = ready.
-  static const String isCalibrating2 = 'is_calibrating_v2';
+  /// 1.0 = still calibrating (< 7 days HRV or < 3 sleep nights), 0.0 = ready.
+  static const String isCalibrating = 'is_calibrating';
 
   ReadinessKey._();
 }

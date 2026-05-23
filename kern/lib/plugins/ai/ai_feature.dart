@@ -3,8 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/plugins/plugin_interfaces.dart';
-import '../derived/derived_providers.dart';
-import '../../ui/widgets/error_state_widget.dart';
+import '../../ui/widgets/ai_coach_card.dart';
 
 class AiFeature implements KernPlugin {
   @override
@@ -16,20 +15,12 @@ class AiFeature implements KernPlugin {
   @override
   String get description => 'Proactive daily health insights powered by Gemini.';
 
-  IconData get icon => Icons.auto_awesome_rounded;
-
-  Color get accentColor => const Color(0xFF673AB7);
-
   @override
-  List<PluginSlot> get supportedSlots => [PluginSlot.header, PluginSlot.main];
-
-  PluginSlot get defaultSlot => PluginSlot.header;
-
-  int get defaultSortOrder => 0;
+  List<PluginSlot> get supportedSlots => [PluginSlot.main];
 
   @override
   Widget buildDashboardWidget(BuildContext context, PluginSlot slot) {
-    return const _AiDashboardWidget();
+    return const AiCoachCard();
   }
 
   @override
@@ -40,96 +31,6 @@ class AiFeature implements KernPlugin {
 
   @override
   Widget? buildSettingsPage(BuildContext context) => const AiSettingsScreen();
-}
-
-class _AiDashboardWidget extends ConsumerWidget {
-  const _AiDashboardWidget();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
-    final insightAsync = ref.watch(aiInsightProvider());
-
-    return insightAsync.when(
-      data: (insight) {
-        if (insight == null) {
-          return const SizedBox();
-        }
-
-        return Container(
-          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                const Color(0xFF673AB7).withValues(alpha: 0.15),
-                const Color(0xFF9C27B0).withValues(alpha: 0.05),
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: const Color(0xFF673AB7).withValues(alpha: 0.2)),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF673AB7).withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Icon(Icons.auto_awesome_rounded, color: Color(0xFF673AB7), size: 20),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        insight['title'] ?? 'Daily Insight',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: theme.colorScheme.onSurface,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  insight['text'] ?? '',
-                  style: TextStyle(
-                    fontSize: 14,
-                    height: 1.5,
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-      loading: () => Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        height: 80,
-        decoration: BoxDecoration(
-          color: theme.colorScheme.surface,
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: const Center(child: CircularProgressIndicator()),
-      ),
-      error: (e, _) => Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: ErrorStateWidget(
-          type: ErrorDisplayType.error,
-          message: 'AI Insight konnte nicht geladen werden',
-        ),
-      ),
-    );
-  }
 }
 
 class AiSettingsScreen extends ConsumerStatefulWidget {
@@ -160,7 +61,7 @@ class _AiSettingsScreenState extends ConsumerState<AiSettingsScreen> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('gemini_api_key', _controller.text.trim());
     setState(() => _saved = true);
-    
+
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('API Key saved')));
       Future.delayed(const Duration(seconds: 2), () {
@@ -185,7 +86,8 @@ class _AiSettingsScreenState extends ConsumerState<AiSettingsScreen> {
           ),
           const SizedBox(height: 8),
           const Text(
-            'To generate personalized insights, the AI Coach requires a Google Gemini API key. Your key is stored securely on this device and is only used to communicate directly with Google.',
+            'The AI Coach uses Gemini 2.5 Flash to lead a daily conversation about your health. '
+            'Your API key is stored on-device and only used for direct communication with Google.',
             textAlign: TextAlign.center,
             style: TextStyle(color: Colors.grey),
           ),

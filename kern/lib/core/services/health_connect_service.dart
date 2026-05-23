@@ -30,29 +30,13 @@ class HealthConnectService {
   // -------------------------------------------------------------------------
 
   static const List<HealthDataType> _readTypes = [
-    HealthDataType.HEART_RATE,
     HealthDataType.HEART_RATE_VARIABILITY_RMSSD,
     HealthDataType.RESTING_HEART_RATE,
-    HealthDataType.SLEEP_SESSION,
     HealthDataType.SLEEP_DEEP,
     HealthDataType.SLEEP_REM,
     HealthDataType.SLEEP_LIGHT,
     HealthDataType.STEPS,
-    
-    // Phase 4: Universal Sync Types
     HealthDataType.ACTIVE_ENERGY_BURNED,
-    HealthDataType.BASAL_ENERGY_BURNED,
-    HealthDataType.BLOOD_GLUCOSE,
-    HealthDataType.BLOOD_OXYGEN,
-    HealthDataType.BLOOD_PRESSURE_DIASTOLIC,
-    HealthDataType.BLOOD_PRESSURE_SYSTOLIC,
-    HealthDataType.BODY_FAT_PERCENTAGE,
-    HealthDataType.BODY_TEMPERATURE,
-    HealthDataType.DISTANCE_DELTA,
-    HealthDataType.FLIGHTS_CLIMBED,
-    HealthDataType.WATER,
-    HealthDataType.WEIGHT,
-    HealthDataType.WORKOUT,
   ];
 
   static List<HealthDataAccess> get _permissions =>

@@ -1987,6 +1987,411 @@ class _AiInsightProviderElement
   String? get date => (origin as AiInsightProvider).date;
 }
 
+String _$strainStepsYesterdayHash() =>
+    r'c8f53a92549526a7b8e9472fb7dfcf65aab217bf';
+
+/// Yesterday's total steps from Derived Store.
+///
+/// Copied from [strainStepsYesterday].
+@ProviderFor(strainStepsYesterday)
+const strainStepsYesterdayProvider = StrainStepsYesterdayFamily();
+
+/// Yesterday's total steps from Derived Store.
+///
+/// Copied from [strainStepsYesterday].
+class StrainStepsYesterdayFamily extends Family<AsyncValue<double?>> {
+  /// Yesterday's total steps from Derived Store.
+  ///
+  /// Copied from [strainStepsYesterday].
+  const StrainStepsYesterdayFamily();
+
+  /// Yesterday's total steps from Derived Store.
+  ///
+  /// Copied from [strainStepsYesterday].
+  StrainStepsYesterdayProvider call({String? date}) {
+    return StrainStepsYesterdayProvider(date: date);
+  }
+
+  @override
+  StrainStepsYesterdayProvider getProviderOverride(
+    covariant StrainStepsYesterdayProvider provider,
+  ) {
+    return call(date: provider.date);
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'strainStepsYesterdayProvider';
+}
+
+/// Yesterday's total steps from Derived Store.
+///
+/// Copied from [strainStepsYesterday].
+class StrainStepsYesterdayProvider extends AutoDisposeFutureProvider<double?> {
+  /// Yesterday's total steps from Derived Store.
+  ///
+  /// Copied from [strainStepsYesterday].
+  StrainStepsYesterdayProvider({String? date})
+    : this._internal(
+        (ref) =>
+            strainStepsYesterday(ref as StrainStepsYesterdayRef, date: date),
+        from: strainStepsYesterdayProvider,
+        name: r'strainStepsYesterdayProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$strainStepsYesterdayHash,
+        dependencies: StrainStepsYesterdayFamily._dependencies,
+        allTransitiveDependencies:
+            StrainStepsYesterdayFamily._allTransitiveDependencies,
+        date: date,
+      );
+
+  StrainStepsYesterdayProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.date,
+  }) : super.internal();
+
+  final String? date;
+
+  @override
+  Override overrideWith(
+    FutureOr<double?> Function(StrainStepsYesterdayRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: StrainStepsYesterdayProvider._internal(
+        (ref) => create(ref as StrainStepsYesterdayRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        date: date,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<double?> createElement() {
+    return _StrainStepsYesterdayProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is StrainStepsYesterdayProvider && other.date == date;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, date.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin StrainStepsYesterdayRef on AutoDisposeFutureProviderRef<double?> {
+  /// The parameter `date` of this provider.
+  String? get date;
+}
+
+class _StrainStepsYesterdayProviderElement
+    extends AutoDisposeFutureProviderElement<double?>
+    with StrainStepsYesterdayRef {
+  _StrainStepsYesterdayProviderElement(super.provider);
+
+  @override
+  String? get date => (origin as StrainStepsYesterdayProvider).date;
+}
+
+String _$strainSteps7dAvgHash() => r'67313caeaa1f82195fc78e263c6e8b1ec0d88188';
+
+/// 7-day average steps from Derived Store.
+///
+/// Copied from [strainSteps7dAvg].
+@ProviderFor(strainSteps7dAvg)
+const strainSteps7dAvgProvider = StrainSteps7dAvgFamily();
+
+/// 7-day average steps from Derived Store.
+///
+/// Copied from [strainSteps7dAvg].
+class StrainSteps7dAvgFamily extends Family<AsyncValue<double?>> {
+  /// 7-day average steps from Derived Store.
+  ///
+  /// Copied from [strainSteps7dAvg].
+  const StrainSteps7dAvgFamily();
+
+  /// 7-day average steps from Derived Store.
+  ///
+  /// Copied from [strainSteps7dAvg].
+  StrainSteps7dAvgProvider call({String? date}) {
+    return StrainSteps7dAvgProvider(date: date);
+  }
+
+  @override
+  StrainSteps7dAvgProvider getProviderOverride(
+    covariant StrainSteps7dAvgProvider provider,
+  ) {
+    return call(date: provider.date);
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'strainSteps7dAvgProvider';
+}
+
+/// 7-day average steps from Derived Store.
+///
+/// Copied from [strainSteps7dAvg].
+class StrainSteps7dAvgProvider extends AutoDisposeFutureProvider<double?> {
+  /// 7-day average steps from Derived Store.
+  ///
+  /// Copied from [strainSteps7dAvg].
+  StrainSteps7dAvgProvider({String? date})
+    : this._internal(
+        (ref) => strainSteps7dAvg(ref as StrainSteps7dAvgRef, date: date),
+        from: strainSteps7dAvgProvider,
+        name: r'strainSteps7dAvgProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$strainSteps7dAvgHash,
+        dependencies: StrainSteps7dAvgFamily._dependencies,
+        allTransitiveDependencies:
+            StrainSteps7dAvgFamily._allTransitiveDependencies,
+        date: date,
+      );
+
+  StrainSteps7dAvgProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.date,
+  }) : super.internal();
+
+  final String? date;
+
+  @override
+  Override overrideWith(
+    FutureOr<double?> Function(StrainSteps7dAvgRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: StrainSteps7dAvgProvider._internal(
+        (ref) => create(ref as StrainSteps7dAvgRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        date: date,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<double?> createElement() {
+    return _StrainSteps7dAvgProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is StrainSteps7dAvgProvider && other.date == date;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, date.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin StrainSteps7dAvgRef on AutoDisposeFutureProviderRef<double?> {
+  /// The parameter `date` of this provider.
+  String? get date;
+}
+
+class _StrainSteps7dAvgProviderElement
+    extends AutoDisposeFutureProviderElement<double?>
+    with StrainSteps7dAvgRef {
+  _StrainSteps7dAvgProviderElement(super.provider);
+
+  @override
+  String? get date => (origin as StrainSteps7dAvgProvider).date;
+}
+
+String _$dailyInsightsHash() => r'808ce84e97ac21d8a497b0b73c7a0657091dc169';
+
+/// Three daily insights (Erholung, Schlaf, Belastung) generated from
+/// readiness, sleep, and strain data.
+///
+/// Copied from [dailyInsights].
+@ProviderFor(dailyInsights)
+const dailyInsightsProvider = DailyInsightsFamily();
+
+/// Three daily insights (Erholung, Schlaf, Belastung) generated from
+/// readiness, sleep, and strain data.
+///
+/// Copied from [dailyInsights].
+class DailyInsightsFamily extends Family<AsyncValue<List<DailyInsight>>> {
+  /// Three daily insights (Erholung, Schlaf, Belastung) generated from
+  /// readiness, sleep, and strain data.
+  ///
+  /// Copied from [dailyInsights].
+  const DailyInsightsFamily();
+
+  /// Three daily insights (Erholung, Schlaf, Belastung) generated from
+  /// readiness, sleep, and strain data.
+  ///
+  /// Copied from [dailyInsights].
+  DailyInsightsProvider call({String? date}) {
+    return DailyInsightsProvider(date: date);
+  }
+
+  @override
+  DailyInsightsProvider getProviderOverride(
+    covariant DailyInsightsProvider provider,
+  ) {
+    return call(date: provider.date);
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'dailyInsightsProvider';
+}
+
+/// Three daily insights (Erholung, Schlaf, Belastung) generated from
+/// readiness, sleep, and strain data.
+///
+/// Copied from [dailyInsights].
+class DailyInsightsProvider
+    extends AutoDisposeFutureProvider<List<DailyInsight>> {
+  /// Three daily insights (Erholung, Schlaf, Belastung) generated from
+  /// readiness, sleep, and strain data.
+  ///
+  /// Copied from [dailyInsights].
+  DailyInsightsProvider({String? date})
+    : this._internal(
+        (ref) => dailyInsights(ref as DailyInsightsRef, date: date),
+        from: dailyInsightsProvider,
+        name: r'dailyInsightsProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$dailyInsightsHash,
+        dependencies: DailyInsightsFamily._dependencies,
+        allTransitiveDependencies:
+            DailyInsightsFamily._allTransitiveDependencies,
+        date: date,
+      );
+
+  DailyInsightsProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.date,
+  }) : super.internal();
+
+  final String? date;
+
+  @override
+  Override overrideWith(
+    FutureOr<List<DailyInsight>> Function(DailyInsightsRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: DailyInsightsProvider._internal(
+        (ref) => create(ref as DailyInsightsRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        date: date,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<List<DailyInsight>> createElement() {
+    return _DailyInsightsProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is DailyInsightsProvider && other.date == date;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, date.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin DailyInsightsRef on AutoDisposeFutureProviderRef<List<DailyInsight>> {
+  /// The parameter `date` of this provider.
+  String? get date;
+}
+
+class _DailyInsightsProviderElement
+    extends AutoDisposeFutureProviderElement<List<DailyInsight>>
+    with DailyInsightsRef {
+  _DailyInsightsProviderElement(super.provider);
+
+  @override
+  String? get date => (origin as DailyInsightsProvider).date;
+}
+
 String _$readinessDataCountsHash() =>
     r'4d09229f5ce7ddf3ed30f0830ab795629bfaa48c';
 

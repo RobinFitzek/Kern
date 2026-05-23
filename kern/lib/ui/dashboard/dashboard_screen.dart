@@ -8,10 +8,11 @@ import '../../core/sync/sync_notifier.dart';
 import '../../plugins/derived/derived_providers.dart';
 import '../theme/app_theme.dart';
 import '../widgets/calibration_banner.dart';
-import '../widgets/recommendation_card.dart';
+import '../widgets/ai_coach_card.dart';
 import '../widgets/stale_data_badge.dart';
 import '../widgets/error_state_widget.dart';
 import '../widgets/historical_readiness_chart.dart';
+import '../widgets/daily_insights_card.dart';
 import 'dashboard_skeleton.dart';
 
 class DashboardScreen extends ConsumerWidget {
@@ -41,7 +42,6 @@ class DashboardScreen extends ConsumerWidget {
   Widget _buildContent(BuildContext context, PluginRegistryState state, WidgetRef ref) {
     final syncState = ref.watch(syncNotifierProvider);
     final mainPlugins = state.getForSlot(PluginSlot.main);
-    final headerPlugins = state.getForSlot(PluginSlot.header);
 
     return RefreshIndicator(
       onRefresh: () => ref.read(syncNotifierProvider.notifier).resync(),
@@ -58,14 +58,9 @@ class DashboardScreen extends ConsumerWidget {
             const CalibrationBanner(),
           const SizedBox(height: 24),
 
-          // Row of 2 insight cards (Sleep + Strain side by side)
-          if (headerPlugins.isNotEmpty) ...[
-            _buildInsightRow(context, headerPlugins, ref),
-            const SizedBox(height: 24),
-          ],
+          const DailyInsightsCard(),
 
-          // Prominent recommendation card
-          const RecommendationCard(),
+          const AiCoachCard(),
           const SizedBox(height: 24),
 
           // Historical trend chart
@@ -170,29 +165,6 @@ class DashboardScreen extends ConsumerWidget {
         mainPlugin,
         mainPlugin.buildDashboardWidget(context, PluginSlot.main),
       ),
-    );
-  }
-
-  Widget _buildInsightRow(BuildContext context, List<KernPlugin> headerPlugins, WidgetRef ref) {
-    final plugins = headerPlugins.take(2).toList();
-
-    return Row(
-      children: [
-        for (int i = 0; i < plugins.length; i++) ...[
-          if (i > 0) const SizedBox(width: 12),
-          Expanded(
-            child: StaleDataBadge(
-              showDetail: false,
-              child: _wrapWithNavigation(
-                context,
-                plugins[i],
-                plugins[i].buildDashboardWidget(context, PluginSlot.header),
-              ),
-            ),
-          ),
-        ],
-        if (plugins.length < 2) const Spacer(),
-      ],
     );
   }
 

@@ -1,11 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:drift/drift.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:google_generative_ai/google_generative_ai.dart';
 import 'dart:convert';
 
 import '../../core/database/app_database.dart';
 import '../../core/database/derived_keys.dart';
+import 'ai_coach_service.dart';
 
 class AiPlugin {
   AiPlugin(this.db);
@@ -19,73 +19,95 @@ class AiPlugin {
 
       if (apiKey == null || apiKey.isEmpty) {
         await _saveInsight(
-          date, 
-          'Setup Required', 
-          'Please configure your Gemini API key in the AI Coach settings to receive personalized daily insights.'
+          date,
+          'Setup Required',
+          'Please configure your Gemini API key in the AI Coach settings to receive personalized daily insights.',
         );
         return;
       }
 
-      // Gather context
-      final readiness = await _getDerivedValue(DerivedNamespace.readiness, ReadinessKey.score, date);
-      final sleep = await _getDerivedValue(DerivedNamespace.sleep, SleepKey.qualityScore, date);
-      final strain = await _getDerivedValue(DerivedNamespace.strain, StrainKey.daily, date);
+      // Build full context using the new service
+      final context = await _buildContext(date);
 
-      // If we don't have enough data, skip or write a fallback
-      if (readiness == null && sleep == null && strain == null) {
+      if (context == null ||
+          (context.physicalScore == null &&
+              context.sleepQualityScore == null &&
+              context.strainScore == null)) {
         await _saveInsight(
           date,
           'Gathering Data',
-          'Not enough data today to generate an insight. Wear your device to start seeing daily coaching.'
+          'Not enough data today to generate an insight. Wear your device to start seeing daily coaching.',
         );
         return;
       }
 
-      final prompt = '''
-You are a proactive, knowledgeable, and concise health coach. 
-Analyze the following health metrics for the user today and provide a single paragraph insight (max 3 sentences) and a short title (max 4 words).
+      // Use the new AiCoachService for the greeting
+      final service = AiCoachService();
+      final greeting = await service.generateGreeting(context);
 
-Readiness Score: ${readiness != null ? readiness.toStringAsFixed(0) : 'Unknown'} (0-100, >70 is good)
-Sleep Score: ${sleep != null ? sleep.toStringAsFixed(0) : 'Unknown'} (0-100, >70 is good)
-Strain Score: ${strain != null ? strain.toStringAsFixed(0) : 'Unknown'} (0-100)
-
-Return your response strictly in the following JSON format without Markdown formatting or code blocks:
-{
-  "title": "Your Short Title",
-  "text": "Your 3-sentence insight."
-}
-''';
-
-      final model = GenerativeModel(model: 'gemini-2.5-flash', apiKey: apiKey);
-      final response = await model.generateContent([Content.text(prompt)]);
-      
-      final text = response.text;
-      if (text != null) {
-        // Clean markdown JSON block if it exists
-        String cleanJson = text;
-        if (cleanJson.startsWith('```json')) {
-          cleanJson = cleanJson.substring(7);
-        }
-        if (cleanJson.startsWith('```')) {
-          cleanJson = cleanJson.substring(3);
-        }
-        if (cleanJson.endsWith('```')) {
-          cleanJson = cleanJson.substring(0, cleanJson.length - 3);
-        }
-
-        final data = jsonDecode(cleanJson.trim());
-        await _saveInsight(date, data['title'] ?? 'Daily Insight', data['text'] ?? 'Ready for the day!');
+      if (greeting != null) {
+        final combined = '${greeting.observation}\n\n${greeting.question}';
+        await _saveInsight(date, 'Daily Insight', combined);
       }
-
     } catch (e) {
       debugPrint('[AiPlugin] Error generating insight: $e');
-      // Only save fallback if no cached insight exists for today.
       final cached = await _getInsightForDate(date);
       if (cached == null) {
         await _saveInsight(date, 'Insight Unavailable',
             'Could not generate your daily coaching insight at this time.');
       }
       rethrow;
+    }
+  }
+
+  Future<AiCoachContext?> _buildContext(String date) async {
+    try {
+      final physScore = await _getDerivedValue(
+          DerivedNamespace.readiness, ReadinessKey.physicalScore, date);
+      final mentScore = await _getDerivedValue(
+          DerivedNamespace.readiness, ReadinessKey.mentalScore, date);
+      final sleepScore = await _getDerivedValue(
+          DerivedNamespace.sleep, SleepKey.qualityScore, date);
+      final strainScore = await _getDerivedValue(
+          DerivedNamespace.strain, StrainKey.daily, date);
+      final deepMins = await _getDerivedValue(
+          DerivedNamespace.sleep, SleepKey.deepMinutes, date);
+      final remMins = await _getDerivedValue(
+          DerivedNamespace.sleep, SleepKey.remMinutes, date);
+      final lightMins = await _getDerivedValue(
+          DerivedNamespace.sleep, SleepKey.lightMinutes, date);
+      final totalMins = await _getDerivedValue(
+          DerivedNamespace.sleep, SleepKey.totalMinutes, date);
+      final stepsY = await _getDerivedValue(
+          DerivedNamespace.strain, StrainKey.stepsYesterday, date);
+      final stepsA = await _getDerivedValue(
+          DerivedNamespace.strain, StrainKey.steps7dAvg, date);
+      final acwr = await _getDerivedValue(
+          DerivedNamespace.readiness, ReadinessKey.acwr, date);
+      final sri = await _getDerivedValue(
+          DerivedNamespace.readiness, ReadinessKey.sri, date);
+      final cal = await _getDerivedValue(
+          DerivedNamespace.readiness, ReadinessKey.isCalibrating, date);
+
+      return AiCoachContext(
+        date: date,
+        physicalScore: physScore,
+        mentalScore: mentScore,
+        deepSleepMins: deepMins,
+        remSleepMins: remMins,
+        lightSleepMins: lightMins,
+        totalSleepMins: totalMins,
+        sleepQualityScore: sleepScore,
+        strainScore: strainScore,
+        stepsYesterday: stepsY,
+        steps7dAvg: stepsA,
+        acwrValue: acwr,
+        sriValue: sri,
+        isCalibrating: cal == 1.0,
+      );
+    } catch (e) {
+      debugPrint('[AiPlugin] context error: $e');
+      return null;
     }
   }
 
@@ -107,7 +129,8 @@ Return your response strictly in the following JSON format without Markdown form
     }
   }
 
-  Future<double?> _getDerivedValue(String namespace, String key, String date) async {
+  Future<double?> _getDerivedValue(
+      String namespace, String key, String date) async {
     final query = db.select(db.derivedEntries)
       ..where((t) => t.namespace.equals(namespace))
       ..where((t) => t.key.equals(key))

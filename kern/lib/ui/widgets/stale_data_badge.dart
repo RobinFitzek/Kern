@@ -88,39 +88,3 @@ class StaleDataBadge extends ConsumerWidget {
     return '${age.inDays}d';
   }
 }
-
-class StaleDataOverlay extends ConsumerWidget {
-  const StaleDataOverlay({
-    super.key,
-    required this.child,
-    this.onTap,
-    this.staleThreshold = const Duration(hours: 4),
-  });
-
-  final Widget child;
-  final VoidCallback? onTap;
-  final Duration staleThreshold;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final syncState = ref.watch(syncNotifierProvider);
-    final lastSync = syncState.lastSyncTime;
-
-    if (lastSync == null) {
-      return GestureDetector(
-        onTap: onTap,
-        child: Opacity(opacity: 0.55, child: child),
-      );
-    }
-
-    final age = DateTime.now().difference(lastSync);
-    final isStale = age > staleThreshold;
-
-    if (!isStale) return GestureDetector(onTap: onTap, child: child);
-
-    return GestureDetector(
-      onTap: onTap,
-      child: Opacity(opacity: 0.55, child: child),
-    );
-  }
-}

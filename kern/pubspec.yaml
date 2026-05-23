@@ -2,7 +2,7 @@ name: kern
 description: "Kern — Android health coaching app with Garmin support via Health Connect."
 publish_to: 'none'
 
-version: 1.0.0+1
+version: 1.0.0+2
 
 environment:
   sdk: ^3.11.5
@@ -49,6 +49,15 @@ dev_dependencies:
   riverpod_generator: ^2.6.1
   custom_lint: ^0.7.0
   riverpod_lint: ^2.6.1
+  flutter_launcher_icons: ^0.14.3
+
+flutter_launcher_icons:
+  android: true
+  image_path: "assets/icon.png"
+  adaptive_icon_foreground: "assets/icon.png"
+  adaptive_icon_background: "#1A73E8"
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/

@@ -17,7 +17,7 @@ class SleepFeature implements KernPlugin {
   String get description => 'Sleep quality and duration metrics.';
 
   @override
-  List<PluginSlot> get supportedSlots => [PluginSlot.footer, PluginSlot.header];
+  List<PluginSlot> get supportedSlots => [PluginSlot.header];
 
   @override
   Widget buildDashboardWidget(BuildContext context, PluginSlot slot) {
@@ -49,7 +49,11 @@ class _SleepFooterWidget extends ConsumerWidget {
     final mins = minsAsync.valueOrNull;
 
     return BouncingCard(
-      onTap: () {},
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => const SleepDetailScreen()),
+        );
+      },
       child: Card(
         child: Padding(
         padding: const EdgeInsets.all(16),

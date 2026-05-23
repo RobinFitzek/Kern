@@ -451,14 +451,6 @@ class SleepInterval {
   final DateTime end;
 }
 
-/// Active calorie burn for a single day.
-/// Used for ACWR computation.
-class DailyCalories {
-  const DailyCalories({required this.date, required this.activeKcal});
-  final DateTime date;
-  final double activeKcal;
-}
-
 /// Aggregated sleep data for a single night.
 class NightSleepData {
   const NightSleepData({

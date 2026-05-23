@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/database/app_database.dart';
 import '../../core/database/derived_keys.dart';
@@ -59,35 +60,50 @@ class ReadinessPlugin {
     final now = DateTime.now().toUtc();
     debugPrint('[ReadinessPlugin] Computing for date=$date');
 
+    // Read user preferences
+    final prefs = await SharedPreferences.getInstance();
+    final includeHrv = prefs.getBool('readiness_include_hrv') ?? true;
+    final includeSleep = prefs.getBool('readiness_include_sleep') ?? true;
+
     // ── 1. Fetch raw data ────────────────────────────────────────────────────
     final baselineStart = now.subtract(_baselineWindow);
     final sleepWindow = now.subtract(const Duration(hours: 36));
 
     // HRV: full 28-day window for baseline + 7-day for CV
-    final hrv28d = await _db.rawEntriesSince(
-      type: RawDataType.hrv,
-      since: baselineStart,
-    );
+    final hrv28d = includeHrv
+        ? await _db.rawEntriesSince(
+            type: RawDataType.hrv,
+            since: baselineStart,
+          )
+        : <RawEntry>[];
 
     // Resting HR: 28-day baseline
-    final rhr28d = await _db.rawEntriesSince(
-      type: RawDataType.restingHr,
-      since: baselineStart,
-    );
+    final rhr28d = includeSleep
+        ? await _db.rawEntriesSince(
+            type: RawDataType.restingHr,
+            since: baselineStart,
+          )
+        : <RawEntry>[];
 
     // Sleep stages: 28-day window for baseline + SRI computation
-    final deepAll = await _db.rawEntriesSince(
-      type: RawDataType.sleepDeep,
-      since: baselineStart,
-    );
-    final remAll = await _db.rawEntriesSince(
-      type: RawDataType.sleepRem,
-      since: baselineStart,
-    );
-    final lightAll = await _db.rawEntriesSince(
-      type: RawDataType.sleepLight,
-      since: baselineStart,
-    );
+    final deepAll = includeSleep
+        ? await _db.rawEntriesSince(
+            type: RawDataType.sleepDeep,
+            since: baselineStart,
+          )
+        : <RawEntry>[];
+    final remAll = includeSleep
+        ? await _db.rawEntriesSince(
+            type: RawDataType.sleepRem,
+            since: baselineStart,
+          )
+        : <RawEntry>[];
+    final lightAll = includeSleep
+        ? await _db.rawEntriesSince(
+            type: RawDataType.sleepLight,
+            since: baselineStart,
+          )
+        : <RawEntry>[];
 
     // Active Calories for ACWR (28d chronic + 7d acute)
     final calories28d = await _db.rawEntriesSince(

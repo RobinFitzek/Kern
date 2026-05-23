@@ -17,7 +17,7 @@ class StrainFeature implements KernPlugin {
   String get description => 'Daily physical exertion based on steps.';
 
   @override
-  List<PluginSlot> get supportedSlots => [PluginSlot.footer, PluginSlot.header];
+  List<PluginSlot> get supportedSlots => [PluginSlot.header];
 
   @override
   Widget buildDashboardWidget(BuildContext context, PluginSlot slot) {
@@ -45,7 +45,11 @@ class _StrainFooterWidget extends ConsumerWidget {
     final scoreAsync = ref.watch(strainScoreProvider());
 
     return BouncingCard(
-      onTap: () {},
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => const StrainDetailScreen()),
+        );
+      },
       child: Card(
         child: Padding(
         padding: const EdgeInsets.all(16),

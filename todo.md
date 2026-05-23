@@ -87,9 +87,23 @@
   - compute: integration, calibration, feedback fusion, sub-scores, clamping
   - NightSleepData: totalSleepMins, efficiency, zero timeInBed
 - [x] **`sleep_plugin_test.dart`** — 13 tests: stage score, duration score, quality score formula
+- [x] **`insight_engine_test.dart`** — 60 tests: all-null, all-good, all-bad, mixed, every category's cascading rules, boundaries
 - [x] **`strain_plugin_test.dart`** — 9 tests: ratio-based score with edge cases
 - [x] **`widget_test.dart`** — algorithm smoke test
-- [x] **79 total tests, all passing**
+- [x] **139 total tests, all passing**
+
+## Phase 6 — Insights & Onboarding ✅ COMPLETE
+
+- [x] **InsightEngine** — pure Dart 3-insight generator (Erholung, Schlaf, Belastung) with cascading rule priority
+- [x] **InsightChip** widget — colored icon + category label + insight text per chip
+- [x] **DailyInsightsCard** — ConsumerWidget rendering 3 chips from dailyInsightsProvider
+- [x] **DailyInsightsCard integrated into dashboard** — replaces Sleep/Strain header row
+- [x] **strainStepsYesterday + strainSteps7dAvg providers** — for insight engine
+- [x] **Multi-step onboarding** — 4-page PageView (Welcome → Readiness → AI Coach → Connect)
+- [x] **Dead code removed** — DailyCalories, StaleDataOverlay, isCalibrating2, unused `onTap: () {}`
+- [x] **Health Connect types trimmed** — 23 → 7 (only types actually used by plugins)
+- [x] **PluginSlot.footer removed from sleep/strain** — dead rendering path eliminated
+- [x] **BouncingCard onTap fixed** — sleep/strain now navigate to detail screens
 
 ## Remaining — v2 / Backlog
 

@@ -471,3 +471,902 @@ Future<double?> hydrationGoalPercent(Ref ref, {String? date}) async {
   );
   return entry?.value;
 }
+
+// ---------------------------------------------------------------------------
+// Recovery
+// ---------------------------------------------------------------------------
+
+@riverpod
+Future<double?> recoveryScore(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.recovery,
+    key: RecoveryKey.score,
+    date: d,
+  );
+  return entry?.value;
+}
+
+@riverpod
+Future<String?> recoveryState(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.recovery,
+    key: RecoveryKey.state,
+    date: d,
+  );
+  if (entry == null) return null;
+  return _recoveryStateString(entry.value);
+}
+
+@riverpod
+Future<double?> recoveryHrvTrend(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.recovery,
+    key: RecoveryKey.hrvTrend,
+    date: d,
+  );
+  return entry?.value;
+}
+
+@riverpod
+Future<double?> recoveryRhrTrend(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.recovery,
+    key: RecoveryKey.rhrTrend,
+    date: d,
+  );
+  return entry?.value;
+}
+
+@riverpod
+Future<String?> recoveryRecommendation(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.recovery,
+    key: RecoveryKey.recommendation,
+    date: d,
+  );
+  return entry?.metadata;
+}
+
+String _recoveryStateString(double value) {
+  switch (value.toInt()) {
+    case 1:
+      return 'Erholt';
+    case 2:
+      return 'Erholt sich';
+    case 3:
+      return 'Stabil';
+    case 4:
+      return 'Rückläufig';
+    case 5:
+      return 'Ermüdet';
+    default:
+      return 'Kalibrierung';
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Heart Health
+// ---------------------------------------------------------------------------
+
+@riverpod
+Future<double?> heartHealthRestingHr(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.heartHealth,
+    key: HeartHealthKey.restingHr,
+    date: d,
+  );
+  return entry?.value;
+}
+
+@riverpod
+Future<double?> heartHealthRestingHrTrend(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.heartHealth,
+    key: HeartHealthKey.restingHrTrend,
+    date: d,
+  );
+  return entry?.value;
+}
+
+@riverpod
+Future<double?> heartHealthHrvBaseline(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.heartHealth,
+    key: HeartHealthKey.hrvBaseline,
+    date: d,
+  );
+  return entry?.value;
+}
+
+@riverpod
+Future<double?> heartHealthCvFitness(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.heartHealth,
+    key: HeartHealthKey.cvFitnessEstimate,
+    date: d,
+  );
+  return entry?.value;
+}
+
+// ---------------------------------------------------------------------------
+// Weekly Report
+// ---------------------------------------------------------------------------
+
+@riverpod
+Future<double?> weeklyAvgReadiness(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.weeklyReport,
+    key: WeeklyReportKey.avgReadiness,
+    date: d,
+  );
+  return entry?.value;
+}
+
+@riverpod
+Future<double?> weeklyAvgSleep(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.weeklyReport,
+    key: WeeklyReportKey.avgSleep,
+    date: d,
+  );
+  return entry?.value;
+}
+
+@riverpod
+Future<double?> weeklyAvgStrain(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.weeklyReport,
+    key: WeeklyReportKey.avgStrain,
+    date: d,
+  );
+  return entry?.value;
+}
+
+@riverpod
+Future<double?> weeklyTotalSteps(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.weeklyReport,
+    key: WeeklyReportKey.totalSteps,
+    date: d,
+  );
+  return entry?.value;
+}
+
+// ---------------------------------------------------------------------------
+// Body Battery
+// ---------------------------------------------------------------------------
+
+@riverpod
+Future<double?> bodyBatteryCurrentLevel(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.bodyBattery,
+    key: BodyBatteryKey.currentLevel,
+    date: d,
+  );
+  return entry?.value;
+}
+
+@riverpod
+Future<double?> bodyBatteryMorningLevel(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.bodyBattery,
+    key: BodyBatteryKey.morningLevel,
+    date: d,
+  );
+  return entry?.value;
+}
+
+@riverpod
+Future<double?> bodyBatteryDrainRate(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.bodyBattery,
+    key: BodyBatteryKey.drainRate,
+    date: d,
+  );
+  return entry?.value;
+}
+
+// ---------------------------------------------------------------------------
+// Active Energy
+// ---------------------------------------------------------------------------
+
+@riverpod
+Future<double?> activeEnergyDailyKcal(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.activeEnergy,
+    key: ActiveEnergyKey.dailyKcal,
+    date: d,
+  );
+  return entry?.value;
+}
+
+@riverpod
+Future<double?> activeEnergyWeeklyAvg(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.activeEnergy,
+    key: ActiveEnergyKey.weeklyAvg,
+    date: d,
+  );
+  return entry?.value;
+}
+
+@riverpod
+Future<String?> activeEnergyLevel(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.activeEnergy,
+    key: ActiveEnergyKey.activityLevel,
+    date: d,
+  );
+  if (entry == null) return null;
+  final raw = entry.metadata ?? _activeLevelString(entry.value);
+  return raw;
+}
+
+String _activeLevelString(double value) {
+  switch (value.toInt()) {
+    case 5:
+      return 'Sehr aktiv';
+    case 4:
+      return 'Aktiv';
+    case 3:
+      return 'Moderat';
+    case 2:
+      return 'Leicht';
+    case 1:
+      return 'Sitzend';
+    default:
+      return 'Sitzend';
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Sleep Debt
+// ---------------------------------------------------------------------------
+
+@riverpod
+Future<double?> sleepDebtBankBalance(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.sleepDebt,
+    key: SleepDebtKey.bankBalance,
+    date: d,
+  );
+  return entry?.value;
+}
+
+@riverpod
+Future<double?> sleepDebtBankScore(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.sleepDebt,
+    key: SleepDebtKey.bankScore,
+    date: d,
+  );
+  return entry?.value;
+}
+
+@riverpod
+Future<double?> sleepDebtDailyShortfall(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.sleepDebt,
+    key: SleepDebtKey.dailyShortfall,
+    date: d,
+  );
+  return entry?.value;
+}
+
+@riverpod
+Future<double?> sleepDebtLastNightSurplus(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.sleepDebt,
+    key: SleepDebtKey.lastNightSurplus,
+    date: d,
+  );
+  return entry?.value;
+}
+
+@riverpod
+Future<int?> sleepDebtSeverity(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.sleepDebt,
+    key: SleepDebtKey.debtSeverity,
+    date: d,
+  );
+  if (entry == null) return null;
+  return entry.value.toInt();
+}
+
+@riverpod
+Future<double?> sleepDebtRecoveryDays(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.sleepDebt,
+    key: SleepDebtKey.recoveryDays,
+    date: d,
+  );
+  return entry?.value;
+}
+
+@riverpod
+Future<int?> sleepDebtTrend(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.sleepDebt,
+    key: SleepDebtKey.trendDirection,
+    date: d,
+  );
+  if (entry == null) return null;
+  return entry.value.toInt();
+}
+
+@riverpod
+Future<double?> sleepDebtSleepGoal(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.sleepDebt,
+    key: SleepDebtKey.sleepGoal,
+    date: d,
+  );
+  return entry?.value;
+}
+
+@riverpod
+Future<double?> sleepDebtWeeklyTrend(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.sleepDebt,
+    key: SleepDebtKey.weeklyBalanceTrend,
+    date: d,
+  );
+  return entry?.value;
+}
+
+@riverpod
+Future<Map<String, dynamic>?> sleepDebtDetailJson(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.sleepDebt,
+    key: SleepDebtKey.detailJson,
+    date: d,
+  );
+  if (entry?.metadata == null) return null;
+  try {
+    return jsonDecode(entry!.metadata!) as Map<String, dynamic>;
+  } catch (_) {
+    return null;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Workload Balance
+// ---------------------------------------------------------------------------
+
+@riverpod
+Future<double?> workloadBalanceRatio(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.workloadBalance,
+    key: WorkloadBalanceKey.ratio,
+    date: d,
+  );
+  return entry?.value;
+}
+
+@riverpod
+Future<int?> workloadBalanceState(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.workloadBalance,
+    key: WorkloadBalanceKey.state,
+    date: d,
+  );
+  if (entry == null) return null;
+  return entry.value.toInt();
+}
+
+@riverpod
+Future<double?> workloadBalanceScore(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.workloadBalance,
+    key: WorkloadBalanceKey.score,
+    date: d,
+  );
+  return entry?.value;
+}
+
+@riverpod
+Future<String?> workloadBalanceTrainingAdvice(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.workloadBalance,
+    key: WorkloadBalanceKey.trainingAdvice,
+    date: d,
+  );
+  return entry?.metadata;
+}
+
+@riverpod
+Future<double?> workloadBalanceAcuteLoad(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.workloadBalance,
+    key: WorkloadBalanceKey.acuteLoad,
+    date: d,
+  );
+  return entry?.value;
+}
+
+@riverpod
+Future<double?> workloadBalanceChronicLoad(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.workloadBalance,
+    key: WorkloadBalanceKey.chronicLoad,
+    date: d,
+  );
+  return entry?.value;
+}
+
+@riverpod
+Future<double?> workloadBalanceRecoveryLevel(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.workloadBalance,
+    key: WorkloadBalanceKey.recoveryLevel,
+    date: d,
+  );
+  return entry?.value;
+}
+
+@riverpod
+Future<double?> workloadBalanceReadinessLevel(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.workloadBalance,
+    key: WorkloadBalanceKey.readinessLevel,
+    date: d,
+  );
+  return entry?.value;
+}
+
+@riverpod
+Future<int?> workloadBalanceTrend(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.workloadBalance,
+    key: WorkloadBalanceKey.trend,
+    date: d,
+  );
+  if (entry == null) return null;
+  return entry.value.toInt();
+}
+
+// ---------------------------------------------------------------------------
+// Consistency
+// ---------------------------------------------------------------------------
+
+@riverpod
+Future<double?> consistencyOverallScore(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.consistency,
+    key: ConsistencyKey.overallScore,
+    date: d,
+  );
+  return entry?.value;
+}
+
+@riverpod
+Future<double?> consistencyStepsScore(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.consistency,
+    key: ConsistencyKey.stepsScore,
+    date: d,
+  );
+  return entry?.value;
+}
+
+@riverpod
+Future<double?> consistencyEnergyScore(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.consistency,
+    key: ConsistencyKey.energyScore,
+    date: d,
+  );
+  return entry?.value;
+}
+
+@riverpod
+Future<int?> consistencyState(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.consistency,
+    key: ConsistencyKey.state,
+    date: d,
+  );
+  if (entry == null) return null;
+  return entry.value.toInt();
+}
+
+@riverpod
+Future<double?> consistencyActiveDays(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.consistency,
+    key: ConsistencyKey.activeDays,
+    date: d,
+  );
+  return entry?.value;
+}
+
+@riverpod
+Future<double?> consistencyStreak(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.consistency,
+    key: ConsistencyKey.streak,
+    date: d,
+  );
+  return entry?.value;
+}
+
+@riverpod
+Future<double?> consistencyBestStreak(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.consistency,
+    key: ConsistencyKey.bestStreak,
+    date: d,
+  );
+  return entry?.value;
+}
+
+// ---------------------------------------------------------------------------
+// Chronotype
+// ---------------------------------------------------------------------------
+
+@riverpod
+Future<int?> chronotypeCategory(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.chronotype,
+    key: ChronotypeKey.category,
+    date: d,
+  );
+  if (entry == null) return null;
+  return entry.value.toInt();
+}
+
+@riverpod
+Future<String?> chronotypeCategoryLabel(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.chronotype,
+    key: ChronotypeKey.categoryLabel,
+    date: d,
+  );
+  return entry?.metadata;
+}
+
+@riverpod
+Future<double?> chronotypeAvgBedtime(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.chronotype,
+    key: ChronotypeKey.avgBedtimeHour,
+    date: d,
+  );
+  return entry?.value;
+}
+
+@riverpod
+Future<double?> chronotypeAvgWaketime(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.chronotype,
+    key: ChronotypeKey.avgWaketimeHour,
+    date: d,
+  );
+  return entry?.value;
+}
+
+@riverpod
+Future<double?> chronotypeMidpoint(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.chronotype,
+    key: ChronotypeKey.midpointHour,
+    date: d,
+  );
+  return entry?.value;
+}
+
+@riverpod
+Future<double?> chronotypeVariability(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.chronotype,
+    key: ChronotypeKey.variabilityMins,
+    date: d,
+  );
+  return entry?.value;
+}
+
+@riverpod
+Future<double?> chronotypeAvgDuration(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.chronotype,
+    key: ChronotypeKey.avgDurationMins,
+    date: d,
+  );
+  return entry?.value;
+}
+
+// ---------------------------------------------------------------------------
+// Stress Load
+// ---------------------------------------------------------------------------
+
+@riverpod
+Future<double?> stressLoadScore(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.stressLoad,
+    key: StressLoadKey.score,
+    date: d,
+  );
+  return entry?.value;
+}
+
+@riverpod
+Future<double?> stressLoadRatio(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.stressLoad,
+    key: StressLoadKey.stressRatio,
+    date: d,
+  );
+  return entry?.value;
+}
+
+@riverpod
+Future<double?> stressLoadNighttimeBaseline(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.stressLoad,
+    key: StressLoadKey.nighttimeBaseline,
+    date: d,
+  );
+  return entry?.value;
+}
+
+@riverpod
+Future<double?> stressLoadDaytimeHrv(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.stressLoad,
+    key: StressLoadKey.daytimeHrv,
+    date: d,
+  );
+  return entry?.value;
+}
+
+@riverpod
+Future<int?> stressLoadCategory(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.stressLoad,
+    key: StressLoadKey.category,
+    date: d,
+  );
+  if (entry == null) return null;
+  return entry.value.toInt();
+}
+
+@riverpod
+Future<int?> stressLoadBaselineTrend(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.stressLoad,
+    key: StressLoadKey.baselineTrend,
+    date: d,
+  );
+  if (entry == null) return null;
+  return entry.value.toInt();
+}
+
+@riverpod
+Future<String?> stressLoadRecommendation(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.stressLoad,
+    key: StressLoadKey.recommendation,
+    date: d,
+  );
+  return entry?.metadata;
+}
+
+// ---------------------------------------------------------------------------
+// Forecast
+// ---------------------------------------------------------------------------
+
+@riverpod
+Future<double?> forecastPredictedReadiness(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.forecast,
+    key: ForecastKey.predictedReadiness,
+    date: d,
+  );
+  return entry?.value;
+}
+
+@riverpod
+Future<double?> forecastPredictedMental(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.forecast,
+    key: ForecastKey.predictedMental,
+    date: d,
+  );
+  return entry?.value;
+}
+
+@riverpod
+Future<double?> forecastTrendSlope(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.forecast,
+    key: ForecastKey.trendSlope,
+    date: d,
+  );
+  return entry?.value;
+}
+
+@riverpod
+Future<double?> forecastConfidence(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.forecast,
+    key: ForecastKey.confidence,
+    date: d,
+  );
+  return entry?.value;
+}
+
+@riverpod
+Future<int?> forecastCategory(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.forecast,
+    key: ForecastKey.category,
+    date: d,
+  );
+  if (entry == null) return null;
+  return entry.value.toInt();
+}
+
+@riverpod
+Future<double?> forecastRecoveryDebt(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.forecast,
+    key: ForecastKey.recoveryDebt,
+    date: d,
+  );
+  return entry?.value;
+}
+
+@riverpod
+Future<String?> forecastRecommendation(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.forecast,
+    key: ForecastKey.recommendation,
+    date: d,
+  );
+  return entry?.metadata;
+}
+
+@riverpod
+Future<double?> forecastMentalTrend(Ref ref, {String? date}) async {
+  final db = ref.watch(appDatabaseProvider);
+  final d = date ?? todayDateString();
+  final entry = await db.latestDerived(
+    namespace: DerivedNamespace.forecast,
+    key: ForecastKey.mentalTrend,
+    date: d,
+  );
+  return entry?.value;
+}

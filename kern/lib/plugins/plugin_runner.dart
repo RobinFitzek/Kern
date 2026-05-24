@@ -7,6 +7,17 @@ import 'sleep/sleep_plugin.dart';
 import 'strain/strain_plugin.dart';
 import 'ai/ai_plugin.dart';
 import 'hydration/hydration_plugin.dart';
+import 'recovery/recovery_plugin.dart';
+import 'heart_health/heart_health_plugin.dart';
+import 'weekly_report/weekly_report_plugin.dart';
+import 'body_battery/body_battery_plugin.dart';
+import 'active_energy/active_energy_plugin.dart';
+import 'sleep_debt/sleep_debt_plugin.dart';
+import 'workload_balance/workload_balance_plugin.dart';
+import 'consistency/consistency_plugin.dart';
+import 'chronotype/chronotype_plugin.dart';
+import 'stress_load/stress_load_plugin.dart';
+import 'forecast/forecast_plugin.dart';
 
 part 'plugin_runner.g.dart';
 
@@ -60,6 +71,17 @@ class PluginRunner extends _$PluginRunner {
     final sleepPlugin = SleepPlugin(db);
     final strainPlugin = StrainPlugin(db);
     final hydrationPlugin = HydrationPlugin(db);
+    final recoveryPlugin = RecoveryPlugin(db);
+    final heartHealthPlugin = HeartHealthPlugin(db);
+    final weeklyReportPlugin = WeeklyReportPlugin(db);
+    final bodyBatteryPlugin = BodyBatteryPlugin(db);
+    final activeEnergyPlugin = ActiveEnergyPlugin(db);
+    final sleepDebtPlugin = SleepDebtPlugin(db);
+    final workloadBalancePlugin = WorkloadBalancePlugin(db);
+    final consistencyPlugin = ConsistencyPlugin(db);
+    final chronotypePlugin = ChronotypePlugin(db);
+    final stressLoadPlugin = StressLoadPlugin(db);
+    final forecastPlugin = ForecastPlugin(db);
 
     bool readinessOk = false;
     bool sleepOk = false;
@@ -89,6 +111,50 @@ class PluginRunner extends _$PluginRunner {
       _run('HydrationPlugin', () => hydrationPlugin.run(date)).catchError((Object e) {
         errors['HydrationPlugin'] = e;
         debugPrint('[PluginRunner] HydrationPlugin failed: $e');
+      }),
+      _run('RecoveryPlugin', () => recoveryPlugin.run(date)).catchError((Object e) {
+        errors['RecoveryPlugin'] = e;
+        debugPrint('[PluginRunner] RecoveryPlugin failed: $e');
+      }),
+      _run('HeartHealthPlugin', () => heartHealthPlugin.run(date)).catchError((Object e) {
+        errors['HeartHealthPlugin'] = e;
+        debugPrint('[PluginRunner] HeartHealthPlugin failed: $e');
+      }),
+      _run('WeeklyReportPlugin', () => weeklyReportPlugin.run(date)).catchError((Object e) {
+        errors['WeeklyReportPlugin'] = e;
+        debugPrint('[PluginRunner] WeeklyReportPlugin failed: $e');
+      }),
+      _run('BodyBatteryPlugin', () => bodyBatteryPlugin.run(date)).catchError((Object e) {
+        errors['BodyBatteryPlugin'] = e;
+        debugPrint('[PluginRunner] BodyBatteryPlugin failed: $e');
+      }),
+      _run('ActiveEnergyPlugin', () => activeEnergyPlugin.run(date)).catchError((Object e) {
+        errors['ActiveEnergyPlugin'] = e;
+        debugPrint('[PluginRunner] ActiveEnergyPlugin failed: $e');
+      }),
+      _run('SleepDebtPlugin', () => sleepDebtPlugin.run(date)).catchError((Object e) {
+        errors['SleepDebtPlugin'] = e;
+        debugPrint('[PluginRunner] SleepDebtPlugin failed: $e');
+      }),
+      _run('WorkloadBalancePlugin', () => workloadBalancePlugin.run(date)).catchError((Object e) {
+        errors['WorkloadBalancePlugin'] = e;
+        debugPrint('[PluginRunner] WorkloadBalancePlugin failed: $e');
+      }),
+      _run('ConsistencyPlugin', () => consistencyPlugin.run(date)).catchError((Object e) {
+        errors['ConsistencyPlugin'] = e;
+        debugPrint('[PluginRunner] ConsistencyPlugin failed: $e');
+      }),
+      _run('ChronotypePlugin', () => chronotypePlugin.run(date)).catchError((Object e) {
+        errors['ChronotypePlugin'] = e;
+        debugPrint('[PluginRunner] ChronotypePlugin failed: $e');
+      }),
+      _run('StressLoadPlugin', () => stressLoadPlugin.run(date)).catchError((Object e) {
+        errors['StressLoadPlugin'] = e;
+        debugPrint('[PluginRunner] StressLoadPlugin failed: $e');
+      }),
+      _run('ForecastPlugin', () => forecastPlugin.run(date)).catchError((Object e) {
+        errors['ForecastPlugin'] = e;
+        debugPrint('[PluginRunner] ForecastPlugin failed: $e');
       }),
     ]);
 
@@ -130,6 +196,17 @@ class PluginRunner extends _$PluginRunner {
     final sleepPlugin = SleepPlugin(db);
     final strainPlugin = StrainPlugin(db);
     final hydrationPlugin = HydrationPlugin(db);
+    final recoveryPlugin = RecoveryPlugin(db);
+    final heartHealthPlugin = HeartHealthPlugin(db);
+    final weeklyReportPlugin = WeeklyReportPlugin(db);
+    final bodyBatteryPlugin = BodyBatteryPlugin(db);
+    final activeEnergyPlugin = ActiveEnergyPlugin(db);
+    final sleepDebtPlugin = SleepDebtPlugin(db);
+    final workloadBalancePlugin = WorkloadBalancePlugin(db);
+    final consistencyPlugin = ConsistencyPlugin(db);
+    final chronotypePlugin = ChronotypePlugin(db);
+    final stressLoadPlugin = StressLoadPlugin(db);
+    final forecastPlugin = ForecastPlugin(db);
 
     final today = DateTime.now();
     int computed = 0;
@@ -154,6 +231,17 @@ class PluginRunner extends _$PluginRunner {
           sleepPlugin.run(dateStr),
           strainPlugin.run(dateStr),
           hydrationPlugin.run(dateStr),
+          recoveryPlugin.run(dateStr),
+          heartHealthPlugin.run(dateStr),
+          weeklyReportPlugin.run(dateStr),
+          bodyBatteryPlugin.run(dateStr),
+          activeEnergyPlugin.run(dateStr),
+          sleepDebtPlugin.run(dateStr),
+          workloadBalancePlugin.run(dateStr),
+          consistencyPlugin.run(dateStr),
+          chronotypePlugin.run(dateStr),
+          stressLoadPlugin.run(dateStr),
+          forecastPlugin.run(dateStr),
         ]);
         computed++;
         debugPrint('[PluginRunner] backfilled $dateStr');

@@ -2,7 +2,7 @@ name: kern
 description: "Kern — Android health coaching app with Garmin support via Health Connect."
 publish_to: 'none'
 
-version: 1.0.0+2
+version: 1.0.0+4
 
 environment:
   sdk: ^3.11.5

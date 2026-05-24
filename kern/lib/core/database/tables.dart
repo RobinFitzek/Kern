@@ -14,6 +14,8 @@ class RawDataType {
   static const String sleepLight = 'sleep_light';
   static const String steps = 'steps';
   static const String heartRate = 'heart_rate';
+  static const String activeEnergyBurned = 'active_energy_burned';
+  static const String water = 'water';
 
   RawDataType._();
 }

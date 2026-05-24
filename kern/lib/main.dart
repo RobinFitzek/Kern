@@ -22,6 +22,17 @@ import 'plugins/ai/ai_feature.dart';
 import 'plugins/insights/insights_feature.dart';
 import 'plugins/trends/trends_feature.dart';
 import 'plugins/hydration/hydration_feature.dart';
+import 'plugins/recovery/recovery_feature.dart';
+import 'plugins/heart_health/heart_health_feature.dart';
+import 'plugins/weekly_report/weekly_report_feature.dart';
+import 'plugins/body_battery/body_battery_feature.dart';
+import 'plugins/active_energy/active_energy_feature.dart';
+import 'plugins/sleep_debt/sleep_debt_feature.dart';
+import 'plugins/workload_balance/workload_balance_feature.dart';
+import 'plugins/consistency/consistency_feature.dart';
+import 'plugins/chronotype/chronotype_feature.dart';
+import 'plugins/stress_load/stress_load_feature.dart';
+import 'plugins/forecast/forecast_feature.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,6 +45,17 @@ void main() {
   PluginRegistry.register(InsightsFeature());
   PluginRegistry.register(TrendsFeature());
   PluginRegistry.register(HydrationFeature());
+  PluginRegistry.register(RecoveryFeature());
+  PluginRegistry.register(HeartHealthFeature());
+  PluginRegistry.register(WeeklyReportFeature());
+  PluginRegistry.register(BodyBatteryFeature());
+  PluginRegistry.register(ActiveEnergyFeature());
+  PluginRegistry.register(SleepDebtFeature());
+  PluginRegistry.register(WorkloadBalanceFeature());
+  PluginRegistry.register(ConsistencyFeature());
+  PluginRegistry.register(ChronotypeFeature());
+  PluginRegistry.register(StressLoadFeature());
+  PluginRegistry.register(ForecastFeature());
 
   final db = AppDatabase();
 
